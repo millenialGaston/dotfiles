@@ -52,6 +52,8 @@
      export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
    #+end_src
 
+   #+RESULTS:
+
 ** misc
 *** add aliases to path
 
@@ -69,6 +71,10 @@
       fi
       alias rr='source ~/.zshrc'
      #+end_src
+
+     #+RESULTS:
+     : ]2;if [ -f ~/.dir_colors ]; then; eval `dircolors ~/.dir_colors`; fi]1;]2;alias rr='source ~/.zshrc']1;
+
 *** venvrapper
     #+begin_src shell :tangle "~/.env/.zshrc"
       venv_arch=/usr/bin/virtualenvwrapper.sh
@@ -78,81 +84,81 @@
     #+end_src
 *** TODO private fpath
 https://unix.stackexchange.com/questions/33255/how-to-define-and-load-your-own-shell-function-in-zsh
-     #+begin_src shell :tangle "~/.env/.zshrc"
-       fpath=( "$HOME/cloud/dotfiles/.zfunctions" "{$fpath[@]}" )
-     #+end_src
+#+begin_src shell :tangle "~/.env/.zshrc"
+fpath=( "$HOME/cloud/dotfiles/.zfunctions" $fpath )
+#+end_src
 
-     #+RESULTS:
+#+RESULTS:
 
 *** themes 
-    https://github.com/bhilburn/
-    #+begin_src shell :tangle no
-      ZSH_THEME="agnoster"
-      ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-      ZSH_THEME="robbyrussell"
-      ZSH_THEME="Pure"
-    #+end_src
+https://github.com/bhilburn/
+#+begin_src shell :tangle no
+ZSH_THEME="agnoster"
+ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+ZSH_THEME="robbyrussell"
+ZSH_THEME="Pure"
+#+end_src
 *** prompts
 ****  pure
 ***** prepare
-      [[https://github.com/sindresorhus/pure][GitHub - sindresorhus/pure: Pretty, minimal and fast ZSH prompt]]
-      - clone repo 
-        #+begin_src shell :session purepromptsetup
-          mkdir shellstuff && cd shellstuff
-          git clone git@github.com:sindresorhus/pure.git pure
-          cd pure
-        #+end_src
-      - symlink both pure.zsh and async.zsh on ~$fpath~ pure.zsh-> prompt_pure_setup
-        #+begin_src shell :session purepromptsetup
-          sudo ln -s "$PWD/pure.zsh"\
-               /usr/share/zsh/site-functions/prompt_pure_setup
-          /usr/local/share/
-          sudo ln -s "$PWD/async.zsh"\ 
-            /usr/share/zsh/site-functions/async
-          #+end_src
+[[https://github.com/sindresorhus/pure][GitHub - sindresorhus/pure: Pretty, minimal and fast ZSH prompt]]
+- clone repo
+  #+begin_src shell :session purepromptsetup
+mkdir shellstuff && cd shellstuff
+git clone git@github.com:sindresorhus/pure.git pure
+cd pure
+  #+end_src
+- symlink both pure.zsh and async.zsh on ~$fpath~ pure.zsh-> prompt_pure_setup
+  #+begin_src shell :session purepromptsetup
+sudo ln -s "$PWD/pure.zsh"\
+    /usr/share/zsh/site-functions/prompt_pure_setup
+/usr/local/share/
+sudo ln -s "$PWD/async.zsh"\
+/usr/share/zsh/site-functions/async
+  #+end_src
 ***** add this to .zshrc 
-       #+begin_src shell :tangle "~/.env/.zshrc"
-         autoload -U promptinit; promptinit
-         prompt pure 
-       #+end_src
+#+begin_src shell :tangle "~/.env/.zshrc"
+autoload -U promptinit; promptinit
+prompt pure
+#+end_src
 
 *** doc from example
-    #+begin_src shell 
-      # CASE_SENSITIVE="true"
-      # Uncomment the following line to use hyphen-insensitive completion.
-      # Case-sensitive completion must be off. _ and - will be interchangeable.
-      # HYPHEN_INSENSITIVE="true"
-      # Uncomment the following line to disable bi-weekly auto-update checks.
-      # DISABLE_AUTO_UPDATE="true"
-      # Uncomment the following line to automatically update without prompting.
-      # DISABLE_UPDATE_PROMPT="true"
-      # Uncomment the following line to change how often to auto-update (in days).
-      # export UPDATE_ZSH_DAYS=13
-      # Uncomment the following line if pasting URLs and other text is messed up.
-      # DISABLE_MAGIC_FUNCTIONS=true
-      # Uncomment the following line to disable colors in ls.
-      # DISABLE_LS_COLORS="true"
-      # Uncomment the following line to disable auto-setting terminal title.
-      # DISABLE_AUTO_TITLE="true"
-      # Uncomment the following line to enable command auto-correction.
-      # ENABLE_CORRECTION="true"
-      # Uncomment the following line to display red dots whilst waiting for completion.
-      # COMPLETION_WAITING_DOTS="true"
-      # Uncomment the following line if you want to disable marking untracked files
-      # under VCS as dirty. This makes repository status check for large repositories
-      # much, much faster.
-      # DISABLE_UNTRACKED_FILES_DIRTY="true"
-      # HIST_STAMPS="mm/dd/yyyy"
+#+begin_src shell
+# CASE_SENSITIVE="true"
+# Uncomment the following line to use hyphen-insensitive completion.
+# Case-sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+# Uncomment the following line to disable bi-weekly auto-update checks.
+# DISABLE_AUTO_UPDATE="true"
+# Uncomment the following line to automatically update without prompting.
+# DISABLE_UPDATE_PROMPT="true"
+# Uncomment the following line to change how often to auto-update (in days).
+# export UPDATE_ZSH_DAYS=13
+# Uncomment the following line if pasting URLs and other text is messed up.
+# DISABLE_MAGIC_FUNCTIONS=true
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+# Uncomment the following line to display red dots whilst waiting for completion.
+# COMPLETION_WAITING_DOTS="true"
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+# HIST_STAMPS="mm/dd/yyyy"
 
-    #+end_src
+#+end_src
    
 
 * tmux 
 ** multiuser stuff
-   [[https://github.com/zolrath/wemux][GitHub - zolrath/wemux: Multi-User Tmux Made Easy]]
+[[https://github.com/zolrath/wemux][GitHub - zolrath/wemux: Multi-User Tmux Made Easy]]
 
 ** TODO redraw and takeover
-   [[https://stackoverflow.com/questions/7814612/is-there-any-way-to-redraw-tmux-window-when-switching-smaller-monitor-to-bigger][Is there any way to redraw tmux window when switching smaller monitor to bigg...]]
+[[https://stackoverflow.com/questions/7814612/is-there-any-way-to-redraw-tmux-window-when-switching-smaller-monitor-to-bigger][Is there any way to redraw tmux window when switching smaller monitor to bigg...]]
 
 
 * Xorg
@@ -429,7 +435,8 @@ bindsym Escape mode "default"
 }
 
 #+end_src
-** i3 -rs bar :deac:
+** bars
+*** i3 -rs bar :deac:
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -452,12 +459,18 @@ urgent_workspace #2f343a #900000 #ffffff
 
 set $Locker i3lock && sleep 1
 #+end_src
-** bumblebee
-
+*** bumblebee
+:PROPERTIES:
+:header-args: :tangle ~/.env/i3/config
+:END:
 #+BEGIN_SRC conf
 bar {
+font pango:DejaVu Sans Mono, FontAwesome 12
+position top
 status_command /home/sole/cloud/dotfiles/i3stuff/bumblebee-status/bumblebee-status -m mpd cpu memory battery time pasink pasource -p time.format="%H:%M" -t solarized
-                }
+tray_output VGA1
+}
+set $Locker i3lock && sleep 1
 #+END_SRC
 ** i3 system
 #+begin_src conf 
@@ -517,6 +530,3 @@ https://github.com/klaxalk/i3-layout-manager
 
 
    zeroconf, need to prevent systemd from creating the network socket
-
-
-*

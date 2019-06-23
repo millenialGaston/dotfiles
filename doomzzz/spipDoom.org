@@ -30,6 +30,7 @@
 (autoload 'ibuffer "ibuffer" "List buffers." t)
 (setq org-cycle-separator-lines 2)
 ;;(add-to-list 'load-path "~/cloud/.personal/dotfiles/emacsPackages/")
+(bind-key (kbd "M-y") 'helm-show-kill-ring)
 #+END_SRC
 
 #+RESULTS:
@@ -303,6 +304,9 @@ https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/
 
 
 ** clock
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
 #+BEGIN_SRC elisp
 (use-package org-clock
   :preface
@@ -336,3 +340,56 @@ https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/
 ;; Set default column view headings: Task Priority Effort Clock_Summary
 (setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM")
 #+END_SRC
+
+
+
+
+
+* lisps
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
+
+** common lisp
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+*** slime
+#+BEGIN_SRC lisp
+(setq inferior-lisp-program "/opt/sbcl/bin/sbcl")
+(setq slime-contribs '(slime-fancy))
+#+END_SRC
+
+#+BEGIN_SRC lisp
+(print "test")
+#+END_SRC
+
+
+* babel
+#+BEGIN_SRC elisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((lisp . t) (shell .t)))
+
+#+END_SRC
+
+#+RESULTS:
+
+
+* experiments
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+** customize evil
+
+https://github.com/hlissner/doom-emacs/wiki/Customization
+https://github.com/Somelauw/evil-org-mode/blob/master/doc/keythemes.org
+#+BEGIN_SRC elisp
+  (evil-define-key 'normal evil-org-mode-map
+    (kbd ">") 'org-meta-right
+    (kbd "<") 'org-meta-left)
+  (evil-org-set-key-theme '(textobjects insert navigation additional shift todo heading))
+#+END_SRC
+
+#+RESULTS:

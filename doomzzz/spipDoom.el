@@ -14,6 +14,7 @@
 (autoload 'ibuffer "ibuffer" "List buffers." t)
 (setq org-cycle-separator-lines 2)
 ;;(add-to-list 'load-path "~/cloud/.personal/dotfiles/emacsPackages/")
+(bind-key (kbd "M-y") 'helm-show-kill-ring)
 
 (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
@@ -75,49 +76,49 @@
 (setq doom-modeline-irc t)
 (setq doom-modeline-irc-stylize 'identity)
 
-      (setq org-agenda-files '("home/sole/cloud/.personal/agenda/"))
+(setq org-agenda-files '("home/sole/cloud/.personal/agenda/"))
 
-       (use-package org-agenda
-         :after org
-         :bind (:map org-agenda-mode-map
-                     ("X" . my/org-agenda-mark-done-and-add-followup)
-                     ("x" . my/org-agenda-done))
-         :preface
-         (defun my/org-agenda-done (&optional arg)
-           "Mark current TODO as done.
+(use-package org-agenda
+  :after org
+  :bind (:map org-agenda-mode-map
+          ("X" . my/org-agenda-mark-done-and-add-followup)
+          ("x" . my/org-agenda-done))
+  :preface
+  (defun my/org-agenda-done (&optional arg)
+    "Mark current TODO as done.
                               This changes the line at point, all other lines in the agenda referring to
                               the same tree node, and the headline of the tree node in the Org-mode file."
-           (interactive "P")
-           (org-agenda-todo "DONE"))
+    (interactive "P")
+    (org-agenda-todo "DONE"))
 
-         (defun my/org-agenda-mark-done-and-add-followup ()
-           "Mark the current TODO as done and add another task after it.
+  (defun my/org-agenda-mark-done-and-add-followup ()
+    "Mark the current TODO as done and add another task after it.
                                Creates it at the same level as the previous task, so it's better to use
                                this with to-do items than with projects or headings."
-           (interactive)
-           (org-agenda-todo "DONE")
-           (org-agenda-switch-to)
-           (org-capture 0 "t"))
-         :custom
-         (org-agenda-dim-blocked-tasks t)
-         (org-agenda-inhibit-startup t)
-         (org-agenda-show-log t)
-         (org-agenda-skip-deadline-if-done t)
-         (org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled)
-         (org-agenda-skip-scheduled-if-done nil)
-         (org-agenda-span 2)
-         (org-agenda-start-on-weekday 6)
-         (org-agenda-sticky nil)
-         (org-agenda-tags-column -100)
-         (org-agenda-time-grid '((daily today require-timed)))
-         (org-agenda-use-tag-inheritance t)
-         (org-columns-default-format "%14SCHEDULED %Effort{:} %1PRIORITY %TODO %50ITEM %TAGS")
-         (org-default-notes-file "~/cloud/.personal/agenda/organizer.org")
-         (org-directory "~/cloud/.personal")
-         (org-enforce-todo-dependencies t)
-         (org-habit-graph-column 80)
-         (org-habit-show-habits-only-for-today nil)
-         (org-track-ordered-property-with-tag t))
+    (interactive)
+    (org-agenda-todo "DONE")
+    (org-agenda-switch-to)
+    (org-capture 0 "t"))
+  :custom
+  (org-agenda-dim-blocked-tasks t)
+  (org-agenda-inhibit-startup t)
+  (org-agenda-show-log t)
+  (org-agenda-skip-deadline-if-done t)
+  (org-agenda-skip-deadline-prewarning-if-scheduled 'pre-scheduled)
+  (org-agenda-skip-scheduled-if-done nil)
+  (org-agenda-span 2)
+  (org-agenda-start-on-weekday 6)
+  (org-agenda-sticky nil)
+  (org-agenda-tags-column -100)
+  (org-agenda-time-grid '((daily today require-timed)))
+  (org-agenda-use-tag-inheritance t)
+  (org-columns-default-format "%14SCHEDULED %Effort{:} %1PRIORITY %TODO %50ITEM %TAGS")
+  (org-default-notes-file "~/cloud/.personal/agenda/organizer.org")
+  (org-directory "~/cloud/.personal")
+  (org-enforce-todo-dependencies t)
+  (org-habit-graph-column 80)
+  (org-habit-show-habits-only-for-today nil)
+  (org-track-ordered-property-with-tag t))
 
 (setq org-agenda-files (list "~/cloud/.personal/agenda"))
 (setq org-refile-targets (quote (("~/cloud/.personal/notes/orgmode.org" :maxlevel . 1)
@@ -126,6 +127,16 @@
 (setq org-outline-path-complete-in-steps t)         ; Refile in a single go
 (setq org-refile-use-outline-path t)                  ; Show full paths for refiling                                    ("~/cloud/.personal/agenda" :level . 2))))
 (load-theme 'doom-nord t)
+
+(use-package org-faces
+  :after org
+  :custom
+  (org-todo-keyword-faces
+   '(("DONE" . (:foreground "cyan" :weight bold))
+     ("SOMEDAY" . (:foreground "gray" :weight bold))
+     ("WAITING" . (:foreground "red" :weight bold))
+     ("STARTED" . (:foreground "cyan" :weight normal))
+     ("NEXT" . (:foreground "cyan" :weight bold)))))
 
 (let* ((variable-tuple (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
                              ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
@@ -145,6 +156,38 @@
    `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
    `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.70))))
    `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
+
+(use-package org-clock
+  :preface
+  (defun my/org-mode-ask-effort ()
+    "Ask for an effort estimate when clocking in."
+    (unless (org-entry-get (point) "Effort")
+      (let ((effort
+             (completing-read
+              "Effort: "
+              (org-entry-get-multivalued-property (point) "Effort"))))
+        (unless (equal effort "")
+          (org-set-property "Effort" effort)))))
+  :hook (org-clock-in-prepare-hook . my/org-mode-ask-effort)
+  :custom
+  (org-clock-clocktable-default-properties
+   '(:block day :maxlevel 2 :scope agenda :link t :compact t :formula %
+            :step day :fileskip0 t :stepskip0 t :narrow 80
+            :properties ("Effort" "CLOCKSUM" "CLOCKSUM_T" "TODO")))
+  (org-clock-continuously nil)
+  (org-clock-in-switch-to-state "STARTED")
+  (org-clock-out-remove-zero-time-clocks t)
+  (org-clock-persist t)
+  (org-clock-persist-file "~/cloud/.personal/agenda/.clock")
+  (org-clock-persist-query-resume nil)
+  (org-clock-report-include-clocking-task t)
+  (org-show-notification-handler (lambda (msg) (alert msg))))
+;; global Effort estimate values
+(setq org-global-properties
+      '(("Effort_ALL" .
+         "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00")))
+;; Set default column view headings: Task Priority Effort Clock_Summary
+(setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM")
 
       (require 'org-bullets)
       (org-babel-do-load-languages
