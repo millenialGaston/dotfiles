@@ -1,0 +1,522 @@
+
+* bash stuff
+** env variables
+~.profile~ should be loaded before .bashrc stuff i think so
+   #+begin_src shell :tangle ~/.env/.profile
+     export PATH=$PATH:$HOME/bin:/usr/local/bin:/home/sole/.emacs.d/bin
+     export PATH=$PATH:$HOME/apps:$HOME/apps/Zotero_linux-x86_64/:$HOME/apps/myScripts
+     export ZSH=$HOME/.oh-my-zsh 
+     export LANG=en_US.UTF-8 
+     export ARCHFLAGS="-arch x86_64"
+     export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
+
+     export WORKON_HOME=$HOME/.virtualenvs
+     export PROJECT_HOME=$HOME/cloud/apps/Devel
+
+     export TERMINAL=termite
+     export TERM=xterm-256color
+
+     export PAGER=less
+     export BROWSER='brave'
+
+     export EDITOR=vim
+     export LESS='-R'
+     if [[ -n $SSH_CONNECTION ]]; then
+         export EDITOR='vim'
+     else
+         export EDITOR='mvim'
+     fi
+
+
+
+     export OOO_FORCE_DESKTOP=gnome soffice
+
+     export HISTCONTROL=ignoredups
+     export HISTSIZE=5000
+     export HISTFILESIZE=1000
+     export HISTIGNORE="&:ls:ll:la:l.:pwd:exit:clear"
+
+     export SANE_DEFAULT_DEVICE="brother4:bus4;dev3"
+     LESSOPEN="|lesspipe.sh %s"; export LESSOPEN
+     export PYSPARK_SUBMIT_ARGS="--master local[2] pyspark-shell"
+
+     export JAVA_HOME="/usr/bin/java"
+     export PROJECT_HOME=$HOME/apps/
+
+     export QT_STYLE_OVERRIDE=gtk
+     export QT_SELECT=qt5
+     export XDG_CACHE_HOME=$HOME/.cache
+
+     export ALTERNATE_EDITOR=""
+     export EDITOR="emacsclient -t"                  # $EDITOR opens in terminal
+     export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
+   #+end_src
+
+** misc
+*** add aliases to path
+
+** zsh
+   https://github.com/robbyrussell/oh-my-zsh
+*** main
+    #+begin_src shell :tangle "~/.env/.zshrc"
+      ZSH_CUSTOM=$HOME/.config/zsh/
+      plugins=(git)
+      source $ZSH/oh-my-zsh.sh
+      source $HOME/.bashrc.aliases
+      source $HOME/.profile
+      if [ -f ~/.dir_colors ]; then
+          eval `dircolors ~/.dir_colors`
+      fi
+      alias rr='source ~/.zshrc'
+     #+end_src
+*** venvrapper
+    #+begin_src shell :tangle "~/.env/.zshrc"
+      venv_arch=/usr/bin/virtualenvwrapper.sh
+      [ -f "$venv_arch" ] && source "$venv_arch"
+      venv_debian=/usr/share/virtualenvwrapper/virtualenvwrapper.sh
+      [ -f "$venv_debian" ] && source "$venv_debian"
+    #+end_src
+*** TODO private fpath
+https://unix.stackexchange.com/questions/33255/how-to-define-and-load-your-own-shell-function-in-zsh
+     #+begin_src shell :tangle "~/.env/.zshrc"
+       fpath=( "$HOME/cloud/dotfiles/.zfunctions" "{$fpath[@]}" )
+     #+end_src
+
+     #+RESULTS:
+
+*** themes 
+    https://github.com/bhilburn/
+    #+begin_src shell :tangle no
+      ZSH_THEME="agnoster"
+      ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
+      ZSH_THEME="robbyrussell"
+      ZSH_THEME="Pure"
+    #+end_src
+*** prompts
+****  pure
+***** prepare
+      [[https://github.com/sindresorhus/pure][GitHub - sindresorhus/pure: Pretty, minimal and fast ZSH prompt]]
+      - clone repo 
+        #+begin_src shell :session purepromptsetup
+          mkdir shellstuff && cd shellstuff
+          git clone git@github.com:sindresorhus/pure.git pure
+          cd pure
+        #+end_src
+      - symlink both pure.zsh and async.zsh on ~$fpath~ pure.zsh-> prompt_pure_setup
+        #+begin_src shell :session purepromptsetup
+          sudo ln -s "$PWD/pure.zsh"\
+               /usr/share/zsh/site-functions/prompt_pure_setup
+          /usr/local/share/
+          sudo ln -s "$PWD/async.zsh"\ 
+            /usr/share/zsh/site-functions/async
+          #+end_src
+***** add this to .zshrc 
+       #+begin_src shell :tangle "~/.env/.zshrc"
+         autoload -U promptinit; promptinit
+         prompt pure 
+       #+end_src
+
+*** doc from example
+    #+begin_src shell 
+      # CASE_SENSITIVE="true"
+      # Uncomment the following line to use hyphen-insensitive completion.
+      # Case-sensitive completion must be off. _ and - will be interchangeable.
+      # HYPHEN_INSENSITIVE="true"
+      # Uncomment the following line to disable bi-weekly auto-update checks.
+      # DISABLE_AUTO_UPDATE="true"
+      # Uncomment the following line to automatically update without prompting.
+      # DISABLE_UPDATE_PROMPT="true"
+      # Uncomment the following line to change how often to auto-update (in days).
+      # export UPDATE_ZSH_DAYS=13
+      # Uncomment the following line if pasting URLs and other text is messed up.
+      # DISABLE_MAGIC_FUNCTIONS=true
+      # Uncomment the following line to disable colors in ls.
+      # DISABLE_LS_COLORS="true"
+      # Uncomment the following line to disable auto-setting terminal title.
+      # DISABLE_AUTO_TITLE="true"
+      # Uncomment the following line to enable command auto-correction.
+      # ENABLE_CORRECTION="true"
+      # Uncomment the following line to display red dots whilst waiting for completion.
+      # COMPLETION_WAITING_DOTS="true"
+      # Uncomment the following line if you want to disable marking untracked files
+      # under VCS as dirty. This makes repository status check for large repositories
+      # much, much faster.
+      # DISABLE_UNTRACKED_FILES_DIRTY="true"
+      # HIST_STAMPS="mm/dd/yyyy"
+
+    #+end_src
+   
+
+* tmux 
+** multiuser stuff
+   [[https://github.com/zolrath/wemux][GitHub - zolrath/wemux: Multi-User Tmux Made Easy]]
+
+** TODO redraw and takeover
+   [[https://stackoverflow.com/questions/7814612/is-there-any-way-to-redraw-tmux-window-when-switching-smaller-monitor-to-bigger][Is there any way to redraw tmux window when switching smaller monitor to bigg...]]
+
+
+* Xorg
+https://unix.stackexchange.com/questions/375/how-to-enable-killing-xorg-with-ctrlaltbackspace
+moved file:/etc/X11/xorg.conf/99-killX.cong
+
+
+* i3
+:PROPERTIES:
+:header-args: :tangle ~/.env/i3/config
+:END:
+
+** execs and basic sets
+#+begin_src conf :tangle "~/.env/i3/config"
+# i3 config file for frederic boileau
+#
+exec source ~/.profile
+set $mod Mod4
+for_window [class=".*"] border pixel 4
+font pango:monospace 10
+gaps inner 15
+gaps outer 15
+set $term termite
+set $browser brave
+exec_always feh --bg-scale "/home/sole/Pictures/rain.jpg"
+
+
+exec nextcloud
+
+exec source ~/.bashrc
+
+# exec mpd
+# exec deluged
+exec unclutter
+exec compton
+
+bindsym $mod+Tab workspace next
+bindsym $mod+Shift+c reload
+bindsym $mod+Shift+r restart
+bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -B 'Yes, exit i3' 'i3-msg exit'"
+#+end_src
+
+** basic bindings
+
+#+begin_src conf :tangle "~/.env/i3/config"
+
+###---Basic definitions---###
+# Use Mouse+$mod to drag floating windows to their wanted position
+bindsym $mod+Return exec termite
+bindsym $mod+Shift+q kill
+# start dmenu (a program launcher)
+#bindsym $mod+d exec dmenu_run
+bindsym $mod+d exec --no-startup-id rofi -show run
+bindsym $mod+w exec --no-startup-id rofi -show window
+# change focus
+
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+Left focus left
+bindsym $mod+Down focus down
+bindsym $mod+Up focus up
+bindsym $mod+Right focus right
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+bindsym $mod+Shift+Left move left
+bindsym $mod+Shift+Down move down
+bindsym $mod+Shift+Up move up
+bindsym $mod+Shift+Right move right
+bindsym $mod+O split vertical
+bindsym $mod+P split horizontal
+bindsym $mod+f fullscreen toggle
+bindsym $mod+s layout stacking
+bindsym $mod+t layout tabbed
+bindsym $mod+e layout toggle split
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+space focus mode_toggle
+bindsym $mod+u focus parent
+bindsym $mod+semicolon focus child
+#+end_src
+** workspace stuff
+#+begin_src conf :tangle "~/.env/i3/config"
+set $ws1 "1"
+set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
+set $ws5 "5:reading"
+set $ws6 "6:media-proc"
+set $ws7 "7:ssh"
+set $ws8 "8:background"
+set $ws9 "9:main"
+set $ws10 "10:prog"
+
+bindsym $mod+b workspace back_and_forth
+bindsym $mod+Shift+b move container to workspace back_and_forth
+# switch to workspace
+bindsym $mod+1 workspace number $ws1
+bindsym $mod+2 workspace number $ws2
+bindsym $mod+3 workspace number $ws3
+bindsym $mod+4 workspace number $ws4
+bindsym $mod+5 workspace number $ws5
+bindsym $mod+6 workspace number $ws6
+bindsym $mod+7 workspace number $ws7
+bindsym $mod+8 workspace number $ws8
+bindsym $mod+9 workspace number $ws9
+bindsym $mod+0 workspace number $ws10
+
+# move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace number $ws1
+bindsym $mod+Shift+2 move container to workspace number $ws2
+bindsym $mod+Shift+3 move container to workspace number $ws3
+bindsym $mod+Shift+4 move container to workspace number $ws4
+bindsym $mod+Shift+5 move container to workspace number $ws5
+bindsym $mod+Shift+6 move container to workspace number $ws6
+bindsym $mod+Shift+7 move container to workspace number $ws7
+bindsym $mod+Shift+8 move container to workspace number $ws8
+bindsym $mod+Shift+9 move container to workspace number $ws9
+bindsym $mod+Shift+0 move container to workspace number $ws10
+
+#+end_src
+** resize
+#+begin_src conf :tangle "~/.env/i3/config"
+# resize window (you can also use the mouse for that)
+mode "resize" {
+# These bindings trigger as soon as you enter the resize mode
+
+# Pressing left will shrink the window’s width.
+# Pressing right will grow the window’s width.
+# Pressing up will shrink the window’s height.
+# Pressing down will grow the window’s height.
+bindsym h resize shrink width 10 px or 10 ppt
+bindsym j resize grow height 10 px or 10 ppt
+bindsym k resize shrink height 10 px or 10 ppt
+bindsym l resize grow width 10 px or 10 ppt
+
+# same bindings, but for the arrow keys
+bindsym Left resize shrink width 10 px or 10 ppt
+bindsym Down resize grow height 10 px or 10 ppt
+bindsym Up resize shrink height 10 px or 10 ppt
+bindsym Right resize grow width 10 px or 10 ppt
+
+# back to normal: Enter or Escape or $mod+r
+bindsym Return mode "default"
+bindsym Escape mode "default"
+bindsym $mod+r mode "default"
+}
+
+bindsym $mod+r mode "resize"
+#+end_src
+** gaps
+#+begin_src conf
+set $mode_gaps Gaps: (o)uter, (i)nner, (h)orizontal, (v)ertical, (t)op, (r)ight, (b)ottom, (l)eft
+set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_horiz Horizontal Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_verti Vertical Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_top Top Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_right Right Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_bottom Bottom Gaps: +|-|0 (local), Shift + +|-|0 (global)
+set $mode_gaps_left Left Gaps: +|-|0 (local), Shift + +|-|0 (global)
+bindsym $mod+Shift+g mode "$mode_gaps"
+
+mode "$mode_gaps" {
+bindsym o      mode "$mode_gaps_outer"
+bindsym i      mode "$mode_gaps_inner"
+bindsym h      mode "$mode_gaps_horiz"
+bindsym v      mode "$mode_gaps_verti"
+bindsym t      mode "$mode_gaps_top"
+bindsym r      mode "$mode_gaps_right"
+bindsym b      mode "$mode_gaps_bottom"
+bindsym l      mode "$mode_gaps_left"
+bindsym Return mode "$mode_gaps"
+bindsym Escape mode "default"
+}
+
+mode "$mode_gaps_outer" {
+bindsym plus  gaps outer current plus 5
+bindsym minus gaps outer current minus 5
+bindsym 0     gaps outer current set 0
+
+bindsym Shift+plus  gaps outer all plus 5
+bindsym Shift+minus gaps outer all minus 5
+bindsym Shift+0     gaps outer all set 0
+
+bindsym Return mode "$mode_gaps"
+bindsym Escape mode "default"
+}
+mode "$mode_gaps_inner" {
+bindsym plus  gaps inner current plus 5
+bindsym minus gaps inner current minus 5
+bindsym 0     gaps inner current set 0
+
+bindsym Shift+plus  gaps inner all plus 5
+bindsym Shift+minus gaps inner all minus 5
+bindsym Shift+0     gaps inner all set 0
+
+bindsym Return mode "$mode_gaps"
+bindsym Escape mode "default"
+}
+mode "$mode_gaps_horiz" {
+bindsym plus  gaps horizontal current plus 5
+bindsym minus gaps horizontal current minus 5
+bindsym 0     gaps horizontal current set 0
+
+bindsym Shift+plus  gaps horizontal all plus 5
+bindsym Shift+minus gaps horizontal all minus 5
+bindsym Shift+0     gaps horizontal all set 0
+
+bindsym Return mode "$mode_gaps"
+bindsym Escape mode "default"
+}
+mode "$mode_gaps_verti" {
+bindsym plus  gaps vertical current plus 5
+bindsym minus gaps vertical current minus 5
+bindsym 0     gaps vertical current set 0
+
+bindsym Shift+plus  gaps vertical all plus 5
+bindsym Shift+minus gaps vertical all minus 5
+bindsym Shift+0     gaps vertical all set 0
+
+bindsym Return mode "$mode_gaps"
+bindsym Escape mode "default"
+}
+mode "$mode_gaps_top" {
+bindsym plus  gaps top current plus 5
+bindsym minus gaps top current minus 5
+bindsym 0     gaps top current set 0
+
+bindsym Shift+plus  gaps top all plus 5
+bindsym Shift+minus gaps top all minus 5
+bindsym Shift+0     gaps top all set 0
+
+bindsym Return mode "$mode_gaps"
+bindsym Escape mode "default"
+}
+mode "$mode_gaps_right" {
+bindsym plus  gaps right current plus 5
+bindsym minus gaps right current minus 5
+bindsym 0     gaps right current set 0
+
+bindsym Shift+plus  gaps right all plus 5
+bindsym Shift+minus gaps right all minus 5
+bindsym Shift+0     gaps right all set 0
+
+bindsym Return mode "$mode_gaps"
+bindsym Escape mode "default"
+}
+mode "$mode_gaps_bottom" {
+bindsym plus  gaps bottom current plus 5
+bindsym minus gaps bottom current minus 5
+bindsym 0     gaps bottom current set 0
+
+bindsym Shift+plus  gaps bottom all plus 5
+bindsym Shift+minus gaps bottom all minus 5
+bindsym Shift+0     gaps bottom all set 0
+
+bindsym Return mode "$mode_gaps"
+bindsym Escape mode "default"
+}
+mode "$mode_gaps_left" {
+bindsym plus  gaps left current plus 5
+bindsym minus gaps left current minus 5
+bindsym 0     gaps left current set 0
+
+bindsym Shift+plus  gaps left all plus 5
+bindsym Shift+minus gaps left all minus 5
+bindsym Shift+0     gaps left all set 0
+
+bindsym Return mode "$mode_gaps"
+bindsym Escape mode "default"
+}
+
+#+end_src
+** i3 -rs bar :deac:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+#+begin_src conf
+bar {
+font pango:DejaVu Sans Mono, FontAwesome 12
+position top
+status_command i3status-rs ~/.config/i3/example_config.toml
+tray_output VGA1
+colors {
+separator #666666
+background #222222
+statusline #dddddd
+focused_workspace #0088CC #0088CC #ffffff
+active_workspace #333333 #333333 #ffffff
+inactive_workspace #333333 #333333 #888888
+urgent_workspace #2f343a #900000 #ffffff
+}
+}
+
+set $Locker i3lock && sleep 1
+#+end_src
+** bumblebee
+
+#+BEGIN_SRC conf
+bar {
+status_command /home/sole/cloud/dotfiles/i3stuff/bumblebee-status/bumblebee-status -m mpd cpu memory battery time pasink pasource -p time.format="%H:%M" -t solarized
+                }
+#+END_SRC
+** i3 system
+#+begin_src conf 
+set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
+mode "$mode_system" {
+bindsym l exec --no-startup-id $Locker, mode "default"
+bindsym e exec --no-startup-id i3-msg exit, mode "default"
+bindsym s exec --no-startup-id $Locker && systemctl suspend, mode "default"
+bindsym h exec --no-startup-id $Locker && systemctl hibernate, mode "default"
+bindsym r exec --no-startup-id systemctl reboot, mode "default"
+bindsym Shift+s exec --no-startup-id systemctl poweroff -i, mode "default"
+
+# back to normal: Enter or Escape
+bindsym Return mode "default"
+bindsym Escape mode "default"
+}
+
+bindsym $mod+Shift+s mode "$mode_system"
+exec xautolock -time 20 -locker "i3lock -i '~/Pictures/rain2.jpg' &"
+#+end_src
+
+
+* layout managers
+https://i3wm.org/docs/layout-saving.html
+https://github.com/klaxalk/i3-layout-manager
+
+
+* automount etc
+
+* media stuff
+** mpd
+*** blog post on remote :
+[[https://feeding.cloud.geek.nz/posts/home-music-server-with-mpd/][Creating a home music server using mpd]]
+
+#+begin_src conf
+     music_directory    "/path/to/music/"
+     bind_to_address    "192.168.1.2"
+     bind_to_address    "/run/mpd/socket"
+     zeroconf_enabled   "yes"
+     password           "Password1"
+  #+end_src
+
+   #+begin_src conf :name pulse
+     audio_output  {
+     type    "pulse"
+     name    "Pulseaudio Output"
+     server  "127.0.0.1"
+     }
+   #+end_src
+
+   exposing pulseaudio to localhost via /etc/pulse/default.pa:
+   #+begin_src conf
+      ### access (may be configured with paprefs, so le  ave this commented
+      ### here if you plan to use paprefs)
+      load-module module-native-protocol-tcp auth-ip-acl=127.0.0. 1
+   #+end_src
+
+
+   zeroconf, need to prevent systemd from creating the network socket
+
+
+*
