@@ -188,13 +188,27 @@
 ;; Set default column view headings: Task Priority Effort Clock_Summary
 (setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM")
 
+(setq inferior-lisp-program "/usr/bin/sbcl")
+(setq slime-contribs '(slime-fancy))
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((lisp . t) (shell .t)))
+
 (with-eval-after-load "ob"
-  (require 'org-babel-eval-in-repl)
-  (define-key org-mode-map (kbd "C-<return>") 'ober-eval-in-repl)
-  (define-key org-mode-map (kbd "M-<return>") 'ober-eval-block-in-repl))
+  (require 'org-babel-eval-in-repl))
+
+(use-package evil-org
+  :commands evil-org-mode
+  :after org
+  :init
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  :config
+  (add-hook 'evil-org-mode-hook
+            (lambda ()
+              (evil-org-set-key-theme '(insert)))))
 
 (evil-define-key 'normal evil-org-mode-map
-  "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
   "<" 'org-metaleft
   ">" 'org-metaright
   "-" 'org-cycle-list-bullet
@@ -209,46 +223,26 @@
           (kbd "M-L") 'org-shiftmetaright
           (kbd "M-H") 'org-shiftmetaleft
           (kbd "M-K") 'org-shiftmetaup
-          (kbd "M-J") 'org-shiftmetadown
-          (kbd "M-o") '(lambda () (interactive)
-                         (evil-org-eol-call
-                          '(lambda()
-                             (org-insert-heading)
-                             (org-metaright))))
-          (kbd "M-t") '(lambda () (interactive)
-                         (evil-org-eol-call
-                          '(lambda()
-                             (org-insert-todo-heading nil)
-                             (org-metaright))))))
+          (kbd "M-J") 'org-shiftmetadown))
       '(normal insert))
 
-      (require 'org-bullets)
-      (org-babel-do-load-languages
-       'org-babel-load-languages
-       '((emacs-lisp . t)
-         (python . t)
-         (shell . t)))
-      (require 'ob-shell)
-      (require 'ox-md)
-      (doom-themes-org-config)
-      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+(load-theme 'doom-city-lights)
 
-      (setq org-element-use-cache nil)
-      (use-package org
-        :init
-        (setq org-use-speed-commands t
-              org-return-follows-link t
-              org-hide-emphasis-markers t
-              org-completion-use-ido t
-              org-agenda-files '("~/cloud/.personal/agenda")
-              org-outline-path-complete-in-steps nil
-              org-src-fontify-natively t   ;; Pretty code blocks
-              org-src-tab-acts-natively t
-              org-confirm-babel-evaluate nil
-              org-books-file "~/cloud/.personal/my-list.org"
-              org-hide-emphasis-markers t))
-      (setq org-cycle-separator-lines 2)
- ;;     (setq ("%latex -interaction nonstopmode -output-directory %o %f" "%bib %b"
-  ;;     "%latex -interaction nonstopmode -output-directory %o %f" "%latex
-   ;;   -interaction nonstopmode -output-directory %o %f")
- ;;)
+(load-theme 'doom-molokai)
+(require 'org-bullets)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)
+   (shell . t)))
+(require 'ob-shell)
+(require 'ox-md)
+(doom-themes-org-config)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+
+(setq org-agenda-files '("~/cloud/.personal/agenda"))
+(setq org-cycle-separator-lines 2)
+;;     (setq ("%latex -interaction nonstopmode -output-directory %o %f" "%bib %b"
+;;     "%latex -interaction nonstopmode -output-directory %o %f" "%latex
+;;   -interaction nonstopmode -output-directory %o %f")
+;;)

@@ -33,7 +33,7 @@
 #+END_SRC
 
 #+RESULTS:
-: 2
+: helm-show-kill-ring
 
 
 ** swiper/ivy
@@ -69,19 +69,19 @@
 
 
 ** magithub :broken:
-   :PROPERTIES:
-   :GH:       https://github.com/vermiculus/magithub
-   :headers-args: :tangle no :results output
-   :END:
-   https://github.com/vermiculus/magithub/blob/master/magithub.org
+:PROPERTIES:
+:GH:       https://github.com/vermiculus/magithub
+:headers-args: :tangle no :results output
+:END:
+https://github.com/vermiculus/magithub/blob/master/magithub.org
 *** quickstart
-    #+begin_src elisp :tangle no
-      (use-package magithub
-        :after magit
-        :config
-        (magithub-feature-autoinject t)
-        (setq magithub-clone-default-directory "~/github"))
-    #+end_src
+#+begin_src elisp :tangle no
+(use-package magithub
+  :after magit
+  :config
+  (magithub-feature-autoinject t)
+  (setq magithub-clone-default-directory "~/github"))
+#+end_src
    
    
 ** doom modeline
@@ -150,41 +150,29 @@
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
-    #+begin_src emacs-lisp
-      (require 'org-bullets)
-      (org-babel-do-load-languages
-       'org-babel-load-languages
-       '((emacs-lisp . t)
-         (python . t)
-         (shell . t)))
-      (require 'ob-shell)
-      (require 'ox-md)
-      (doom-themes-org-config)
-      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+#+begin_src emacs-lisp
+(load-theme 'doom-molokai)
+(require 'org-bullets)
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)
+   (shell . t)))
+(require 'ob-shell)
+(require 'ox-md)
+(doom-themes-org-config)
+(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 
-      (setq org-element-use-cache nil)
-      (use-package org
-        :init
-        (setq org-use-speed-commands t
-              org-return-follows-link t
-              org-hide-emphasis-markers t
-              org-completion-use-ido t
-              org-agenda-files '("~/cloud/.personal/agenda")
-              org-outline-path-complete-in-steps nil
-              org-src-fontify-natively t   ;; Pretty code blocks
-              org-src-tab-acts-natively t
-              org-confirm-babel-evaluate nil
-              org-books-file "~/cloud/.personal/my-list.org"
-              org-hide-emphasis-markers t))
-      (setq org-cycle-separator-lines 2)
- ;;     (setq ("%latex -interaction nonstopmode -output-directory %o %f" "%bib %b"
-  ;;     "%latex -interaction nonstopmode -output-directory %o %f" "%latex
-   ;;   -interaction nonstopmode -output-directory %o %f")
- ;;)
-    #+end_src
+(setq org-agenda-files '("~/cloud/.personal/agenda"))
+(setq org-cycle-separator-lines 2)
+;;     (setq ("%latex -interaction nonstopmode -output-directory %o %f" "%bib %b"
+;;     "%latex -interaction nonstopmode -output-directory %o %f" "%latex
+;;   -interaction nonstopmode -output-directory %o %f")
+;;)
+#+end_src
 
-    #+RESULTS:
-    : 2
+#+RESULTS:
+: 2
 
 
 *** TODO insert after current hotkey
@@ -244,7 +232,7 @@
   (org-habit-graph-column 80)
   (org-habit-show-habits-only-for-today nil)
   (org-track-ordered-property-with-tag t))
-     #+END_SRC
+#+END_SRC
 
 *** NEXT refile
 https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/
@@ -368,7 +356,8 @@ https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/
 
 
 * NEXT babel
-#+BEGIN_SRC elisp
+
+#+BEGIN_SRC elisp :tangle yes
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((lisp . t) (shell .t)))
@@ -389,9 +378,7 @@ https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/
 :END:
 #+BEGIN_SRC elisp
 (with-eval-after-load "ob"
-  (require 'org-babel-eval-in-repl)
-  (define-key org-mode-map (kbd "C-<return>") 'ober-eval-in-repl)
-  (define-key org-mode-map (kbd "M-<return>") 'ober-eval-block-in-repl))
+  (require 'org-babel-eval-in-repl))
 #+END_SRC
 
 ** customize evil :alpha:beta:
@@ -402,6 +389,22 @@ https://www.reddit.com/r/emacs/comments/4366f9/how_do_orgrefiletargets_work/
 https://github.com/hlissner/doom-emacs/wiki/Customization
 https://github.com/Somelauw/evil-org-mode/blob/master/doc/keythemes.org
 https://github.com/syl20bnr/spacemacs/blob/master/layers/%2Bemacs/org/local/evil-org/evil-org.el
+
+#+BEGIN_SRC elisp
+(use-package evil-org
+  :commands evil-org-mode
+  :after org
+  :init
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  :config
+  (add-hook 'evil-org-mode-hook
+            (lambda ()
+              (evil-org-set-key-theme '(insert)))))
+#+END_SRC
+
+#+RESULTS:
+: t
+
 #+BEGIN_SRC elisp
 (evil-define-key 'normal evil-org-mode-map
   "<" 'org-metaleft
@@ -420,7 +423,8 @@ https://github.com/syl20bnr/spacemacs/blob/master/layers/%2Bemacs/org/local/evil
           (kbd "M-K") 'org-shiftmetaup
           (kbd "M-J") 'org-shiftmetadown))
       '(normal insert))
+(load-theme 'doom-city-lights)
 #+END_SRC
 
 #+RESULTS:
-| normal | insert |
+: t

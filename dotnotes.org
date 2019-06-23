@@ -1,96 +1,40 @@
 
 * bash stuff
-** env variables
-~.profile~ should be loaded before .bashrc stuff i think so
-   #+begin_src shell :tangle ~/.env/.profile
-     export PATH=$PATH:$HOME/bin:/usr/local/bin:/home/sole/.emacs.d/bin
-     export PATH=$PATH:$HOME/apps:$HOME/apps/Zotero_linux-x86_64/:$HOME/apps/myScripts
-     export ZSH=$HOME/.oh-my-zsh 
-     export LANG=en_US.UTF-8 
-     export ARCHFLAGS="-arch x86_64"
-     export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
-
-     export WORKON_HOME=$HOME/.virtualenvs
-     export PROJECT_HOME=$HOME/cloud/apps/Devel
-
-     export TERMINAL=termite
-     export TERM=xterm-256color
-
-     export PAGER=less
-     export BROWSER='brave'
-
-     export EDITOR=vim
-     export LESS='-R'
-     if [[ -n $SSH_CONNECTION ]]; then
-         export EDITOR='vim'
-     else
-         export EDITOR='mvim'
-     fi
-
-
-
-     export OOO_FORCE_DESKTOP=gnome soffice
-
-     export HISTCONTROL=ignoredups
-     export HISTSIZE=5000
-     export HISTFILESIZE=1000
-     export HISTIGNORE="&:ls:ll:la:l.:pwd:exit:clear"
-
-     export SANE_DEFAULT_DEVICE="brother4:bus4;dev3"
-     LESSOPEN="|lesspipe.sh %s"; export LESSOPEN
-     export PYSPARK_SUBMIT_ARGS="--master local[2] pyspark-shell"
-
-     export JAVA_HOME="/usr/bin/java"
-     export PROJECT_HOME=$HOME/apps/
-
-     export QT_STYLE_OVERRIDE=gtk
-     export QT_SELECT=qt5
-     export XDG_CACHE_HOME=$HOME/.cache
-
-     export ALTERNATE_EDITOR=""
-     export EDITOR="emacsclient -t"                  # $EDITOR opens in terminal
-     export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
-   #+end_src
-
-   #+RESULTS:
-
-** misc
-*** add aliases to path
-
+https://www.emacswiki.org/emacs/EmacsClient
 ** zsh
-   https://github.com/robbyrussell/oh-my-zsh
+https://github.com/robbyrussell/oh-my-zsh
 *** main
-    #+begin_src shell :tangle "~/.env/.zshrc"
-      ZSH_CUSTOM=$HOME/.config/zsh/
-      plugins=(git)
-      source $ZSH/oh-my-zsh.sh
-      source $HOME/.bashrc.aliases
-      source $HOME/.profile
-      if [ -f ~/.dir_colors ]; then
-          eval `dircolors ~/.dir_colors`
-      fi
-      alias rr='source ~/.zshrc'
-     #+end_src
+#+begin_src shell :tangle ~/.zshrc
+ZSH_CUSTOM=$HOME/.config/zsh/
+plugins=(git)
+source $ZSH/oh-my-zsh.sh
+source $HOME/.bashrc.aliases
+source $HOME/.profile
+if [ -f ~/.dir_colors ]; then
+    eval `dircolors ~/.dir_colors`
+fi
+alias rr='source ~/.zshrc'
+#+end_src
 
-     #+RESULTS:
-     : ]2;if [ -f ~/.dir_colors ]; then; eval `dircolors ~/.dir_colors`; fi]1;]2;alias rr='source ~/.zshrc']1;
+    #+RESULTS:
+    : ]2;if [ -f ~/.dir_colors ]; then; eval `dircolors ~/.dir_colors`; fi]1;]2;alias rr='source ~/.zshrc']1;
 
 *** venvrapper
-    #+begin_src shell :tangle "~/.env/.zshrc"
-      venv_arch=/usr/bin/virtualenvwrapper.sh
-      [ -f "$venv_arch" ] && source "$venv_arch"
-      venv_debian=/usr/share/virtualenvwrapper/virtualenvwrapper.sh
-      [ -f "$venv_debian" ] && source "$venv_debian"
-    #+end_src
-*** TODO private fpath
+#+begin_src shell :tangle ~/.zshrc
+venv_arch=/usr/bin/virtualenvwrapper.sh
+[ -f "$venv_arch" ] && source "$venv_arch"
+venv_debian=/usr/share/virtualenvwrapper/virtualenvwrapper.sh
+[ -f "$venv_debian" ] && source "$venv_debian"
+#+end_src
+*** private fpath
 https://unix.stackexchange.com/questions/33255/how-to-define-and-load-your-own-shell-function-in-zsh
-#+begin_src shell :tangle "~/.env/.zshrc"
+#+begin_src shell :tangle ~/.zshrc
 fpath=( "$HOME/cloud/dotfiles/.zfunctions" $fpath )
 #+end_src
 
 #+RESULTS:
 
-*** themes 
+*** themes
 https://github.com/bhilburn/
 #+begin_src shell :tangle no
 ZSH_THEME="agnoster"
@@ -114,10 +58,10 @@ sudo ln -s "$PWD/pure.zsh"\
     /usr/share/zsh/site-functions/prompt_pure_setup
 /usr/local/share/
 sudo ln -s "$PWD/async.zsh"\
-/usr/share/zsh/site-functions/async
+    /usr/share/zsh/site-functions/async
   #+end_src
-***** add this to .zshrc 
-#+begin_src shell :tangle "~/.env/.zshrc"
+***** add this to .zshrc
+#+begin_src shell :tangle ~/.zshrc
 autoload -U promptinit; promptinit
 prompt pure
 #+end_src
@@ -151,9 +95,117 @@ prompt pure
 # HIST_STAMPS="mm/dd/yyyy"
 
 #+end_src
-   
 
-* tmux 
+
+
+** env variables
+~.profile~ should be loaded before .bashrc stuff i think so
+#+begin_src shell :tangle ~/.env/.profile
+export PATH=$PATH:$HOME/bin:/usr/local/bin:/home/sole/.emacs.d/bin
+export PATH=$PATH:$HOME/apps:$HOME/apps/Zotero_linux-x86_64/:$HOME/apps/myScripts
+export ZSH=$HOME/.oh-my-zsh
+export LANG=en_US.UTF-8
+export ARCHFLAGS="-arch x86_64"
+export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
+
+export WORKON_HOME=$HOME/.virtualenvs
+export PROJECT_HOME=$HOME/cloud/apps/Devel
+
+export TERMINAL=termite
+export TERM=xterm-256color
+
+export PAGER=less
+export BROWSER='brave'
+
+export LESS='-R'
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient -t"                  # $EDITOR opens in terminal
+export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
+
+export OOO_FORCE_DESKTOP=gnome soffice
+
+export HISTCONTROL=ignoredups
+export HISTSIZE=5000
+export HISTFILESIZE=1000
+export HISTIGNORE="&:ls:ll:la:l.:pwd:exit:clear"
+
+export SANE_DEFAULT_DEVICE="brother4:bus4;dev3"
+LESSOPEN="|lesspipe.sh %s"; export LESSOPEN
+export PYSPARK_SUBMIT_ARGS="--master local[2] pyspark-shell"
+
+export JAVA_HOME="/usr/bin/java"
+export PROJECT_HOME=$HOME/apps/
+
+export QT_STYLE_OVERRIDE=gtk
+export QT_SELECT=qt5
+export XDG_CACHE_HOME=$HOME/.cache
+
+export ALTERNATE_EDITOR=""
+export EDITOR="emacsclient -t"                  # $EDITOR opens in terminal
+export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
+#+end_src
+
+#+RESULTS:
+** aliases
+:PROPERTIES:
+:header-args: :tangle ~/.bashrc.aliases
+:END:
+
+#+BEGIN_SRC shell
+if [[ $LANG = '' ]]; then
+	  export LANG=en_US.UTF-8
+fi
+
+alias ls='ls --color=auto'
+alias psg='ps -aux | grep --color=auto'
+alias grep='grep --color=auto'
+alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
+alias pacman='sudo pacman'
+alias journalctl='sudo journalctl'
+alias pacu='sudo pacman -Syu --noconfirm'
+alias yayu='yay -Syua --noconfirm'
+alias systemctl='sudo systemctl'
+alias se='ls /usr/bin | grep'
+
+alias ep='emacs --with-profileom'
+alias aj="autojump"
+alias b="brave &"
+alias bl="bluetoothctl"
+alias c="clear"
+alias cp='cp -i'
+alias e='emacsclient -c -a "" $* &'
+alias g="git status"
+alias grep='grep --color=auto'
+alias j="jobs"
+alias ls='ls --color=auto'
+alias linkhere='ln -s $(pwd)'
+alias mv='mv -i'
+alias n="nvim"
+alias o="xdg-open &"
+alias p='gitPush'
+alias m='pulsemixer'
+alias r="ranger"
+alias s="source"
+alias v="vim"
+alias igv="vim .gitignore"
+alias z="zotero &"
+
+alias tma="tmux attach-session -t"
+alias tmn="tmux new-session -s"
+alias lt='ls -Alhtr'
+
+alias ftg='git status'
+alias ftgA='git add -A'
+alias gp='gitPush'
+
+
+alias lpd="lp -o sides=two-sided-long-edge"
+alias ser="ssh pi@192.168.1.2"
+#+END_SRC
+** TODO misc
+*** add aliases to path
+
+* tmux
 ** multiuser stuff
 [[https://github.com/zolrath/wemux][GitHub - zolrath/wemux: Multi-User Tmux Made Easy]]
 
@@ -171,7 +223,10 @@ moved file:/etc/X11/xorg.conf/99-killX.cong
 :header-args: :tangle ~/.env/i3/config
 :END:
 
+** TODO floating windows faster
+
 ** execs and basic sets
+
 #+begin_src conf :tangle "~/.env/i3/config"
 # i3 config file for frederic boileau
 #
@@ -507,27 +562,31 @@ https://github.com/klaxalk/i3-layout-manager
 [[https://feeding.cloud.geek.nz/posts/home-music-server-with-mpd/][Creating a home music server using mpd]]
 
 #+begin_src conf
-     music_directory    "/path/to/music/"
-     bind_to_address    "192.168.1.2"
-     bind_to_address    "/run/mpd/socket"
-     zeroconf_enabled   "yes"
-     password           "Password1"
-  #+end_src
+music_directory    "/path/to/music/"
+bind_to_address    "192.168.1.2"
+bind_to_address    "/run/mpd/socket"
+zeroconf_enabled   "yes"
+password           "Password1"
+#+end_src
 
-   #+begin_src conf :name pulse
-     audio_output  {
-     type    "pulse"
-     name    "Pulseaudio Output"
-     server  "127.0.0.1"
-     }
-   #+end_src
+#+begin_src conf :name pulse
+audio_output  {
+type    "pulse"
+name    "Pulseaudio Output"
+server  "127.0.0.1"
+}
+#+end_src
 
-   exposing pulseaudio to localhost via /etc/pulse/default.pa:
-   #+begin_src conf
-      ### access (may be configured with paprefs, so le  ave this commented
-      ### here if you plan to use paprefs)
-      load-module module-native-protocol-tcp auth-ip-acl=127.0.0. 1
-   #+end_src
+exposing pulseaudio to localhost via /etc/pulse/default.pa:
+#+begin_src conf
+### access (may be configured with paprefs, so le  ave this commented
+### here if you plan to use paprefs)
+load-module module-native-protocol-tcp auth-ip-acl=127.0.0. 1
+#+end_src
 
 
-   zeroconf, need to prevent systemd from creating the network socket
+zeroconf, need to prevent systemd from creating the network socket
+
+
+* annoying
+- xmodmap :: shift to xinitrc, org it and make it executable
