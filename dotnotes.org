@@ -500,6 +500,7 @@ https://github.com/klaxalk/i3-layout-manager
 
 * automount etc
 
+
 * media stuff
 ** mpd
 *** blog post on remote :

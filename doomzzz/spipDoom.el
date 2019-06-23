@@ -126,7 +126,6 @@
                                  (org-agenda-files :maxlevel . 3))))
 (setq org-outline-path-complete-in-steps t)         ; Refile in a single go
 (setq org-refile-use-outline-path t)                  ; Show full paths for refiling                                    ("~/cloud/.personal/agenda" :level . 2))))
-(load-theme 'doom-nord t)
 
 (use-package org-faces
   :after org
@@ -188,6 +187,40 @@
          "0:15 0:30 0:45 1:00 2:00 3:00 4:00 5:00 6:00 0:00")))
 ;; Set default column view headings: Task Priority Effort Clock_Summary
 (setq org-columns-default-format "%50ITEM(Task) %2PRIORITY %10Effort(Effort){:} %10CLOCKSUM")
+
+(with-eval-after-load "ob"
+  (require 'org-babel-eval-in-repl)
+  (define-key org-mode-map (kbd "C-<return>") 'ober-eval-in-repl)
+  (define-key org-mode-map (kbd "M-<return>") 'ober-eval-block-in-repl))
+
+(evil-define-key 'normal evil-org-mode-map
+  "o" '(lambda () (interactive) (evil-org-eol-call 'clever-insert-item))
+  "<" 'org-metaleft
+  ">" 'org-metaright
+  "-" 'org-cycle-list-bullet
+  (kbd "TAB") 'org-cycle)
+;; normal & insert state shortcuts.
+(mapc (lambda (state)
+        (evil-define-key state evil-org-mode-map
+          (kbd "M-l") 'org-metaright
+          (kbd "M-h") 'org-metaleft
+          (kbd "M-k") 'org-metaup
+          (kbd "M-j") 'org-metadown
+          (kbd "M-L") 'org-shiftmetaright
+          (kbd "M-H") 'org-shiftmetaleft
+          (kbd "M-K") 'org-shiftmetaup
+          (kbd "M-J") 'org-shiftmetadown
+          (kbd "M-o") '(lambda () (interactive)
+                         (evil-org-eol-call
+                          '(lambda()
+                             (org-insert-heading)
+                             (org-metaright))))
+          (kbd "M-t") '(lambda () (interactive)
+                         (evil-org-eol-call
+                          '(lambda()
+                             (org-insert-todo-heading nil)
+                             (org-metaright))))))
+      '(normal insert))
 
       (require 'org-bullets)
       (org-babel-do-load-languages
