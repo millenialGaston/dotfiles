@@ -1,0 +1,15 @@
+[submodule "zoo/cheat"]
+	path = zoo/cheat
+	url = git@github.com:cheat/cheat
+[submodule "zoo/cheat-ext"]
+	path = zoo/cheat-ext
+	url = https://github.com/chhsiao90/cheat-ext
+[submodule "zoo/chemacs"]
+	path = zoo/chemacs
+	url = https://github.com/plexus/chemacs
+[submodule "zoo/tldr"]
+	path = zoo/tldr
+	url = https://github.com/tldr-pages/tldr
+[submodule "zoo/bro"]
+	path = zoo/bro
+	url = https://github.com/hubsmoke/bro
