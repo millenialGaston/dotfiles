@@ -35,7 +35,6 @@ export HISTFILESIZE=1000
 export HISTIGNORE="&:ls:ll:la:l.:pwd:exit:clear"
 
 export SANE_DEFAULT_DEVICE="brother4:bus4;dev3"
-LESSOPEN="|lesspipe.sh %s"; export LESSOPEN
 
 export JAVA_HOME="/usr/bin/java"
 

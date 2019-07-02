@@ -19,3 +19,12 @@
 [submodule "my-aur/yay"]
 	path = my-aur/yay
 	url = https://aur.archlinux.org/yay.git
+[submodule "dotconfigs/i3"]
+	path = dotconfigs/i3
+	url = git@github.com:SoliElvis/i3
+[submodule "dotconfigs/myNeovim"]
+	path = dotconfigs/myNeovim
+	url = git@github.com:SoliElvis/myNeovim
+[submodule "dotconfigs/myDoom"]
+	path = dotconfigs/myDoom
+	url = git@github.com:SoliElvis/myDoom.git
