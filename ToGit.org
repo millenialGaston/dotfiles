@@ -1,0 +1,7 @@
+* gossants
+  - [  ] .zshrc
+  - [  ] .profile
+  - [  ] .bashrc.aliases
+  - [  ] .bashrc
+
+

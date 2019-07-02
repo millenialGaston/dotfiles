@@ -1,0 +1,54 @@
+if [[ $LANG = '' ]]; then
+	export LANG=en_US.UTF-8
+fi
+
+alias ls='ls --color=auto'
+alias psg='ps -aux | grep --color=auto'
+alias grep='grep --color=auto'
+alias pacrepo='sudo reflector -l 20 -f 10 --save /etc/pacman.d/mirrorlist'
+alias pacman='sudo pacman'
+alias journalctl='sudo journalctl'
+alias pacu='sudo pacman -Syu --noconfirm'
+alias yayu='yay -Syua --noconfirm'
+alias systemctl='sudo systemctl'
+alias se='ls /usr/bin | fzf'
+
+alias rr='source ~/.zshrc'
+
+alias b="brave &"
+alias bl="bluetoothctl"
+alias c="clear"
+alias cp='cp -i'
+alias e='emacsclient -c -a "" $* &'
+alias g="git status"
+alias j="jobs"
+alias ls='ls --color=auto'
+alias linkhere='ln -s $(pwd)'
+alias mv='mv -i'
+alias n="nvim"
+alias o="xdg-open &"
+alias p='gitPush'
+alias m='pulsemixer'
+alias r="ranger"
+alias s="source"
+alias v="vim"
+alias igv="vim .gitignore"
+alias z="zotero &"
+
+alias tma="tmux attach-session -t"
+alias tmn="tmux new-session -s"
+alias lt='ls -Alhtr'
+
+alias ftg='git status'
+alias ftgA='git add -A'
+alias gp='gitPush'
+
+
+alias lpd="lp -o sides=two-sided-long-edge"
+alias ser="ssh pi@192.168.1.2"
+
+alias weather="curl -H \"Accept-Language: fr\" wttr.in/montreal"
+
+alias nxt="playerctl -p spotify next"
+alias prv="playerctl -p spotify previous"
+alias pp="playerctl -p spotify play-pause"
