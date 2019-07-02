@@ -1,101 +1,5 @@
 * bash stuff
 https://www.emacswiki.org/emacs/EmacsClient
-** zsh
-https://github.com/robbyrussell/oh-my-zsh
-*** main
-#+begin_src shell :tangle ~/.zshrc
-ZSH_CUSTOM=$HOME/.config/zsh/
-plugins=(git)
-source $ZSH/oh-my-zsh.sh
-source $HOME/.bashrc.aliases
-source $HOME/.profile
-if [ -f ~/.dir_colors ]; then
-    eval `dircolors ~/.dir_colors`
-fi
-alias rr='source ~/.zshrc'
-#+end_src
-
-    #+RESULTS:
-    : ]2;if [ -f ~/.dir_colors ]; then; eval `dircolors ~/.dir_colors`; fi]1;]2;alias rr='source ~/.zshrc']1;
-
-*** venvrapper
-#+begin_src shell :tangle ~/.zshrc
-venv_arch=/usr/bin/virtualenvwrapper.sh
-[ -f "$venv_arch" ] && source "$venv_arch"
-venv_debian=/usr/share/virtualenvwrapper/virtualenvwrapper.sh
-[ -f "$venv_debian" ] && source "$venv_debian"
-#+end_src
-*** private fpath
-https://unix.stackexchange.com/questions/33255/how-to-define-and-load-your-own-shell-function-in-zsh
-#+begin_src shell :tangle ~/.zshrc
-fpath=( "$HOME/cloud/dotfiles/.zfunctions" $fpath )
-#+end_src
-
-#+RESULTS:
-
-*** themes
-https://github.com/bhilburn/
-#+begin_src shell :tangle no
-ZSH_THEME="agnoster"
-ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-ZSH_THEME="robbyrussell"
-ZSH_THEME="Pure"
-#+end_src
-*** prompts
-****  pure
-***** prepare
-[[https://github.com/sindresorhus/pure][GitHub - sindresorhus/pure: Pretty, minimal and fast ZSH prompt]]
-- clone repo
-  #+begin_src shell :session purepromptsetup
-mkdir shellstuff && cd shellstuff
-git clone git@github.com:sindresorhus/pure.git pure
-cd pure
-  #+end_src
-- symlink both pure.zsh and async.zsh on ~$fpath~ pure.zsh-> prompt_pure_setup
-  #+begin_src shell :session purepromptsetup
-sudo ln -s "$PWD/pure.zsh"\
-    /usr/share/zsh/site-functions/prompt_pure_setup
-/usr/local/share/
-sudo ln -s "$PWD/async.zsh"\
-    /usr/share/zsh/site-functions/async
-  #+end_src
-***** add this to .zshrc
-#+begin_src shell :tangle ~/.zshrc
-autoload -U promptinit; promptinit
-prompt pure
-#+end_src
-
-*** doc from example
-#+begin_src shell
-# CASE_SENSITIVE="true"
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-# Uncomment the following line to disable bi-weekly auto-update checks.
-# DISABLE_AUTO_UPDATE="true"
-# Uncomment the following line to automatically update without prompting.
-# DISABLE_UPDATE_PROMPT="true"
-# Uncomment the following line to change how often to auto-update (in days).
-# export UPDATE_ZSH_DAYS=13
-# Uncomment the following line if pasting URLs and other text is messed up.
-# DISABLE_MAGIC_FUNCTIONS=true
-# Uncomment the following line to disable colors in ls.
-# DISABLE_LS_COLORS="true"
-# Uncomment the following line to disable auto-setting terminal title.
-# DISABLE_AUTO_TITLE="true"
-# Uncomment the following line to enable command auto-correction.
-# ENABLE_CORRECTION="true"
-# Uncomment the following line to display red dots whilst waiting for completion.
-# COMPLETION_WAITING_DOTS="true"
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-# HIST_STAMPS="mm/dd/yyyy"
-
-#+end_src
-
-
 
 ** env variables
 ~.profile~ should be loaded before .bashrc stuff i think so
@@ -205,9 +109,68 @@ alias ser="ssh pi@192.168.1.2"
 *** add aliases to path
 
 
-* scripts
-make one for maim
+* zsh
 
+
+** old
+https://github.com/robbyrussell/oh-my-zsh
+*** main
+#+begin_src shell
+ZSH_CUSTOM=$HOME/.config/zsh/
+plugins=(git)
+source $ZSH/oh-my-zsh.sh
+source $HOME/.bashrc.aliases
+source $HOME/.profile
+if [ -f ~/.dir_colors ]; then
+    eval `dircolors ~/.dir_colors`
+fi
+alias rr='source ~/.zshrc'
+#+end_src
+
+*** venvrapper
+#+begin_src shell :tangle ~/.zshrc
+venv_arch=/usr/bin/virtualenvwrapper.sh
+[ -f "$venv_arch" ] && source "$venv_arch"
+venv_debian=/usr/share/virtualenvwrapper/virtualenvwrapper.sh
+[ -f "$venv_debian" ] && source "$venv_debian"
+#+end_src
+
+** with antigen
+:PROPERTIES:
+:header-args: :tangle ~/.zshrc
+:END:
+#+BEGIN_SRC shell
+source $HOME/dotfiles/antigen.zsh
+# Load the oh-my-zsh's library.
+antigen use oh-my-zsh
+
+# Bundles from the default repo (robbyrussell's oh-my-zsh).
+antigen bundle git
+antigen bundle heroku
+antigen bundle pip
+antigen bundle lein
+antigen bundle command-not-found
+
+# Syntax highlighting bundle.
+antigen bundle zsh-users/zsh-syntax-highlighting
+# Load the theme.
+antigen theme denysdovhan/spaceship-prompt
+# Tell Antigen that you're done.
+antigen apply
+#+END_SRC
+* tmux
+** multiuser stuff
+[[https://github.com/zolrath/wemux][GitHub - zolrath/wemux: Multi-User Tmux Made Easy]]
+
+** CANCELLED redraw and takeover
+[[https://stackoverflow.com/questions/7814612/is-there-any-way-to-redraw-tmux-window-when-switching-smaller-monitor-to-bigger][Is there any way to redraw tmux window when switching smaller monitor to bigg...]]
+
+
+
+
+* Xorg
+https://unix.stackexchange.com/questions/375/how-to-enable-killing-xorg-with-ctrlaltbackspace
+moved file:/etc/X11/xorg.conf/99-killX.cong
 
 
 * beets
@@ -226,17 +189,53 @@ make one for maim
 ** TODO make it not use spaces or non ascii characters
 
 
-* tmux
-** multiuser stuff
-[[https://github.com/zolrath/wemux][GitHub - zolrath/wemux: Multi-User Tmux Made Easy]]
-
-** CANCELLED redraw and takeover
-[[https://stackoverflow.com/questions/7814612/is-there-any-way-to-redraw-tmux-window-when-switching-smaller-monitor-to-bigger][Is there any way to redraw tmux window when switching smaller monitor to bigg...]]
 
 
-* Xorg
-https://unix.stackexchange.com/questions/375/how-to-enable-killing-xorg-with-ctrlaltbackspace
-moved file:/etc/X11/xorg.conf/99-killX.cong
+
+* media stuff
+** mpd
+*** blog post on remote :
+[[https://feeding.cloud.geek.nz/posts/home-music-server-with-mpd/][Creating a home music server using mpd]]
+
+#+begin_src conf
+music_directory    "/path/to/music/"
+bind_to_address    "192.168.1.2"
+bind_to_address    "/run/mpd/socket"
+zeroconf_enabled   "yes"
+password           "Password1"
+#+end_src
+
+#+begin_src conf :name pulse
+audio_output  {
+type    "pulse"
+name    "Pulseaudio Output"
+server  "127.0.0.1"
+}
+#+end_src
+
+exposing pulseaudio to localhost via /etc/pulse/default.pa:
+#+begin_src conf
+### access (may be configured with paprefs, so le  ave this commented
+### here if you plan to use paprefs)
+load-module module-native-protocol-tcp auth-ip-acl=127.0.0. 1
+#+end_src
+
+
+zeroconf, need to prevent systemd from creating the network socket
+
+
+
+
+* scripts
+make one for maim
+
+
+
+
+
+
+
+
 
 
 * i3
@@ -549,7 +548,7 @@ tray_output VGA1
 set $Locker i3lock && sleep 1
 #+END_SRC
 ** i3 system
-#+begin_src conf 
+#+begin_src conf
 set $mode_system System (l) lock, (e) logout, (s) suspend, (h) hibernate, (r) reboot, (Shift+s) shutdown
 mode "$mode_system" {
 bindsym l exec --no-startup-id $Locker, mode "default"
@@ -569,44 +568,27 @@ exec xautolock -time 20 -locker "i3lock -i '~/Pictures/rain2.jpg' &"
 #+end_src
 
 
+
+
 * layout managers
 https://i3wm.org/docs/layout-saving.html
 https://github.com/klaxalk/i3-layout-manager
 
 
+
+
+
+
+
+*
+
+
+
+
+
+
 * automount etc
 
-
-* media stuff
-** mpd
-*** blog post on remote :
-[[https://feeding.cloud.geek.nz/posts/home-music-server-with-mpd/][Creating a home music server using mpd]]
-
-#+begin_src conf
-music_directory    "/path/to/music/"
-bind_to_address    "192.168.1.2"
-bind_to_address    "/run/mpd/socket"
-zeroconf_enabled   "yes"
-password           "Password1"
-#+end_src
-
-#+begin_src conf :name pulse
-audio_output  {
-type    "pulse"
-name    "Pulseaudio Output"
-server  "127.0.0.1"
-}
-#+end_src
-
-exposing pulseaudio to localhost via /etc/pulse/default.pa:
-#+begin_src conf
-### access (may be configured with paprefs, so le  ave this commented
-### here if you plan to use paprefs)
-load-module module-native-protocol-tcp auth-ip-acl=127.0.0. 1
-#+end_src
-
-
-zeroconf, need to prevent systemd from creating the network socket
 
 
 * annoying

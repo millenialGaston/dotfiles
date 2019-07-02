@@ -18,7 +18,6 @@
 ** basic basic
 
 #+BEGIN_SRC elisp
-
 (setq org-cycle-separator-lines 2)
 (require 'doom-themes)
 (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
@@ -45,7 +44,6 @@
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "brave")
 #+end_src
-
 
 
 ** searching
@@ -84,7 +82,7 @@
 - http://develop.spacemacs.org/layers/+completion/ivy/README.html
 
 
-*** rgrep -- rg :melpa:github:
+*** rg :melpa:github:
 :PROPERTIES:
 :GH:       https://github.com/dajva/rg.el
 :header-args: :tangle yes
@@ -190,7 +188,6 @@
 
 
 ** theming
-
 #+BEGIN_SRC elisp
 (let* ((variable-tuple (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
                              ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
@@ -212,6 +209,8 @@
    `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.70))))
    `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
 #+END_SRC
+
+#+RESULTS:
 
 
 ** bib stuff
@@ -240,3 +239,46 @@
         (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
         (default       . bibtex-completion-format-citation-default)))
 #+END_SRC
+
+
+* evil :interactive:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+
+#+BEGIN_SRC elisp
+(use-package evil-org
+  :commands evil-org-mode
+  :after org
+  :init
+  (add-hook 'org-mode-hook 'evil-org-mode))
+#+END_SRC
+
+#+RESULTS:
+| er/add-org-mode-expansions | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load |
+
+
+#+BEGIN_SRC elisp
+(evil-define-key 'normal evil-org-mode-map
+  "<" 'org-metaleft
+  ">" 'org-metaright
+  "-" 'org-cycle-list-bullet
+  (kbd "TAB") 'org-cycle)
+;; normal & insert state shortcuts.
+(mapc (lambda (state)
+        (evil-define-key state evil-org-mode-map
+          (kbd "M-l") 'org-metaright
+          (kbd "M-h") 'org-metaleft
+          (kbd "M-k") 'org-metaup
+          (kbd "M-j") 'org-metadown
+          (kbd "M-L") 'org-shiftmetaright
+          (kbd "M-H") 'org-shiftmetaleft
+          (kbd "M-K") 'org-shiftmetaup
+          (kbd "M-J") 'org-shiftmetadown))
+      '(normal insert))
+#+END_SRC
+
+#+RESULTS:
+| normal | insert |
+
+*
