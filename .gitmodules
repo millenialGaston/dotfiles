@@ -13,3 +13,9 @@
 [submodule "zoo/bro"]
 	path = zoo/bro
 	url = https://github.com/hubsmoke/bro
+[submodule "zoo/notmuch"]
+	path = zoo/notmuch
+	url = https://github.com/notmuch/notmuch
+[submodule "my-aur/yay"]
+	path = my-aur/yay
+	url = https://aur.archlinux.org/yay.git

@@ -1,5 +1,7 @@
 export PATH=$PATH:$HOME/bin:/usr/local/bin:/home/sole/.emacs.d/bin
 export PATH=$PATH:$HOME/apps:$HOME/apps/myScripts
+export PATH=$PATH:$HOME/.local
+export PATH=$PATH:$HOME/.gem/ruby/2.6.0/bin
 export DOTFILES=$HOME/dotfiles
 export ZSH=$HOME/.oh-my-zsh
 export LANG=en_US.UTF-8

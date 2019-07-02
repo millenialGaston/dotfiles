@@ -1,22 +1,19 @@
 source ~/.profile
 source ~/.bashrc.aliases
-umask g-w,o-rwx
-setopt auto_cd
 
 alias rr="source ~/.zshrc"
 fpath=( "$DOTFILES/.zfunctions" "${fpath[@]}" )
 fpath=( "$DOTFILES/.zfunctions/myCode" "${fpath[@]}" )
-backup_dotfiles() {
-  ls -ta $DOTFILES/manualBacks | while read f; do
-    if [ -f $f ]; then
-      echo $f
-      rsync -a $HOME/$f $DOTFILES/manualBacks/$f
-    fi
-  done
-}
+
+
+[[ -s "$HOME/.local/share/marker/marker.sh" ]] && source "$HOME/.local/share/marker/marker.sh"
 #Private autoloads
 autoload -Uz fdd
+autoload -Uz afaGoogle.zsh
+autoload -Uz afaPapers.zsh
+autoload -Uz backup_dotfiles.zsh
 
+alias bdot="backup_dotfiles"
 #Prompt stuff
 autoload -Uz promptinit && promptinit
 prompt pure
