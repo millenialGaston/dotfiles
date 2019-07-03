@@ -28,3 +28,18 @@
 [submodule "manualBack/myDoom"]
 	path = emacsy/myDoom
 	url = git@github.com:SoliElvis/myDoom.git
+[submodule "zfunctions/pure"]
+	path = zfunctions/pure
+	url = https://github.com/sindresorhus/pure.git
+[submodule "zoo/neovim"]
+	path = zoo/neovim
+	url = https://github.com/neovim/neovim
+[submodule "zoo/bumblebee-status"]
+	path = zoo/bumblebee-status
+	url = git://github.com/tobi-wan-kenobi/bumblebee-status
+[submodule "fzf"]
+	path = zoo/fzf
+	url = https://github.com/junegunn/fzf.git
+[submodule "zoo/direnv"]
+	path = zoo/direnv
+	url = git@github.com:direnv/direnv.git

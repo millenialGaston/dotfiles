@@ -99,16 +99,6 @@
    (python . t)
    (shell . t)))
 
-(use-package org-faces
-  :after org
-  :custom
-  (org-todo-keyword-faces
-   '(("DONE" . (:foreground "cyan" :weight bold))
-     ("SOMEDAY" . (:foreground "gray" :weight bold))
-     ("WAITING" . (:foreground "red" :weight bold))
-     ("STARTED" . (:foreground "cyan" :weight normal))
-     ("NEXT" . (:foreground "cyan" :weight bold)))))
-
 (let* ((variable-tuple (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
                              ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
                              ((x-list-fonts   "Verdana")         '(:font   "Verdana"))

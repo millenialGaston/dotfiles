@@ -175,6 +175,9 @@
 
 
 ** org faces
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 #+BEGIN_SRC elisp
 (use-package org-faces
   :after org
