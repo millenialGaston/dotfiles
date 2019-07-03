@@ -129,14 +129,14 @@
    `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.70))))
    `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
 
-(setq reftex-default-bibliography '("~/.personal/.bibstuff/references.bib"))
+(setq reftex-default-bibliography '("~/.personal/.bibstuff/master-biblio.bib"))
 
 (setq org-ref-bibliography-notes "~/.personal/.bibstuff/orgRefNotes.org"
-      org-ref-default-bibliography '("~/.personal/.bibstuff/references.bib")
-      org-ref-pdf-directory "~/.personal/zotf_ile")
+      org-ref-default-bibliography '("~/.personal/.bibstuff/master-bib.bib")
+      org-ref-pdf-directory "~/.personal/zotero/storage/")
 
-(setq bibtex-completion-bibliography '("~/.personal/.bibstuff/references.bib")
-      bibtex-completion-library-path "~/.personal/zotf_ile"
+(setq bibtex-completion-bibliography '("~/.personal/.bibstuff/master-bib.bib")
+      bibtex-completion-library-path "~/.personal/zotero/storage"
       bibtex-completion-notes-path "~/.personal/.bibstuff/helm-bibtex-notes")
 
 (setq bibtex-completion-pdf-field "file")
@@ -144,6 +144,7 @@
       (lambda (fpath)
         (start-process "evince" "*helm-bibtex-evince*" "/usr/bin/evince"
                        fpath)))
+
 (setq bibtex-dialect 'biblatex)
 
 (setq bibtex-completion-format-citation-functions

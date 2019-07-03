@@ -10,9 +10,6 @@
 [submodule "zoo/tldr"]
 	path = zoo/tldr
 	url = https://github.com/tldr-pages/tldr
-[submodule "zoo/bro"]
-	path = zoo/bro
-	url = https://github.com/hubsmoke/bro
 [submodule "zoo/notmuch"]
 	path = zoo/notmuch
 	url = https://github.com/notmuch/notmuch
