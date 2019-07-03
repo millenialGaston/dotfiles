@@ -25,3 +25,6 @@
 [submodule "dotconfigs/myDoom"]
 	path = dotconfigs/myDoom
 	url = git@github.com:SoliElvis/myDoom.git
+[submodule "manualBack/myDoom"]
+	path = emacsy/myDoom
+	url = git@github.com:SoliElvis/myDoom.git
