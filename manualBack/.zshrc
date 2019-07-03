@@ -2,11 +2,17 @@ source ~/.profile
 source ~/.bashrc.aliases
 
 alias rr="source ~/.zshrc"
-fpath=( "$DOTFILES/.zfunctions" "${fpath[@]}" )
-fpath=( "$DOTFILES/.zfunctions/myCode" "${fpath[@]}" )
+
+if [[ -s "$HOME/.local/share/marker/marker.sh" ]];then
+  source "$HOME/.local/share/marker/marker.sh"
+fi
+
+fpath=( "$DOTFILES/zfunctions" "${fpath[@]}" )
+fpath=( "$DOTFILES/zfunctions/myCode" "${fpath[@]}" )
 
 
-[[ -s "$HOME/.local/share/marker/marker.sh" ]] && source "$HOME/.local/share/marker/marker.sh"
+
+
 #Private autoloads
 autoload -Uz fdd
 autoload -Uz afaGoogle.zsh

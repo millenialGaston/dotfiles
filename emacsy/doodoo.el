@@ -1,23 +1,8 @@
-#+TITLE: DooDoo
-#+AUTHOR: Frederic Boileau
-
-* basic
-:PROPERTIES:
-:header-args: :tangle yes
-:END:
-
-** preamble
-#+BEGIN_SRC elisp
 ;;; package --- doodoo
 ;;; Commentary:
 ;;; summary: private config of Doom
 ;;; Code:
-#+END_SRC
 
-
-** basic basic
-
-#+BEGIN_SRC elisp
 (setq org-cycle-separator-lines 2)
 (require 'doom-themes)
 (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
@@ -33,31 +18,10 @@
 (autoload 'ibuffer "ibuffer" "List buffers." t)
 (setq org-cycle-separator-lines 2)
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
-#+END_SRC
 
-#+RESULTS:
-: helm-show-kill-ring
-
-
-** emacs xdg
-#+begin_src elisp
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "brave")
-#+end_src
 
-#+RESULTS:
-: brave
-
-
-** searching
-
-*** swiper/ivy :melpa:github:
-:PROPERTIES:
-:GH:       https://github.com/abo-abo/swiper
-:END:
-
-**** small config example from github
-#+begin_src elisp :tangle yes :results replace
 (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
 (setq enable-recursive-minibuffers t)
@@ -77,42 +41,15 @@
 (global-set-key (kbd "C-c j") 'counsel-git-grep)
 (global-set-key (kbd "C-c k") 'counsel-ag)
 (global-set-key (kbd "C-x l") 'counsel-locate)
-#+end_src
 
-#+RESULTS:
-: counsel-locate
-
-- http://develop.spacemacs.org/layers/+completion/ivy/README.html
-
-
-*** rg :melpa:github:broken:
-:PROPERTIES:
-:GH:       https://github.com/dajva/rg.el
-:header-args: :tangle yes
-:END:
-#+BEGIN_SRC elisp
 (use-package rg
   :bind ("C-c l" . counsel-rg)
   :config
   (rg-enable-default-bindings))
-#+END_SRC
 
-#+RESULTS:
-: counsel-rg
-
-
-** doom modeline :melpa:github:doom:
-:PROPERTIES:
-:header-args: :tangle yes
-:GH:       https://github.com/abo-abo/swiper
-:END:
-#+BEGIN_SRC elisp
 (require 'doom-modeline)
 (doom-modeline-mode 1)
-#+end_src
 
-*** customize
-#+begin_src elisp
 (setq doom-modeline-height 25)
 (setq doom-modeline-bar-width 3)
 (setq doom-modeline-buffer-file-name-style 'truncate-upto-project)
@@ -150,17 +87,7 @@
 (setq doom-modeline-mu4e t)
 (setq doom-modeline-irc t)
 (setq doom-modeline-irc-stylize 'identity)
-#+end_src
 
-#+RESULTS:
-: identity
-
-
-** babel
-:PROPERTIES:
-:header-args: :tangle yes
-:END:
-#+BEGIN_SRC elisp
 (require 'ob-shell)
 (require 'ox-md)
 (with-eval-after-load "ob"
@@ -171,11 +98,7 @@
  '((emacs-lisp . t)
    (python . t)
    (shell . t)))
-#+END_SRC
 
-
-** org faces
-#+BEGIN_SRC elisp
 (use-package org-faces
   :after org
   :custom
@@ -185,14 +108,7 @@
      ("WAITING" . (:foreground "red" :weight bold))
      ("STARTED" . (:foreground "cyan" :weight normal))
      ("NEXT" . (:foreground "cyan" :weight bold)))))
-#+END_SRC
 
-#+RESULTS:
-: org-faces
-
-
-** theming
-#+BEGIN_SRC elisp
 (let* ((variable-tuple (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
                              ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
                              ((x-list-fonts   "Verdana")         '(:font   "Verdana"))
@@ -212,14 +128,7 @@
    `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
    `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.70))))
    `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
-#+END_SRC
 
-#+RESULTS:
-
-
-** bib stuff
-
-#+BEGIN_SRC elisp
 (setq reftex-default-bibliography '("~/.personal/.bibstuff/references.bib"))
 
 (setq org-ref-bibliography-notes "~/.personal/.bibstuff/orgRefNotes.org"
@@ -242,27 +151,13 @@
         (latex-mode    . bibtex-completion-format-citation-cite)
         (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
         (default       . bibtex-completion-format-citation-default)))
-#+END_SRC
 
-
-* evil :interactive:
-:PROPERTIES:
-:header-args: :tangle yes
-:END:
-
-#+BEGIN_SRC elisp
 (use-package evil-org
   :commands evil-org-mode
   :after org
   :init
   (add-hook 'org-mode-hook 'evil-org-mode))
-#+END_SRC
 
-#+RESULTS:
-| er/add-org-mode-expansions | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load |
-
-
-#+BEGIN_SRC elisp
 (evil-define-key 'normal evil-org-mode-map
   "<" 'org-metaleft
   ">" 'org-metaright
@@ -280,9 +175,3 @@
           (kbd "M-K") 'org-shiftmetaup
           (kbd "M-J") 'org-shiftmetadown))
       '(normal insert))
-#+END_SRC
-
-#+RESULTS:
-| normal | insert |
-
-*
