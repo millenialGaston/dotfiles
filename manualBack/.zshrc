@@ -3,14 +3,8 @@ source ~/.bashrc.aliases
 
 alias rr="source ~/.zshrc"
 
-if [[ -s "$HOME/.local/share/marker/marker.sh" ]];then
-  source "$HOME/.local/share/marker/marker.sh"
-fi
-
 fpath=( "$DOTFILES/zfunctions" "${fpath[@]}" )
 fpath=( "$DOTFILES/zfunctions/myCode" "${fpath[@]}" )
-
-
 
 
 #Private autoloads
@@ -35,4 +29,5 @@ antigen bundle pip
 antigen bundle fzf
 antigen bundle command-not-found
 antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle djui/alias-tips
 antigen apply

@@ -263,7 +263,7 @@
 #+END_SRC
 
 #+RESULTS:
-| er/add-org-mode-expansions | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load |
+| er/add-org-mode-expansions | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load |
 
 
 #+BEGIN_SRC elisp
@@ -290,3 +290,43 @@
 | normal | insert |
 
 *
+
+
+* org faces interactive
+
+#+BEGIN_SRC elisp
+(cl-defun ap/org-set-level-faces (&key (first-parent 'outline-1))
+    (solarized-with-color-variables 'dark
+      (require 'color)
+      (require 'dash)
+      (require 'org-inlinetask)
+      (let ((org-level-color-list (-cycle (list red orange yellow green cyan blue violet magenta))))
+        (cl-flet ((modify-color (color) (thread-first color
+                                          (color-desaturate-name 30))))
+          (cl-loop for level from 1 to (1- org-inlinetask-min-level)
+                   for face = (intern (format "org-level-%s" level))
+                   for parent = (cl-case level
+                                  (1 (list first-parent 'highlight))
+                                  (t (intern (format "org-level-%s" (1- level)))))
+                   for height = (cond ((= level 1) 1.3)
+                                      ((<= level 4) 0.9)
+                                      (t 1.0))
+                   for weight = (if (<= level 8) 'bold 'normal)
+                   unless (internal-lisp-face-p face)
+                   do (custom-declare-face face `((t :inherit ,(intern (format "outline-%s" (1- level)))))
+                                           (format "Face for Org level %s headings." (1- level)))
+                   do (set-face-attribute face nil
+                                          :inherit parent
+                                          :foreground (modify-color (nth level org-level-color-list))
+                                          :height height
+                                          :weight weight
+                                          :overline t)
+                   collect face into faces
+                   finally do (defconst org-level-faces faces)
+                   finally do (setq org-n-level-faces (length org-level-faces)))))))
+  (ap/org-set-level-faces :first-parent 'variable-pitch)
+#+END_SRC
+
+
+* configs
+https://emacs.christianbaeuerlein.com/my-org-config.html
