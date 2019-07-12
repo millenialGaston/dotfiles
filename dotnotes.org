@@ -1,0 +1,17 @@
+#+TITLE: dotnotes
+
+* ideas
+** xdg
+- [ ] set env variables for blobs
+- [ ] set default software (videos etc)
+
+
+  
+
+* ghosts
+https://github.com/cjbassi/gotop
+
+* other peeps dotfiles
+https://github.com/rmw5601/dotfiles
+* fonts
+[[https://github.com/NerdyPepper/scientifica][GitHub - NerdyPepper/scientifica: Tall, condensed, bitmap font for geeks.]]

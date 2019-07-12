@@ -43,3 +43,6 @@
 [submodule "zoo/direnv"]
 	path = zoo/direnv
 	url = git@github.com:direnv/direnv.git
+[submodule "zoo/gotop"]
+	path = zoo/gotop
+	url = https://github.com/cjbassi/gotop
