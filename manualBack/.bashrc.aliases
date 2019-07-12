@@ -40,8 +40,6 @@ alias tma="tmux attach-session -t"
 alias tmn="tmux new-session -s"
 alias lt='ls -Alhtr'
 
-alias ftg='git status'
-alias ftgA='git add -A'
 alias gp='gitPush'
 
 

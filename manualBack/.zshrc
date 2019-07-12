@@ -15,8 +15,8 @@ autoload -Uz backup_dotfiles.zsh
 
 alias bdot="backup_dotfiles"
 #Prompt stuff
-autoload -Uz promptinit && promptinit
-prompt pure
+#autoload -Uz promptinit && promptinit
+#prompt pure
 
 zstyle ':completion:*' accept-exact '*(N)'
 zstyle ':completion:*' use-cache on
@@ -30,4 +30,7 @@ antigen bundle fzf
 antigen bundle command-not-found
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle djui/alias-tips
+#antigen bundle denysdovhan/spaceship-prompt
+antigen bundle mafredri/zsh-async
+antigen bundle sindresorhus/pure
 antigen apply
