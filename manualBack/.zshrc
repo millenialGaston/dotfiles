@@ -12,6 +12,7 @@ autoload -Uz fdd
 autoload -Uz afaGoogle.zsh
 autoload -Uz afaPapers.zsh
 autoload -Uz backup_dotfiles.zsh
+autoload -Uz lazygit.zsh
 
 alias bdot="backup_dotfiles"
 #Prompt stuff
