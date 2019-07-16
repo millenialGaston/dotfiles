@@ -29,6 +29,7 @@ antigen bundle git
 antigen bundle pip
 antigen bundle fzf
 antigen bundle command-not-found
+antigen bundle tmux
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle djui/alias-tips
 #antigen bundle denysdovhan/spaceship-prompt
