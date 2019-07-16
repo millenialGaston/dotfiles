@@ -18,6 +18,7 @@
 ** basic basic
 
 #+BEGIN_SRC elisp
+(ranger-override-dired-mode t)
 (setq org-cycle-separator-lines 2)
 (require 'doom-themes)
 (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
@@ -163,6 +164,8 @@
 #+BEGIN_SRC elisp
 (require 'ob-shell)
 (require 'ox-md)
+(require 'julia-repl)
+(add-hook 'julia-mode-hook 'julia-repl-mode)
 (with-eval-after-load "ob"
   (require 'org-babel-eval-in-repl))
 
@@ -170,8 +173,11 @@
  'org-babel-load-languages
  '((emacs-lisp . t)
    (python . t)
+   (julia . t)
    (shell . t)))
 #+END_SRC
+
+#+RESULTS:
 
 
 ** org faces
@@ -252,6 +258,23 @@
 : ((org-mode . bibtex-completion-format-citation-org-link-to-PDF) (latex-mode . bibtex-completion-format-citation-cite) (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc) (default . bibtex-completion-format-citation-default))
 
 
+* org
+
+** toc org
+#+BEGIN_SRC elisp
+(if (require 'toc-org nil t)
+    (add-hook 'org-mode-hook 'toc-org-mode)
+  (warn "toc-org not found"))
+#+END_SRC
+
+* keybindings
+#+BEGIN_SRC elisp
+(global-set-key (kbd "M-p l") 'org-cliplink)
+#+END_SRC
+
+#+RESULTS:
+: org-cliplink
+
 * evil :interactive:
 :PROPERTIES:
 :header-args: :tangle yes
@@ -266,7 +289,7 @@
 #+END_SRC
 
 #+RESULTS:
-| er/add-org-mode-expansions | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load |
+| er/add-org-mode-expansions | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load |
 
 
 #+BEGIN_SRC elisp

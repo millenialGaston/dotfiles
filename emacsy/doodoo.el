@@ -3,6 +3,7 @@
 ;;; summary: private config of Doom
 ;;; Code:
 
+(ranger-override-dired-mode t)
 (setq org-cycle-separator-lines 2)
 (require 'doom-themes)
 (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
@@ -90,6 +91,8 @@
 
 (require 'ob-shell)
 (require 'ox-md)
+(require 'julia-repl)
+(add-hook 'julia-mode-hook 'julia-repl-mode)
 (with-eval-after-load "ob"
   (require 'org-babel-eval-in-repl))
 
@@ -97,6 +100,7 @@
  'org-babel-load-languages
  '((emacs-lisp . t)
    (python . t)
+   (julia . t)
    (shell . t)))
 
 (let* ((variable-tuple (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
