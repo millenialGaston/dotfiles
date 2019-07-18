@@ -42,12 +42,12 @@
 (autoload 'ibuffer "ibuffer" "List buffers." t)
 (setq org-cycle-separator-lines 2)
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
-(bind-key (kbd "M-p") 'company-complete)
+(bind-key (kbd "M-o") 'company-complete)
+(global-set-key (kbd "M-p") nil)
+(bind-key (kbd "M-p l") 'org-cliplink)
 (load-theme 'doom-city-lights)
 #+END_SRC
 
-#+RESULTS:
-: t
 
 
 ** emacs xdg
@@ -234,13 +234,7 @@
 : org-faces
 
 
-** theming
-#+BEGIN_SRC elisp
-(let* ((variable-tuple (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
-                             ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
-                             ((x-list-fonts   "Verdana")         '(:font   "Verdana"))
-                             ((x-family-fonts "Sans Serif")      '(:family "Sans Serif"))
-                             (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
+  Install Source Sans Pro."))))
        (base-font-color (face-foreground 'default nil 'default))
        (headline       `(:inherit default :weight normal :foreground ,base-font-color)))
 
@@ -291,6 +285,17 @@
 #+RESULTS:
 : ((org-mode . bibtex-completion-format-citation-org-link-to-PDF) (latex-mode . bibtex-completion-format-citation-cite) (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc) (default . bibtex-completion-format-citation-default))
 
+
+
+** evil interactive
+#+BEGIN_SRC elisp
+(evil-define-key nil evil-insert-state-map
+  "\C-n" 'evil-next-visual-line
+  "\C-p" 'evil-previous-visual-line
+  "\C-f" 'evil-forward-char
+  "\C-b" 'evil-backward-char
+  "\C-k" 'kill-line)
+#+END_SRC
 
 * completion
 #+BEGIN_SRC elisp
@@ -436,6 +441,9 @@
 
 
 ** IDEA org keywords
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
 #+BEGIN_SRC elisp
 (setq org-todo-keywords
       '(
@@ -514,6 +522,57 @@
 ** capture
 
 
+** cliplink
+#+BEGIN_SRC elisp
+(defun custom-org-cliplink ()
+  (interactive)
+  (org-cliplink-insert-transformed-title
+   (org-cliplink-clipboard-content)     ;take the URL from the CLIPBOARD
+   (lambda (url title)
+     (let* ((parsed-url (url-generic-parse-url url)) ;parse the url
+            (clean-title
+             (cond
+              ;; if the host is github.com, cleanup the title
+              ((string= (url-host parsed-url) "github.com")
+               (replace-regexp-in-string "GitHub - .*: \\(.*\\)" "\\1" title))
+              ;; otherwise keep the original title
+              (t title))))
+       ;; forward the title to the default org-cliplink transformer
+       (org-cliplink-org-mode-link-transformer url clean-title)))))
+#+END_SRC
+
+
+** youtube embed
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
+#+BEGIN_SRC elisp
+(defvar yt-iframe-format
+  ;; You may want to change your width and height.
+  (concat "<iframe width=\"440\""
+          " height=\"335\""
+          " src=\"https://www.youtube.com/embed/%s\""
+          " frameborder=\"0\""
+          " allowfullscreen>%s</iframe>"))
+
+(org-add-link-type
+ "yt"
+ (lambda (handle)
+   (browse-url
+    (concat "https://www.youtube.com/embed/"
+            handle)))
+ (lambda (path desc backend)
+   (cl-case backend
+     (html (format yt-iframe-format
+                   path (or desc "")))
+     (latex (format "\href{%s}{%s}"
+                    path (or desc "video"))))))
+#+END_SRC
+
+#+RESULTS:
+: Created yt link.
+
+[[yt:lEljKc9ZtU8]]
 * TODO snippets
 #+BEGIN_SRC elisp
 ;; Develop in ~/emacs.d/mysnippets, but also

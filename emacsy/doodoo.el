@@ -27,7 +27,9 @@
 (autoload 'ibuffer "ibuffer" "List buffers." t)
 (setq org-cycle-separator-lines 2)
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
-(bind-key (kbd "M-p") 'company-complete)
+(bind-key (kbd "M-o") 'company-complete)
+(global-set-key (kbd "M-p l") 'org-cliplink)
+(load-theme 'doom-city-lights)
 
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "brave")
@@ -123,26 +125,6 @@
                        "<n"
                        "Insert name")
 
-(let* ((variable-tuple (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
-                             ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
-                             ((x-list-fonts   "Verdana")         '(:font   "Verdana"))
-                             ((x-family-fonts "Sans Serif")      '(:family "Sans Serif"))
-                             (nil (warn "Cannot find a Sans Serif Font.  Install Source Sans Pro."))))
-       (base-font-color (face-foreground 'default nil 'default))
-       (headline       `(:inherit default :weight normal :foreground ,base-font-color)))
-
-  (custom-theme-set-faces
-   'user
-   `(org-level-8        ((t (,@headline ,@variable-tuple))))
-   `(org-level-7        ((t (,@headline ,@variable-tuple))))
-   `(org-level-6        ((t (,@headline ,@variable-tuple))))
-   `(org-level-5        ((t (,@headline ,@variable-tuple))))
-   `(org-level-4        ((t (,@headline ,@variable-tuple :height 1.2))))
-   `(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
-   `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
-   `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.70))))
-   `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
-
 (setq reftex-default-bibliography '("~/.personal/.bibstuff/master-biblio.bib"))
 
 (setq org-ref-bibliography-notes "~/.personal/.bibstuff/orgRefNotes.org"
@@ -166,6 +148,70 @@
         (latex-mode    . bibtex-completion-format-citation-cite)
         (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
         (default       . bibtex-completion-format-citation-default)))
+
+(evil-define-key nil evil-insert-state-map
+  "\C-n" 'evil-next-visual-line
+  "\C-p" 'evil-previous-visual-line
+  "\C-f" 'evil-forward-char
+  "\C-b" 'evil-backward-char
+  "\C-k" 'kill-line)
+
+(setq org-todo-keywords
+      '(
+        (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
+        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+        ))
+
+(setq org-todo-keyword-faces
+      '(("IDEA" . (:foreground "GoldenRod" :weight bold))
+        ("NEXT" . (:foreground "IndianRed1" :weight bold))
+        ("STARTED" . (:foreground "OrangeRed" :weight bold))
+        ("WAITING" . (:foreground "coral" :weight bold))
+        ("CANCELED" . (:foreground "LimeGreen" :weight bold))
+        ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
+        ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))
+        ))
+
+(setq org-tag-persistent-alist
+      '((:startgroup . nil)
+        ("HOME" . ?h)
+        ("RESEARCH" . ?r)
+        ("TEACHING" . ?t)
+        (:endgroup . nil)
+        (:startgroup . nil)
+        ("OS" . ?o)
+        ("DEV" . ?d)
+        ("WWW" . ?w)
+        (:endgroup . nil)
+        (:startgroup . nil)
+        ("EASY" . ?e)
+        ("MEDIUM" . ?m)
+        ("HARD" . ?a)
+        (:endgroup . nil)
+        ("URGENT" . ?u)
+        ("KEY" . ?k)
+        ("BONUS" . ?b)
+        ("noexport" . ?x)
+        )
+      )
+
+(setq org-tag-faces
+      '(
+        ("HOME" . (:foreground "GoldenRod" :weight bold))
+        ("RESEARCH" . (:foreground "GoldenRod" :weight bold))
+        ("TEACHING" . (:foreground "GoldenRod" :weight bold))
+        ("OS" . (:foreground "IndianRed1" :weight bold))
+        ("DEV" . (:foreground "IndianRed1" :weight bold))
+        ("WWW" . (:foreground "IndianRed1" :weight bold))
+        ("URGENT" . (:foreground "Red" :weight bold))
+        ("KEY" . (:foreground "Red" :weight bold))
+        ("EASY" . (:foreground "OrangeRed" :weight bold))
+        ("MEDIUM" . (:foreground "OrangeRed" :weight bold))
+        ("HARD" . (:foreground "OrangeRed" :weight bold))
+        ("BONUS" . (:foreground "GoldenRod" :weight bold))
+        ("noexport" . (:foreground "LimeGreen" :weight bold))
+        )
+)
 
 (use-package evil-org
   :commands evil-org-mode
