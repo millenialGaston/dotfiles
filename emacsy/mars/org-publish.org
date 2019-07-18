@@ -1,0 +1,963 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<!-- Created by htmlize-1.51 in css mode. -->
+<html>
+  <head>
+    <title>org-publish-html-tutorial.org</title>
+    <style type="text/css">
+    <!--
+      body {
+        color: #000000;
+        background-color: #ffffff;
+      }
+      .bold {
+        /* bold */
+        font-weight: bold;
+      }
+      .builtin {
+        /* font-lock-builtin-face */
+        font-weight: bold;
+      }
+      .comment {
+        /* font-lock-comment-face */
+        font-weight: bold;
+        font-style: italic;
+      }
+      .comment-delimiter {
+        /* font-lock-comment-delimiter-face */
+        font-weight: bold;
+        font-style: italic;
+      }
+      .constant {
+        /* font-lock-constant-face */
+        font-weight: bold;
+        text-decoration: underline;
+      }
+      .italic {
+        /* italic */
+        font-style: italic;
+      }
+      .keyword {
+        /* font-lock-keyword-face */
+        font-weight: bold;
+      }
+      .org-block {
+      }
+      .org-block-begin-line {
+        /* org-block-begin-line */
+        font-weight: bold;
+        font-style: italic;
+      }
+      .org-block-end-line {
+        /* org-block-end-line */
+        font-weight: bold;
+        font-style: italic;
+      }
+      .org-code {
+      }
+      .org-document-info {
+      }
+      .org-document-info-keyword {
+      }
+      .org-document-title {
+        /* org-document-title */
+        font-weight: bold;
+      }
+      .org-footnote {
+        /* org-footnote */
+        text-decoration: underline;
+      }
+      .org-formula {
+        /* org-formula */
+        font-weight: bold;
+        font-style: italic;
+      }
+      .org-hide {
+      }
+      .org-level-1 {
+        /* org-level-1 */
+        font-weight: bold;
+      }
+      .org-level-2 {
+        /* org-level-2 */
+        font-weight: bold;
+        font-style: italic;
+      }
+      .org-level-3 {
+        /* org-level-3 */
+        font-weight: bold;
+      }
+      .org-link {
+        /* org-link */
+        text-decoration: underline;
+      }
+      .org-meta-line {
+        /* org-meta-line */
+        font-weight: bold;
+        font-style: italic;
+      }
+      .org-property-value {
+      }
+      .org-special-keyword {
+        /* org-special-keyword */
+        font-weight: bold;
+      }
+      .org-table {
+      }
+      .org-target {
+        /* org-target */
+        text-decoration: underline;
+      }
+      .org-verbatim {
+      }
+      .regexp-grouping-backslash {
+        /* font-lock-regexp-grouping-backslash */
+        font-weight: bold;
+      }
+      .regexp-grouping-construct {
+        /* font-lock-regexp-grouping-construct */
+        font-weight: bold;
+      }
+      .string {
+        /* font-lock-string-face */
+        font-style: italic;
+      }
+
+      a {
+        color: inherit;
+        background-color: inherit;
+        font: inherit;
+        text-decoration: inherit;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    -->
+    </style>
+  </head>
+  <body>
+    <pre>
+<span class="org-meta-line">#+OPTIONS:    H:3 num:nil toc:t \n:nil ::t |:t ^:t -:t f:t *:t tex:t d:(HIDE) tags:not-in-toc</span>
+<span class="org-meta-line">#+STARTUP:    align fold nodlcheck hidestars oddeven lognotestate</span>
+<span class="org-meta-line">#+SEQ_TODO:   TODO(t) INPROGRESS(i) WAITING(w@) | DONE(d) CANCELED(c@)</span>
+<span class="org-meta-line">#+TAGS:       Write(w) Update(u) Fix(f) Check(c)</span>
+<span class="org-document-info-keyword">#+TITLE:</span>      <span class="org-document-title">Publishing Org-mode files to HTML
+</span><span class="org-document-info-keyword">#+AUTHOR:</span>     <span class="org-document-info">Sebastian Rose
+</span><span class="org-document-info-keyword">#+EMAIL:</span>      <span class="org-document-info">sebastian_rose gmx de
+</span><span class="org-meta-line">#+LANGUAGE:   en</span>
+<span class="org-meta-line">#+PRIORITIES: A C B</span>
+<span class="org-meta-line">#+CATEGORY:   worg-tutorial</span>
+
+
+<span class="org-link"><a href="file:../index.org">{Back to Worg's index}</a></span>
+
+<span class="org-level-1">* Introduction</span>
+
+  This Tutorial describes one of many ways to publishing Org-mode files to
+  XHTML. We use the publishing mechanism to keep the <span class="org-verbatim">=*.html=</span> files separated
+  from our <span class="org-verbatim">=*.org=</span> files and to access them via web browser. Simply exporting the
+  Org-mode files to HTML would leave them in <span class="org-verbatim">=~/org/=</span>.
+
+  The XHTML files we create will work every where, on any host, with or without
+  network access, and even when accessed through the <span class="org-verbatim">=</span><span class="org-link"><span class="org-verbatim"><a href="file:///">file:///</a></span></span><span class="org-verbatim">=</span> protocol. To
+  achieve this goal, we use
+
+  - no absolute paths in HTML,
+  - no server side scripting to navigate our output directories,
+  - no <span class="org-verbatim">=base=</span> element (which is optional as of XHTML 1.0 strict) and
+  - no software, but emacs, Org-mode and a web browser.
+
+  All this means, we are able to check and use the result of work immediately,
+  everywhere.
+
+<span class="org-level-1">* Basics</span>
+
+  Throughout this tutorial, let's assume that all our Org-mode files live beneath
+  <span class="org-verbatim">=~/org/=</span> and we publish them to <span class="org-verbatim">=~/public_html/=</span>.
+
+  Let's further assume you're already familiar with the note taking basics in
+  org and able to add a little content to the Org-mode files we add to our project
+  during this tutorial. Please add at least one headline to each of the files.
+
+  The first thing to do is to create the folder <span class="org-verbatim">=~/org=</span>. This is where our notes
+  files live. Inside <span class="org-verbatim">=~/org/=</span> we have a folder <span class="org-verbatim">=css/=</span> for stylesheets and
+  scripts, and a folder called <span class="org-verbatim">=img/=</span> (guess what's in there).
+
+  The first file we add to that folder (and to subdirectories later on) is called
+  <span class="org-verbatim">=index.org=</span>. This name was choosen, since Org will publish the files to those
+  with the basename of the source file plus the extension <span class="org-verbatim">=.html=</span> <span class="org-footnote">[fn:1]</span>. Thus
+  <span class="org-verbatim">=~/org/index.org=</span> will once be <span class="org-verbatim">=~/public_html/index.html=</span> -- the startpage.
+
+  Let's add another file and call it <span class="org-verbatim">=~/org/remember.org=</span>. After adding a
+  stylesheet, <span class="org-verbatim">=~/org/=</span> looks like this:
+
+  <span class="org-code">: ~/org/
+</span>  <span class="org-code">:    |- css/
+</span>  <span class="org-code">:    |  `- stylesheet.css
+</span>  <span class="org-code">:    |- img/
+</span>  <span class="org-code">:    |- index.org
+</span>  <span class="org-code">:    `- remember.org
+</span>
+  When ever you want to add link to a file, do it the usual way. To link from
+  <span class="org-verbatim">=index.org=</span> to <span class="org-verbatim">=remember.org=</span>, just write
+  <span class="org-code">: <a href="file:remember.org">[[file:remember.org][remember]]</a>
+</span>  Org will convert those links to HTML links for you on export:
+  <span class="org-code">: &lt;a href="./remember.html"&gt;remember&lt;/a&gt;
+</span>
+  Same is true for images. To add an image, put it in <span class="org-verbatim">=~/org/img/test.jpg=</span> and
+  refer to it by
+  <span class="org-code">: <a href="file:img/test.jpg">[[file:img/test.jpg]]</a>
+</span>
+  You may test your links by clicking on them. To test image links you may also
+  try to turn on <span class="org-verbatim">=iimage-mode=</span> <span class="org-footnote">[fn:2]</span> which works without problems here.
+
+  Optionally, set up the stylesheet as shown in section <span class="org-link">Special comment
+  section</span>. The recommended way is to use a real stylesheet though.
+
+<span class="org-level-1">* Publishing the </span><span class="org-level-1"><span class="italic">/org/</span></span><span class="org-level-1"> project</span>
+
+  To publish the <span class="org-verbatim">=~/org/=</span> project to HTML, we'll have to setup the variable
+  <span class="org-verbatim">=org-publish-project-alist=</span> <span class="org-footnote">[fn:3]</span>.  I tend to split each project in three basic
+  <span class="italic">/components/</span> as described in the manual. We need these different components,
+  since we want org to use two different functions to publish dynamic content
+  (org =&gt; html) and static content like scripts, images, stylesheets or even
+  .htaccess files (org =&gt; copy). The third component is just for convenience and
+  tells org to execute the former ones.
+
+  <span class="org-verbatim">=org-publish-project-alist=</span> may be adjusted using customize (<span class="org-verbatim">=M-x
+  customize-variable RET org-publish-project-alist RET=</span>), but I prefere to
+  use an extra file to setup my projects, since there are quite a few. To follow
+  this tutorial use the <span class="org-verbatim">=*scratch*=</span> buffer and put all the Lisp in this section
+  in there.
+
+  First of all, enter this into the <span class="org-verbatim">=*scratch*=</span> buffer:
+
+<span class="org-block-begin-line">#+begin_src emacs-lisp
+</span><span class="org-block">(</span><span class="org-block"><span class="keyword">require</span></span><span class="org-block"> '</span><span class="org-block"><span class="constant">ox-publish</span></span><span class="org-block">)
+(</span><span class="org-block"><span class="keyword">setq</span></span><span class="org-block"> org-publish-project-alist
+      '(
+
+       </span><span class="org-block"><span class="comment-delimiter">;; </span></span><span class="org-block"><span class="comment">... add all the components here (see below)...
+</span></span><span class="org-block">
+      ))
+</span><span class="org-block-end-line">#+end_src
+</span>
+  Be sure to put all the <span class="italic">/components/</span> below right there where the comment line
+  is now.
+
+<span class="org-hide">*</span><span class="org-level-2">* The </span><span class="org-level-2"><span class="italic">/notes/</span></span><span class="org-level-2"> component</span>
+
+   The <span class="italic">/notes/</span> component publishes all the Org-mode files to HTML. Hence the
+   <span class="org-verbatim">=publishing-function=</span> is set to <span class="org-verbatim">=org-publish-org-to-html=</span>. Here is an example
+   of the notes component:
+
+<span class="org-block-begin-line">#+begin_src emacs-lisp
+</span><span class="org-block">(</span><span class="org-block"><span class="string">"org-notes"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:base-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/org/"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:base-extension</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"org"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:publishing-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/public_html/"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:recursive</span></span><span class="org-block"> t
+ </span><span class="org-block"><span class="builtin">:publishing-function</span></span><span class="org-block"> org-html-publish-to-html
+ </span><span class="org-block"><span class="builtin">:headline-levels</span></span><span class="org-block"> 4             </span><span class="org-block"><span class="comment-delimiter">; </span></span><span class="org-block"><span class="comment">Just the default for this project.
+</span></span><span class="org-block"> </span><span class="org-block"><span class="builtin">:auto-preamble</span></span><span class="org-block"> t
+ )
+</span><span class="org-block-end-line">#+end_src
+</span>
+   Note, that <span class="org-verbatim">=headline-levels=</span> may be adjusted <span class="org-link"><a href="Overwrite the defaults">on a per file basis</a></span> to overwrite
+   the default.
+
+   The most important settings here are:
+
+   <span class="org-table">| </span><span class="org-formula"><span class="org-verbatim">=base-directory=</span></span><span class="org-formula">       </span><span class="org-table">| The components root directory.                                                                                                |</span>
+   <span class="org-table">| </span><span class="org-formula"><span class="org-verbatim">=base-extension=</span></span><span class="org-formula">       </span><span class="org-table">| Filename suffix without the dot.                                                                                              |</span>
+   <span class="org-table">| </span><span class="org-formula"><span class="org-verbatim">=publishing-directory=</span></span><span class="org-formula"> </span><span class="org-table">| The base directory where all our files will be published.                                                                     |</span>
+   <span class="org-table">| </span><span class="org-formula"><span class="org-verbatim">=recursive=</span></span><span class="org-formula">            </span><span class="org-table">| If </span><span class="org-table"><span class="org-verbatim">=t=</span></span><span class="org-table">, include subdirectories - we want that. Subdirectories in </span><span class="org-table"><span class="org-verbatim">=:publishing-directory=</span></span><span class="org-table"> are created if they don't yet exist. |</span>
+   <span class="org-table">| </span><span class="org-formula"><span class="org-verbatim">=publishing-function=</span></span><span class="org-formula">  </span><span class="org-table">| If and how org should process the files in this component. In this case: convert the Org-mode files to HTML.                  |</span>
+
+<span class="org-hide">*</span><span class="org-level-2">* The </span><span class="org-level-2"><span class="italic">/static/</span></span><span class="org-level-2"> component</span>
+
+   The <span class="italic">/static/</span> component just copies files (and their folders) from
+   <span class="org-verbatim">=:base-directory=</span> to <span class="org-verbatim">=:publishing-directory=</span> without changing them. Thus
+   let's tell Org-mode to use the function <span class="org-verbatim">=org-publish-attachment=</span>:
+
+<span class="org-block-begin-line">#+begin_src emacs-lisp
+</span><span class="org-block">(</span><span class="org-block"><span class="string">"org-static"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:base-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/org/"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:base-extension</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"css</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">js</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">png</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">jpg</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">gif</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">pdf</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">mp3</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">ogg</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">swf"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:publishing-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/public_html/"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:recursive</span></span><span class="org-block"> t
+ </span><span class="org-block"><span class="builtin">:publishing-function</span></span><span class="org-block"> org-publish-attachment
+ )
+</span><span class="org-block-end-line">#+end_src
+</span>
+   <span class="bold">*Note*</span> that <span class="org-verbatim">=:publishing-function=</span> is set to <span class="org-verbatim">=org-publish-attachment=</span>.
+
+<span class="org-hide">*</span><span class="org-level-2">* The </span><span class="org-level-2"><span class="italic">/publish/</span></span><span class="org-level-2"> component</span>
+
+   To publish all with one command, we add the <span class="italic">/publish/</span> component. For this
+   component I usually drop the suffix and just use the basename of the
+   project.
+
+<span class="org-block-begin-line">#+begin_src emacs-lisp
+</span><span class="org-block"> (</span><span class="org-block"><span class="string">"org"</span></span><span class="org-block"> </span><span class="org-block"><span class="builtin">:components</span></span><span class="org-block"> (</span><span class="org-block"><span class="string">"org-notes"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"org-static"</span></span><span class="org-block">))
+</span><span class="org-block-end-line">#+end_src
+</span>
+   Now <span class="org-verbatim">=M-x org-publish-project RET org RET=</span> publishes everything
+   recursively to <span class="org-verbatim">=~/public_html/=</span>. Target directories are created, if they
+   don't yet exist.
+
+<span class="org-hide">*</span><span class="org-level-2">* Pooh - can we publish now?</span>
+
+   The good message is <span class="bold">*yes, we can*</span>. Just one little hump. Since we've put the
+   definition for our publishing components in the <span class="org-verbatim">=*scratch*=</span> buffer, again,
+   make sure all the <span class="italic">/components/</span> are enclosed by the lines
+
+<span class="org-block-begin-line">#+begin_src emacs-lisp
+</span><span class="org-block">(</span><span class="org-block"><span class="keyword">require</span></span><span class="org-block"> '</span><span class="org-block"><span class="constant">ox-publish</span></span><span class="org-block">)
+(</span><span class="org-block"><span class="keyword">setq</span></span><span class="org-block"> org-publish-project-alist
+      '(
+
+       </span><span class="org-block"><span class="comment-delimiter">;; </span></span><span class="org-block"><span class="comment">... all the components ...
+</span></span><span class="org-block">
+      ))
+</span><span class="org-block-end-line">#+end_src
+</span>
+   Move to the end of the first line and press <span class="org-verbatim">=C-x C-e=</span> to load
+   <span class="org-verbatim">=org-publish=</span>. Now go to the end of the last line and press <span class="org-verbatim">=C-x C-e=</span>
+   again. Repeat the last step after every change to your
+   <span class="org-verbatim">=org-publish-project-alist=</span>.
+
+   To publish your Org-mode files just type
+   <span class="org-verbatim">=M-x org-publish-project RET org RET=</span> or use one of the shortcuts listed in
+   the manual. If nothing went wrong, you should now be able to point your
+   browser to <span class="org-link"><a href="http://localhost/~user/">http://localhost/~user/</a></span>, if <span class="org-verbatim">=mod_userdir=</span> is set up. If
+   not, simply navigate to <span class="org-link"><a href="file:///home/user/public_html">file:///home/user/public_html</a></span> (you might use
+   <span class="italic">/file -&gt; open/</span> from the file menu of your browser.
+
+<span class="org-level-1">* Adding directories</span>
+
+  As we add more and more files to <span class="org-verbatim">=~/org/=</span>, we will soon end up with filenames
+  like '<span class="org-verbatim">=networking-ssh-sshd-config.org=</span>' or longer. What we need is a
+  directory structure:
+
+  <span class="org-code">: ~/org/
+</span>  <span class="org-code">:   |- css/
+</span>  <span class="org-code">:   |  `- stylesheet.css
+</span>  <span class="org-code">:   |- Emacs
+</span>  <span class="org-code">:   |  |- index.org
+</span>  <span class="org-code">:   |  |- gnus.org
+</span>  <span class="org-code">:   |  |- org.org
+</span>  <span class="org-code">:   |  `- snippets.org
+</span>  <span class="org-code">:   |- img/
+</span>  <span class="org-code">:   |- index.org
+</span>  <span class="org-code">:   `- remember.org
+</span>
+  If we hadn't added
+  <span class="org-code">:      :recursive t
+</span>  in the <span class="italic">/notes/</span> and <span class="italic">/static/</span> components already, we would have to do it now at
+  the latest to export the subdirectories too.
+
+<span class="org-level-1">* Overwrite the defaults</span>
+
+  The defaults set by <span class="org-verbatim">=org-publish-project-alist=</span> may be overwritten. You might
+  want to justify the export properties for single files. Be it the level of
+  headlines, include extry scripts or different stylesheets. Org offers ways to adjust
+  the settings for a single file.
+
+<span class="org-hide">*</span><span class="org-level-2">* The export options template</span>
+
+   The first choice is the <span class="italic">/export options template/</span> on top of the file. When in
+   an Org-mode file, you may insert basic information using <span class="org-verbatim">=C-c C-e #=</span>
+   (<span class="org-verbatim">=org-export-dispatch=</span>) plus "template".  You will be prompted for a template
+   choice.  "default" will provide a template for common options, and "html"
+   will provide a template for HTML-specific options.
+
+   WARNING: Do <span class="bold">*not*</span> copy lines from the sample output below into your
+   files. The template might change from release to release. Instead,
+   insert a template as above and delete any entries that are not
+   applicable.
+
+   The default option inserts the following lines:
+   
+   <span class="org-code">: #+TITLE: filename with the extension omitted
+</span>   <span class="org-code">: #+DATE: &lt;2013-06-04 Tue&gt;
+</span>   <span class="org-code">: #+AUTHOR: Your name
+</span>   <span class="org-code">: #+EMAIL: Your email address
+</span>   <span class="org-code">: #+OPTIONS: ':t *:t -:t ::t &lt;:t H:3 \n:nil ^:t arch:headline author:t c:nil
+</span>   <span class="org-code">: #+OPTIONS: creator:comment d:(not LOGBOOK) date:t e:t email:nil f:t inline:t
+</span>   <span class="org-code">: #+OPTIONS: num:t p:nil pri:nil stat:t tags:t tasks:t tex:t timestamp:t toc:t
+</span>   <span class="org-code">: #+OPTIONS: todo:t |:t
+</span>   <span class="org-code">: #+CREATOR: Emacs 24.3.50.3 (Org mode 8.0.3)
+</span>   <span class="org-code">: #+DESCRIPTION:
+</span>   <span class="org-code">: #+EXCLUDE_TAGS: noexport
+</span>   <span class="org-code">: #+KEYWORDS:
+</span>   <span class="org-code">: #+LANGUAGE: en
+</span>   <span class="org-code">: #+SELECT_TAGS: export
+</span>
+   and the html option will add the following:
+
+   <span class="org-code">: #+OPTIONS: html-postamble:auto html-preamble:t tex:t
+</span>   <span class="org-code">: #+CREATOR: &lt;a href="<a href="http://www.gnu.org/software/emacs/">http://www.gnu.org/software/emacs/</a>"&gt;Emacs&lt;/a&gt; 24.3.50.3 (&lt;a href="<a href="https://orgmode.org">https://orgmode.org</a>"&gt;Org&lt;/a&gt; mode 8.0.3)
+</span>   <span class="org-code">: #+HTML_CONTAINER: div
+</span>   <span class="org-code">: #+HTML_DOCTYPE: xhtml-strict
+</span>   <span class="org-code">: #+HTML_HEAD:
+</span>   <span class="org-code">: #+HTML_HEAD_EXTRA:
+</span>   <span class="org-code">: #+HTML_HTML5_FANCY:
+</span>   <span class="org-code">: #+HTML_INCLUDE_SCRIPTS:
+</span>   <span class="org-code">: #+HTML_INCLUDE_STYLE:
+</span>   <span class="org-code">: #+HTML_LINK_HOME:
+</span>   <span class="org-code">: #+HTML_LINK_UP:
+</span>   <span class="org-code">: #+HTML_MATHJAX:
+</span>   <span class="org-code">: #+INFOJS_OPT:
+</span>
+   All we have to do now is to alter the options to match our needs. All the
+   options are listed in the wonderful Org-mode manual. Note though, that these
+   options are only parsed on startup (i.e., when you first open the file). To
+   explicitly apply your new options move on any of those lines and press <span class="org-verbatim">=C-c=</span>
+   twice.
+
+<span class="org-hide">*</span><span class="org-level-2">* </span><span class="org-target">&lt;&lt;&lt;Special comment section&gt;&gt;&gt;</span>
+
+   Also, CSS style variables may be using a special section may be
+   #insert/appended to Org-mode files:
+
+   <span class="org-code">: * COMMENT html style specifications
+</span>   <span class="org-code">:
+</span>   <span class="org-code">: # Local Variables&#58;
+</span>   <span class="org-code">: # org-export-html-style: "&lt;link rel=\"stylesheet\" type=\"text/css\" href=\"css/stylesheet.css\" /&gt;"
+</span>   <span class="org-code">: # End:
+</span>
+   <span class="org-verbatim">=css/stylesheet.css=</span> suits the needs for a file in the root folder. Use \\
+   <span class="org-verbatim">=../css/stylesheet.css=</span> in a subfolder (first level), \\
+   <span class="org-verbatim">=../../css/stylesheet.css=</span> for a file in a sub-sub-folder.
+
+<span class="org-level-1">* Tired of export templates?</span>
+
+ If you're like me, you will soon get tired of adding the same export options
+ template to numerous files and adjust the title and paths in it. Luckily,
+ Org-mode supports laziness and offers an additional way to set up files. All
+ we need is a directory (e.g. <span class="org-verbatim">=~/.emacs.d/org-templates/=</span>) and create the
+ following files there:
+
+ + <span class="org-verbatim">=level-0.org=</span> \\
+   This file contains all export options lines. The <span class="org-link">special comment section</span>
+   will not work for files in subdirectories. Hence we always use the export
+   options line
+   <span class="org-special-keyword">:#+STYLE:</span> <span class="org-property-value">&lt;link rel="stylesheet" type="text/css" href="stylesheet.css" /&gt;</span>
+   ...suitable for each file in the projects root folder
+   (<span class="org-verbatim">=~/org/=</span> or <span class="org-verbatim">=~/B/=</span> in the examples). Just drop the <span class="org-verbatim">=#+TITLE=</span> since this
+   will be different for every file and automatically set on export (based on
+   the filename if omitted).
+ + <span class="org-verbatim">=level-1.org=</span> \\
+   This file contains all export options lines for the stylesheet suitable for
+   each file in a subfolder of the projects root folder (e.g. <span class="org-verbatim">=~/org/emacs/=</span>
+   or <span class="org-verbatim">=~/org/networking/=</span>). Just drop the <span class="org-verbatim">=#+TITLE=</span> again. The options line
+   for the stylesheet looks like this:
+   <span class="org-special-keyword">:#+STYLE:</span> <span class="org-property-value">&lt;link rel="stylesheet" type="text/css" href="../stylesheet.css" /&gt;</span>
+
+ + Add more files for more levels.
+
+ Now remove the <span class="org-link">special comment section</span> from the end of your Org-mode files in
+ the project folders and change the export options template to
+
+ <span class="org-code">: #+SETUPFILE: ~/.emacs.d/org-templates/level-N.org
+</span> <span class="org-code">: #+TITLE: My Title
+</span>
+ Replace <span class="org-verbatim">=N=</span> with distance to the root folder (<span class="org-verbatim">=0=</span>, <span class="org-verbatim">=1=</span> etc.) of your project
+ and press <span class="org-verbatim">=C-c=</span> twice while still on this line to apply the
+ changes. Subsequent lines still overwrite the settings for just this one file.
+
+
+<span class="org-hide">*</span><span class="org-level-2">* More level files</span>
+
+  Also, these <span class="italic">/level-N/</span> files give us the chance to easily switch between different
+  export setups. As an example, we could have a separate stylesheet and
+  <span class="org-verbatim">=org-info.js=</span> setup for presentations, and put the appropriate options in a
+  file named <span class="org-verbatim">=level-0-slides.org=</span>:
+
+  <span class="org-code">: #+INFOJS_OPT: path:org-info.js
+</span>  <span class="org-code">: #+INFOJS_OPT: toc:nil view:slide
+</span>  <span class="org-code">: #+STYLE: &lt;link rel="stylesheet" type="text/css" href="slides.css" /&gt;
+</span>
+  Now it's as simple as typing '<span class="italic">/-slides/</span>' to change the appearance of any file
+  in our project.
+
+<span class="org-level-1">* More Projects</span>
+
+   As we get used to note taking in org, we might add an <span class="org-verbatim">=org=</span> directory to most
+   of our projects. All those projects are published as well. Project '<span class="org-verbatim">=~/B/=</span>'
+   is published to '<span class="org-verbatim">=~/public_html/B/=</span>', '<span class="org-verbatim">=~/C/=</span>' is published to
+   '<span class="org-verbatim">=~/public_html/C/=</span>', and so on. This leads to the problem of common
+   stylesheets and current JavaScripts --- and to a new <span class="italic">/component/</span>.
+
+<span class="org-hide">*</span><span class="org-level-2">* The </span><span class="org-level-2"><span class="italic">/inherit/</span></span><span class="org-level-2"> component</span>
+
+   Once we get tired of copying the static files from one project to another, the
+   following configuration does the trick for us. We simply add the <span class="italic">/inherit/</span>
+   component, that imports all the static files from our <span class="org-verbatim">=~/org/=</span> directory <span class="org-footnote">[fn:4]</span>.
+   From now on, it will be sufficient to edit stylesheets and scripts just
+   there.
+
+<span class="org-block-begin-line">#+begin_src emacs-lisp
+</span><span class="org-block"> (</span><span class="org-block"><span class="string">"B-inherit"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:base-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/org/"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:recursive</span></span><span class="org-block"> t
+  </span><span class="org-block"><span class="builtin">:base-extension</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"css</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">js"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:publishing-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/public_html/B/"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:publishing-function</span></span><span class="org-block"> org-publish-attachment
+ )
+
+ (</span><span class="org-block"><span class="string">"B-org"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:base-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/B/"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:auto-index</span></span><span class="org-block"> t
+ </span><span class="org-block"><span class="builtin">:index-filename</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"sitemap.org"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:index-title</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"Sitemap"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:recursive</span></span><span class="org-block"> t
+ </span><span class="org-block"><span class="builtin">:base-extension</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"org"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:publishing-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/public_html/B/"</span></span><span class="org-block">
+ </span><span class="org-block"><span class="builtin">:publishing-function</span></span><span class="org-block"> org-publish-org-to-html
+ </span><span class="org-block"><span class="builtin">:headline-levels</span></span><span class="org-block"> 3
+ </span><span class="org-block"><span class="builtin">:auto-preamble</span></span><span class="org-block"> t
+ )
+ (</span><span class="org-block"><span class="string">"B-static"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:base-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/B/"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:recursive</span></span><span class="org-block"> t
+  </span><span class="org-block"><span class="builtin">:base-extension</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"css</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">js</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">png</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">jpg</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">gif</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">pdf</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">mp3</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">ogg</span></span><span class="org-block"><span class="string"><span class="regexp-grouping-backslash">\\</span></span></span><span class="org-block"><span class="string"><span class="regexp-grouping-construct">|</span></span></span><span class="org-block"><span class="string">swf"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:publishing-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/public_html/B/"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:publishing-function</span></span><span class="org-block"> org-publish-attachment)
+
+ (</span><span class="org-block"><span class="string">"B"</span></span><span class="org-block"> </span><span class="org-block"><span class="builtin">:components</span></span><span class="org-block"> (</span><span class="org-block"><span class="string">"B-inherit"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"B-notes"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"B-static"</span></span><span class="org-block">))
+</span><span class="org-block-end-line">#+end_src
+</span>
+   <span class="bold">*Note*</span>, that the inheritance trick works for non org directories. You might
+   want to keep all your stylesheets and scripts in a single place, or even add
+   more <span class="italic">/inheritance/</span> to your projects, to import sources from upstream.
+
+   <span class="bold">*Note*</span> also, that <span class="org-verbatim">=B-inherit=</span> exports directly to the web. If you want to track
+   the changes to <span class="org-verbatim">=~org/*.css=</span> directly in <span class="org-verbatim">=~/B=</span>, you must ensure, that <span class="org-verbatim">=B-inherit=</span> is
+   the first component in <span class="org-verbatim">=B=</span> since the components in <span class="org-verbatim">=B=</span> are executed in
+   the sequence listed: first get the new stylesheet into <span class="org-verbatim">=B=</span>, then execute
+   <span class="org-verbatim">=B-static=</span>.
+
+<span class="org-hide">**</span><span class="org-level-3">* One more Example</span>
+
+    As I use <span class="org-link"><a href="file:../code/org-info-js/index.org">org-info.js</a></span> and track Worg git, I use "<span class="org-verbatim">=inherit-org-info-js=</span>" in all
+    my <span class="org-verbatim">=org=</span> projects:
+
+<span class="org-block-begin-line">#+begin_src emacs-lisp
+</span><span class="org-block"> (</span><span class="org-block"><span class="string">"inherit-org-info-js"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:base-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/develop/org/Worg/code/org-info-js/"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:recursive</span></span><span class="org-block"> t
+  </span><span class="org-block"><span class="builtin">:base-extension</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"js"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:publishing-directory</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"~/org/"</span></span><span class="org-block">
+  </span><span class="org-block"><span class="builtin">:publishing-function</span></span><span class="org-block"> org-publish-attachment)
+
+ </span><span class="org-block"><span class="comment-delimiter">;; </span></span><span class="org-block"><span class="comment">... all the rest ... ;;
+</span></span><span class="org-block">
+ (</span><span class="org-block"><span class="string">"B"</span></span><span class="org-block"> </span><span class="org-block"><span class="builtin">:components</span></span><span class="org-block"> (</span><span class="org-block"><span class="string">"inherit-org-info-js"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"B-inherit"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"B-notes"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"B-static"</span></span><span class="org-block">))
+ (</span><span class="org-block"><span class="string">"C"</span></span><span class="org-block"> </span><span class="org-block"><span class="builtin">:components</span></span><span class="org-block"> (</span><span class="org-block"><span class="string">"inherit-org-info-js"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"C-inherit"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"C-notes"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"C-static"</span></span><span class="org-block">))
+ (</span><span class="org-block"><span class="string">"D"</span></span><span class="org-block"> </span><span class="org-block"><span class="builtin">:components</span></span><span class="org-block"> (</span><span class="org-block"><span class="string">"inherit-org-info-js"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"D-inherit"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"D-notes"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"D-static"</span></span><span class="org-block">))
+ (</span><span class="org-block"><span class="string">"E"</span></span><span class="org-block"> </span><span class="org-block"><span class="builtin">:components</span></span><span class="org-block"> (</span><span class="org-block"><span class="string">"inherit-org-info-js"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"E-inherit"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"E-notes"</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"E-static"</span></span><span class="org-block">))
+</span><span class="org-block-end-line">#+end_src
+</span>
+    ...means, <span class="org-verbatim">=B=</span> <span class="org-verbatim">=C=</span> <span class="org-verbatim">=D=</span> and <span class="org-verbatim">=E=</span> use my local stylesheets and always the latest
+    version of <span class="org-verbatim">=org-info.js=</span>.
+
+<span class="org-level-1">* Overview</span>
+
+  Once there are lots of files and subdirectories, we're in the need of ways to
+  easily navigate our notes in a browser. What we need now, is an index, an
+  overview of all our note files.
+
+<span class="org-hide">*</span><span class="org-level-2">* The sitemap</span>
+
+   Org-modes great publishing also generates a recursive sitemap. Its name 
+   defaults to <span class="org-verbatim">=sitemap.org=</span>, which get's in our way, since we have a real 
+   startpage as <span class="org-verbatim">=sitemap.html=</span> <span class="org-footnote">[fn:5]</span>. Fortunately there is a configuration 
+   option to change the name of the generated sitemap. To generate the sitemap,
+   add these lines to the <span class="italic">/notes/</span> component:
+
+<span class="org-block-begin-line">#+begin_src emacs-lisp
+</span><span class="org-block"> </span><span class="org-block"><span class="builtin">:auto-sitemap</span></span><span class="org-block"> t                </span><span class="org-block"><span class="comment-delimiter">; </span></span><span class="org-block"><span class="comment">Generate sitemap.org automagically...
+</span></span><span class="org-block"> </span><span class="org-block"><span class="builtin">:sitemap-filename</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"sitemap.org"</span></span><span class="org-block">  </span><span class="org-block"><span class="comment-delimiter">; </span></span><span class="org-block"><span class="comment">... call it sitemap.org (it's the default)...
+</span></span><span class="org-block"> </span><span class="org-block"><span class="builtin">:sitemap-title</span></span><span class="org-block"> </span><span class="org-block"><span class="string">"Sitemap"</span></span><span class="org-block">         </span><span class="org-block"><span class="comment-delimiter">; </span></span><span class="org-block"><span class="comment">... with title 'Sitemap'.
+</span></span><span class="org-block-end-line">#+end_src
+</span>
+   The sitemap will reflect the tree structure of the project. To access the
+   sitemap easily, we could do two things:
+
+   1. Setup the '<span class="italic">/UP/</span>' link of the Startpage to link to <span class="org-verbatim">=sitemap.html=</span> (see next
+      section),
+   2. use the '<span class="org-verbatim">=#+INCLUDE: sitemap.org=</span>' directive. Most of my Org-mode files
+      contain a chapter called "<span class="italic">/Links/</span>" at the end of the file, which contains
+      a subsection <span class="italic">/Sitemap/</span> that in turn just consists of that
+      diretive. For the <span class="org-verbatim">=index.org=</span> files in the root directory, I include the
+      sitemap as the first section.
+
+   You can also change the position of folders with <span class="org-verbatim">=:sitemap-sort-folders=</span>,
+   this can be set to <span class="org-verbatim">=last=</span> or <span class="org-verbatim">=first=</span> (default), to display folders last or 
+   first.
+
+<span class="org-hide">*</span><span class="org-level-2">* org-info.js</span>
+
+   Another way to get additional links to navigate the structure is
+   <span class="org-link"><a href="file:../code/org-info-js/index.org">org-info.js</a></span>. Let's set it up like this (either in every file, or in
+   <span class="org-verbatim">=org-level-N.org=</span>, where <span class="org-verbatim">=N &gt; 0=</span>):
+
+   <span class="org-code">: #+LINK_UP: index.html
+</span>
+   This makes the little <span class="italic">/UP/</span> link ('<span class="org-verbatim">=h=</span>') point to the <span class="org-verbatim">=index.html=</span> in the
+   current directory.
+
+   The <span class="org-verbatim">=index.org=</span> in the root of the project has the <span class="italic">/index file/</span> as section 2
+   (which I may reach pressing '<span class="org-verbatim">=n=</span>' then), and the same option set like this:
+
+   <span class="org-code">: #+LINK_UP: sitemap.html
+</span>
+   For an <span class="org-verbatim">=index.org=</span> in a subdirectory:
+
+   <span class="org-code">: #+LINK_UP: ../index.html
+</span>
+   The <span class="org-verbatim">=LINK_HOME=</span> always points to the same file:
+
+   <span class="org-code">: #+LINK_HOME: <a href="http://localhost/~user/index.html">http://localhost/~user/index.html</a>
+</span>
+   Please consider replacing the last one with a relative path (which will be
+   different for every level of subdirectories).
+
+   No matter where we are, we may always press <span class="org-verbatim">=H n=</span> and we face the sitemap.
+   No matter where we are, we may always press <span class="org-verbatim">=h=</span> to move up the tree.
+
+<span class="org-level-1">* Special symbols</span>
+
+  This is a list of LaTeX symbols understood by Org-mode. You may use most of
+  those LaTeX symbols to get the desired results (shown in the first column)
+  when exporting to HTML. Note though, that not all symbols are translated to
+  HTML. They are listed anyway, since they may be used for LaTeX export
+  nonetheless. Some characters in the first column are invisible (spaces). To
+  see them, mark the part of the table using the mouse.
+
+  You may produce special HTML characters for verbatim <span class="org-verbatim">=#+BEGIN\_HTML=</span> sections
+  using <span class="org-link"><a href="http://www-atm.physics.ox.ac.uk/user/iwi/charmap.html">http://www-atm.physics.ox.ac.uk/user/iwi/charmap.html</a></span> (download link on
+  the bottom of that page).
+
+
+  <span class="org-table">| Symbol      | LaTeX                    |</span>
+  <span class="org-table">|-------------+--------------------------|</span>
+  <span class="org-table">| \nbsp       | </span><span class="org-table"><span class="org-code">~\nbsp~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \iexcl      | </span><span class="org-table"><span class="org-code">~\iexcl~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \cent       | </span><span class="org-table"><span class="org-code">~\cent~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \pound      | </span><span class="org-table"><span class="org-code">~\pound~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \curren     | </span><span class="org-table"><span class="org-code">~\curren~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \yen        | </span><span class="org-table"><span class="org-code">~\yen~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \brvbar     | </span><span class="org-table"><span class="org-code">~\brvbar~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \vert       | </span><span class="org-table"><span class="org-code">~\vert~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \sect       | </span><span class="org-table"><span class="org-code">~\sect~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \uml        | </span><span class="org-table"><span class="org-code">~\uml~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \copy       | </span><span class="org-table"><span class="org-code">~\copy~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \ordf       | </span><span class="org-table"><span class="org-code">~\ordf~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \laquo      | </span><span class="org-table"><span class="org-code">~\laquo~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \not        | </span><span class="org-table"><span class="org-code">~\not~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \shy        | </span><span class="org-table"><span class="org-code">~\shy~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \reg        | </span><span class="org-table"><span class="org-code">~\reg~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \macr       | </span><span class="org-table"><span class="org-code">~\macr~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \deg        | </span><span class="org-table"><span class="org-code">~\deg~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \plusmn     | </span><span class="org-table"><span class="org-code">~\plusmn~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \sup1       | </span><span class="org-table"><span class="org-code">~\sup1~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \sup2       | </span><span class="org-table"><span class="org-code">~\sup2~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \sup3       | </span><span class="org-table"><span class="org-code">~\sup3~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \acute      | </span><span class="org-table"><span class="org-code">~\acute~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \micro      | </span><span class="org-table"><span class="org-code">~\micro~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \para       | </span><span class="org-table"><span class="org-code">~\para~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \middot     | </span><span class="org-table"><span class="org-code">~\middot~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \odot       | </span><span class="org-table"><span class="org-code">~\odot~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \star       | </span><span class="org-table"><span class="org-code">~\star~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \cedil      | </span><span class="org-table"><span class="org-code">~\cedil~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \ordm       | </span><span class="org-table"><span class="org-code">~\ordm~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \raquo      | </span><span class="org-table"><span class="org-code">~\raquo~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \frac14     | </span><span class="org-table"><span class="org-code">~\frac14~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \frac12     | </span><span class="org-table"><span class="org-code">~\frac12~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \frac34     | </span><span class="org-table"><span class="org-code">~\frac34~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \iquest     | </span><span class="org-table"><span class="org-code">~\iquest~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Agrave     | </span><span class="org-table"><span class="org-code">~\Agrave~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Aacute     | </span><span class="org-table"><span class="org-code">~\Aacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Acirc      | </span><span class="org-table"><span class="org-code">~\Acirc~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Atilde     | </span><span class="org-table"><span class="org-code">~\Atilde~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Auml       | </span><span class="org-table"><span class="org-code">~\Auml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \Aring      | </span><span class="org-table"><span class="org-code">~\Aring~</span></span><span class="org-table"> </span><span class="org-table"><span class="org-code">~\AA~</span></span><span class="org-table">           |</span>
+  <span class="org-table">| \AElig      | </span><span class="org-table"><span class="org-code">~\AElig~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Ccedil     | </span><span class="org-table"><span class="org-code">~\Ccedil~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Egrave     | </span><span class="org-table"><span class="org-code">~\Egrave~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Eacute     | </span><span class="org-table"><span class="org-code">~\Eacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Ecirc      | </span><span class="org-table"><span class="org-code">~\Ecirc~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Euml       | </span><span class="org-table"><span class="org-code">~\Euml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \Igrave     | </span><span class="org-table"><span class="org-code">~\Igrave~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Iacute     | </span><span class="org-table"><span class="org-code">~\Iacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Icirc      | </span><span class="org-table"><span class="org-code">~\Icirc~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Iuml       | </span><span class="org-table"><span class="org-code">~\Iuml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \ETH        | </span><span class="org-table"><span class="org-code">~\ETH~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \Ntilde     | </span><span class="org-table"><span class="org-code">~\Ntilde~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Ograve     | </span><span class="org-table"><span class="org-code">~\Ograve~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Oacute     | </span><span class="org-table"><span class="org-code">~\Oacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Ocirc      | </span><span class="org-table"><span class="org-code">~\Ocirc~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Otilde     | </span><span class="org-table"><span class="org-code">~\Otilde~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Ouml       | </span><span class="org-table"><span class="org-code">~\Ouml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \times      | </span><span class="org-table"><span class="org-code">~\times~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Oslash     | </span><span class="org-table"><span class="org-code">~\Oslash~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Ugrave     | </span><span class="org-table"><span class="org-code">~\Ugrave~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Uacute     | </span><span class="org-table"><span class="org-code">~\Uacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Ucirc      | </span><span class="org-table"><span class="org-code">~\Ucirc~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Uuml       | </span><span class="org-table"><span class="org-code">~\Uuml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \Yacute     | </span><span class="org-table"><span class="org-code">~\Yacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \THORN      | </span><span class="org-table"><span class="org-code">~\THORN~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \szlig      | </span><span class="org-table"><span class="org-code">~\szlig~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \agrave     | </span><span class="org-table"><span class="org-code">~\agrave~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \aacute     | </span><span class="org-table"><span class="org-code">~\aacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \acirc      | </span><span class="org-table"><span class="org-code">~\acirc~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \atilde     | </span><span class="org-table"><span class="org-code">~\atilde~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \auml       | </span><span class="org-table"><span class="org-code">~\auml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \aring      | </span><span class="org-table"><span class="org-code">~\aring~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \aelig      | </span><span class="org-table"><span class="org-code">~\aelig~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \ccedil     | </span><span class="org-table"><span class="org-code">~\ccedil~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \egrave     | </span><span class="org-table"><span class="org-code">~\egrave~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \eacute     | </span><span class="org-table"><span class="org-code">~\eacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \ecirc      | </span><span class="org-table"><span class="org-code">~\ecirc~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \euml       | </span><span class="org-table"><span class="org-code">~\euml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \igrave     | </span><span class="org-table"><span class="org-code">~\igrave~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \iacute     | </span><span class="org-table"><span class="org-code">~\iacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \icirc      | </span><span class="org-table"><span class="org-code">~\icirc~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \iuml       | </span><span class="org-table"><span class="org-code">~\iuml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \eth        | </span><span class="org-table"><span class="org-code">~\eth~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \ntilde     | </span><span class="org-table"><span class="org-code">~\ntilde~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \ograve     | </span><span class="org-table"><span class="org-code">~\ograve~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \oacute     | </span><span class="org-table"><span class="org-code">~\oacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \ocirc      | </span><span class="org-table"><span class="org-code">~\ocirc~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \otilde     | </span><span class="org-table"><span class="org-code">~\otilde~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \ouml       | </span><span class="org-table"><span class="org-code">~\ouml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \oslash     | </span><span class="org-table"><span class="org-code">~\oslash~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \ugrave     | </span><span class="org-table"><span class="org-code">~\ugrave~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \uacute     | </span><span class="org-table"><span class="org-code">~\uacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \ucirc      | </span><span class="org-table"><span class="org-code">~\ucirc~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \uuml       | </span><span class="org-table"><span class="org-code">~\uuml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \yacute     | </span><span class="org-table"><span class="org-code">~\yacute~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \thorn      | </span><span class="org-table"><span class="org-code">~\thorn~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \yuml       | </span><span class="org-table"><span class="org-code">~\yuml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \fnof       | </span><span class="org-table"><span class="org-code">~\fnof~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \Alpha      | </span><span class="org-table"><span class="org-code">~\Alpha~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Beta       | </span><span class="org-table"><span class="org-code">~\Beta~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \Gamma      | </span><span class="org-table"><span class="org-code">~\Gamma~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Delta      | </span><span class="org-table"><span class="org-code">~\Delta~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Epsilon    | </span><span class="org-table"><span class="org-code">~\Epsilon~</span></span><span class="org-table">               |</span>
+  <span class="org-table">| \Zeta       | </span><span class="org-table"><span class="org-code">~\Zeta~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \Eta        | </span><span class="org-table"><span class="org-code">~\Eta~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \Theta      | </span><span class="org-table"><span class="org-code">~\Theta~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Iota       | </span><span class="org-table"><span class="org-code">~\Iota~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \Kappa      | </span><span class="org-table"><span class="org-code">~\Kappa~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Lambda     | </span><span class="org-table"><span class="org-code">~\Lambda~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Mu         | </span><span class="org-table"><span class="org-code">~\Mu~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \Nu         | </span><span class="org-table"><span class="org-code">~\Nu~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \Xi         | </span><span class="org-table"><span class="org-code">~\Xi~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \Omicron    | </span><span class="org-table"><span class="org-code">~\Omicron~</span></span><span class="org-table">               |</span>
+  <span class="org-table">| \Pi         | </span><span class="org-table"><span class="org-code">~\Pi~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \Rho        | </span><span class="org-table"><span class="org-code">~\Rho~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \Sigma      | </span><span class="org-table"><span class="org-code">~\Sigma~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Tau        | </span><span class="org-table"><span class="org-code">~\Tau~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \Upsilon    | </span><span class="org-table"><span class="org-code">~\Upsilon~</span></span><span class="org-table">               |</span>
+  <span class="org-table">| \Phi        | </span><span class="org-table"><span class="org-code">~\Phi~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \Chi        | </span><span class="org-table"><span class="org-code">~\Chi~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \Psi        | </span><span class="org-table"><span class="org-code">~\Psi~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \Omega      | </span><span class="org-table"><span class="org-code">~\Omega~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \alpha      | </span><span class="org-table"><span class="org-code">~\alpha~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \beta       | </span><span class="org-table"><span class="org-code">~\beta~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \gamma      | </span><span class="org-table"><span class="org-code">~\gamma~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \delta      | </span><span class="org-table"><span class="org-code">~\delta~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \epsilon    | </span><span class="org-table"><span class="org-code">~\epsilon~</span></span><span class="org-table">               |</span>
+  <span class="org-table">| \varepsilon | </span><span class="org-table"><span class="org-code">~\varepsilon~</span></span><span class="org-table">            |</span>
+  <span class="org-table">| \zeta       | </span><span class="org-table"><span class="org-code">~\zeta~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \eta        | </span><span class="org-table"><span class="org-code">~\eta~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \theta      | </span><span class="org-table"><span class="org-code">~\theta~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \iota       | </span><span class="org-table"><span class="org-code">~\iota~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \kappa      | </span><span class="org-table"><span class="org-code">~\kappa~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \lambda     | </span><span class="org-table"><span class="org-code">~\lambda~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \mu         | </span><span class="org-table"><span class="org-code">~\mu~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \nu         | </span><span class="org-table"><span class="org-code">~\nu~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \xi         | </span><span class="org-table"><span class="org-code">~\xi~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \omicron    | </span><span class="org-table"><span class="org-code">~\omicron~</span></span><span class="org-table">               |</span>
+  <span class="org-table">| \pi         | </span><span class="org-table"><span class="org-code">~\pi~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \rho        | </span><span class="org-table"><span class="org-code">~\rho~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \sigmaf     | </span><span class="org-table"><span class="org-code">~\sigmaf~</span></span><span class="org-table">  </span><span class="org-table"><span class="org-code">~\varsigma~</span></span><span class="org-table">   |</span>
+  <span class="org-table">| \sigma      | </span><span class="org-table"><span class="org-code">~\sigma~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \tau        | </span><span class="org-table"><span class="org-code">~\tau~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \upsilon    | </span><span class="org-table"><span class="org-code">~\upsilon~</span></span><span class="org-table">               |</span>
+  <span class="org-table">| \phi        | </span><span class="org-table"><span class="org-code">~\phi~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \chi        | </span><span class="org-table"><span class="org-code">~\chi~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \psi        | </span><span class="org-table"><span class="org-code">~\psi~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \omega      | </span><span class="org-table"><span class="org-code">~\omega~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \thetasym   | </span><span class="org-table"><span class="org-code">~\thetasym~</span></span><span class="org-table">  </span><span class="org-table"><span class="org-code">~\vartheta~</span></span><span class="org-table"> |</span>
+  <span class="org-table">| \upsih      | </span><span class="org-table"><span class="org-code">~\upsih~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \piv        | </span><span class="org-table"><span class="org-code">~\piv~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \bull       | </span><span class="org-table"><span class="org-code">~\bull~</span></span><span class="org-table">  </span><span class="org-table"><span class="org-code">~\bullet~</span></span><span class="org-table">       |</span>
+  <span class="org-table">| \hellip     | </span><span class="org-table"><span class="org-code">~\hellip~</span></span><span class="org-table">  </span><span class="org-table"><span class="org-code">~\dots~</span></span><span class="org-table">       |</span>
+  <span class="org-table">| \prime      | </span><span class="org-table"><span class="org-code">~\prime~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Prime      | </span><span class="org-table"><span class="org-code">~\Prime~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \oline      | </span><span class="org-table"><span class="org-code">~\oline~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \frasl      | </span><span class="org-table"><span class="org-code">~\frasl~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \weierp     | </span><span class="org-table"><span class="org-code">~\weierp~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \image      | </span><span class="org-table"><span class="org-code">~\image~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \real       | </span><span class="org-table"><span class="org-code">~\real~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \trade      | </span><span class="org-table"><span class="org-code">~\trade~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \alefsym    | </span><span class="org-table"><span class="org-code">~\alefsym~</span></span><span class="org-table">               |</span>
+  <span class="org-table">| \larr       | </span><span class="org-table"><span class="org-code">~\larr~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \uarr       | </span><span class="org-table"><span class="org-code">~\uarr~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \rarr       | </span><span class="org-table"><span class="org-code">~\rarr~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \darr       | </span><span class="org-table"><span class="org-code">~\darr~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \harr       | </span><span class="org-table"><span class="org-code">~\harr~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \crarr      | </span><span class="org-table"><span class="org-code">~\crarr~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \lArr       | </span><span class="org-table"><span class="org-code">~\lArr~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \uArr       | </span><span class="org-table"><span class="org-code">~\uArr~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \rArr       | </span><span class="org-table"><span class="org-code">~\rArr~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \dArr       | </span><span class="org-table"><span class="org-code">~\dArr~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \hArr       | </span><span class="org-table"><span class="org-code">~\hArr~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \forall     | </span><span class="org-table"><span class="org-code">~\forall~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \part       | </span><span class="org-table"><span class="org-code">~\part~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \exist      | </span><span class="org-table"><span class="org-code">~\exist~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \empty      | </span><span class="org-table"><span class="org-code">~\empty~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \nabla      | </span><span class="org-table"><span class="org-code">~\nabla~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \isin       | </span><span class="org-table"><span class="org-code">~\isin~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \notin      | </span><span class="org-table"><span class="org-code">~\notin~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \ni         | </span><span class="org-table"><span class="org-code">~\ni~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \prod       | </span><span class="org-table"><span class="org-code">~\prod~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \sum        | </span><span class="org-table"><span class="org-code">~\sum~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \minus      | </span><span class="org-table"><span class="org-code">~\minus~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \lowast     | </span><span class="org-table"><span class="org-code">~\lowast~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \radic      | </span><span class="org-table"><span class="org-code">~\radic~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \prop       | </span><span class="org-table"><span class="org-code">~\prop~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \infin      | </span><span class="org-table"><span class="org-code">~\infin~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \ang        | </span><span class="org-table"><span class="org-code">~\ang~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \cap        | </span><span class="org-table"><span class="org-code">~\cap~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \cup        | </span><span class="org-table"><span class="org-code">~\cup~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \int        | </span><span class="org-table"><span class="org-code">~\int~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \there4     | </span><span class="org-table"><span class="org-code">~\there4~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \sim        | </span><span class="org-table"><span class="org-code">~\sim~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \cong       | </span><span class="org-table"><span class="org-code">~\cong~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \asymp      | </span><span class="org-table"><span class="org-code">~\asymp~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \ne         | </span><span class="org-table"><span class="org-code">~\ne~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \equiv      | </span><span class="org-table"><span class="org-code">~\equiv~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \le         | </span><span class="org-table"><span class="org-code">~\le~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \ge         | </span><span class="org-table"><span class="org-code">~\ge~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \sub        | </span><span class="org-table"><span class="org-code">~\sub~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \sup        | </span><span class="org-table"><span class="org-code">~\sup~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \nsub       | </span><span class="org-table"><span class="org-code">~\nsub~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \sube       | </span><span class="org-table"><span class="org-code">~\sube~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \supe       | </span><span class="org-table"><span class="org-code">~\supe~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \oplus      | </span><span class="org-table"><span class="org-code">~\oplus~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \otimes     | </span><span class="org-table"><span class="org-code">~\otimes~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \perp       | </span><span class="org-table"><span class="org-code">~\perp~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \sdot       | </span><span class="org-table"><span class="org-code">~\sdot~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \lceil      | </span><span class="org-table"><span class="org-code">~\lceil~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \rceil      | </span><span class="org-table"><span class="org-code">~\rceil~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \lfloor     | </span><span class="org-table"><span class="org-code">~\lfloor~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \rfloor     | </span><span class="org-table"><span class="org-code">~\rfloor~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \lang       | </span><span class="org-table"><span class="org-code">~\lang~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \rang       | </span><span class="org-table"><span class="org-code">~\rang~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \loz        | </span><span class="org-table"><span class="org-code">~\loz~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \spades     | </span><span class="org-table"><span class="org-code">~\spades~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \clubs      | </span><span class="org-table"><span class="org-code">~\clubs~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \hearts     | </span><span class="org-table"><span class="org-code">~\hearts~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \diams      | </span><span class="org-table"><span class="org-code">~\diams~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \smile      | </span><span class="org-table"><span class="org-code">~\smile~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \quot       | </span><span class="org-table"><span class="org-code">~\quot~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \amp        | </span><span class="org-table"><span class="org-code">~\amp~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \lt         | </span><span class="org-table"><span class="org-code">~\lt~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \gt         | </span><span class="org-table"><span class="org-code">~\gt~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \OElig      | </span><span class="org-table"><span class="org-code">~\OElig~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \oelig      | </span><span class="org-table"><span class="org-code">~\oelig~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \Scaron     | </span><span class="org-table"><span class="org-code">~\Scaron~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \scaron     | </span><span class="org-table"><span class="org-code">~\scaron~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Yuml       | </span><span class="org-table"><span class="org-code">~\Yuml~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \circ       | </span><span class="org-table"><span class="org-code">~\circ~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \tilde      | </span><span class="org-table"><span class="org-code">~\tilde~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \ensp       | </span><span class="org-table"><span class="org-code">~\ensp~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \emsp       | </span><span class="org-table"><span class="org-code">~\emsp~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \thinsp     | </span><span class="org-table"><span class="org-code">~\thinsp~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \zwnj       | </span><span class="org-table"><span class="org-code">~\zwnj~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \zwj        | </span><span class="org-table"><span class="org-code">~\zwj~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \lrm        | </span><span class="org-table"><span class="org-code">~\lrm~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \rlm        | </span><span class="org-table"><span class="org-code">~\rlm~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \ndash      | </span><span class="org-table"><span class="org-code">~\ndash~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \mdash      | </span><span class="org-table"><span class="org-code">~\mdash~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \lsquo      | </span><span class="org-table"><span class="org-code">~\lsquo~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \rsquo      | </span><span class="org-table"><span class="org-code">~\rsquo~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \sbquo      | </span><span class="org-table"><span class="org-code">~\sbquo~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \ldquo      | </span><span class="org-table"><span class="org-code">~\ldquo~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \rdquo      | </span><span class="org-table"><span class="org-code">~\rdquo~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \bdquo      | </span><span class="org-table"><span class="org-code">~\bdquo~</span></span><span class="org-table">                 |</span>
+  <span class="org-table">| \dagger     | </span><span class="org-table"><span class="org-code">~\dagger~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \Dagger     | </span><span class="org-table"><span class="org-code">~\Dagger~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \permil     | </span><span class="org-table"><span class="org-code">~\permil~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \lsaquo     | </span><span class="org-table"><span class="org-code">~\lsaquo~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \rsaquo     | </span><span class="org-table"><span class="org-code">~\rsaquo~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \euro       | </span><span class="org-table"><span class="org-code">~\euro~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \arccos     | </span><span class="org-table"><span class="org-code">~\arccos~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \arcsin     | </span><span class="org-table"><span class="org-code">~\arcsin~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \arctan     | </span><span class="org-table"><span class="org-code">~\arctan~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \arg        | </span><span class="org-table"><span class="org-code">~\arg~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \cos        | </span><span class="org-table"><span class="org-code">~\cos~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \cosh       | </span><span class="org-table"><span class="org-code">~\cosh~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \cot        | </span><span class="org-table"><span class="org-code">~\cot~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \coth       | </span><span class="org-table"><span class="org-code">~\coth~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \csc        | </span><span class="org-table"><span class="org-code">~\csc~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \deg        | </span><span class="org-table"><span class="org-code">~\deg~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \det        | </span><span class="org-table"><span class="org-code">~\det~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \dim        | </span><span class="org-table"><span class="org-code">~\dim~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \exp        | </span><span class="org-table"><span class="org-code">~\exp~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \gcd        | </span><span class="org-table"><span class="org-code">~\gcd~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \hom        | </span><span class="org-table"><span class="org-code">~\hom~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \inf        | </span><span class="org-table"><span class="org-code">~\inf~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \ker        | </span><span class="org-table"><span class="org-code">~\ker~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \lg         | </span><span class="org-table"><span class="org-code">~\lg~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \lim        | </span><span class="org-table"><span class="org-code">~\lim~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \liminf     | </span><span class="org-table"><span class="org-code">~\liminf~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \limsup     | </span><span class="org-table"><span class="org-code">~\limsup~</span></span><span class="org-table">                |</span>
+  <span class="org-table">| \ln         | </span><span class="org-table"><span class="org-code">~\ln~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \log        | </span><span class="org-table"><span class="org-code">~\log~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \max        | </span><span class="org-table"><span class="org-code">~\max~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \min        | </span><span class="org-table"><span class="org-code">~\min~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \Pr         | </span><span class="org-table"><span class="org-code">~\Pr~</span></span><span class="org-table">                    |</span>
+  <span class="org-table">| \sec        | </span><span class="org-table"><span class="org-code">~\sec~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \sin        | </span><span class="org-table"><span class="org-code">~\sin~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \sinh       | </span><span class="org-table"><span class="org-code">~\sinh~</span></span><span class="org-table">                  |</span>
+  <span class="org-table">| \tan        | </span><span class="org-table"><span class="org-code">~\tan~</span></span><span class="org-table">                   |</span>
+  <span class="org-table">| \tanh       | </span><span class="org-table"><span class="org-code">~\tanh~</span></span><span class="org-table">                  |</span>
+
+
+<span class="org-level-1">* Further reading</span>
+
+   For more information you might want to read the great <span class="org-link"><a href="https://orgmode.org/manual/">Org-mode manual</a></span>. One of
+   the nicest mailing lists on this planet, BTW, is <span class="org-link"><a href="http://lists.gnu.org/archive/html/emacs-orgmode/">emacs-orgmode (archive)</a></span>
+   where you might as well find answers to your questions.
+
+
+   Have fun!
+
+
+
+
+<span class="org-level-1">* Footnotes</span>
+
+<span class="org-footnote">[fn:1]</span>  You may customize the file suffix for exported files like this:
+ <span class="org-verbatim">=M-x customize RET org-export-html-extension=</span>.
+
+<span class="org-footnote">[fn:2]</span>  ...by typing <span class="org-verbatim">=M-x iimage-mode RET=</span>. iimage-mode even shows *.svg images, if
+ <span class="org-verbatim">=librsvg=</span> was present on compile time. FIXME: is this true for emacs22 ?
+
+<span class="org-footnote">[fn:3]</span>  All components of <span class="org-verbatim">=org-publish-projects-alist=</span> are documented in the <span class="org-link"><a href="https://orgmode.org/manual/Project-alist.html#Project-alist">Org Mode
+    Manual</a></span>.
+
+<span class="org-footnote">[fn:4]</span>  Files may be copied from arbitrary src directories to any target directory
+ desired.
+
+<span class="org-footnote">[fn:5]</span>  This is primarily because of the behaviour of servers. When we navigate
+ to <span class="org-link"><a href="https://orgmode.org/worg/">https://orgmode.org/worg/</a></span> we will face the <span class="org-verbatim">=index.html=</span> if present.
+</pre>
+  </body>
+</html>

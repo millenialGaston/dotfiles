@@ -46,3 +46,6 @@
 [submodule "zoo/gotop"]
 	path = zoo/gotop
 	url = https://github.com/cjbassi/gotop
+[submodule "emacsy/packages/yasnippets-orgmode"]
+	path = emacsy/mysnippets/yasnippets-orgmode
+	url = git@github.com:yyr/yasnippets-orgmode.git

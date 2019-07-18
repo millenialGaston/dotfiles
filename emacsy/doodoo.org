@@ -18,6 +18,14 @@
 ** basic basic
 
 #+BEGIN_SRC elisp
+;; Set default font
+(set-face-attribute 'default nil
+                    :family "Inconsolata"
+                    :height 110
+                    :weight 'normal
+                    :width 'normal)
+(setq  inferior-julia-program-name "/usr/bin/julia")
+(setq python-python-command "/usr/bin/ipython")
 (ranger-override-dired-mode t)
 (setq org-cycle-separator-lines 2)
 (require 'doom-themes)
@@ -34,10 +42,12 @@
 (autoload 'ibuffer "ibuffer" "List buffers." t)
 (setq org-cycle-separator-lines 2)
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
+(bind-key (kbd "M-p") 'company-complete)
+(load-theme 'doom-city-lights)
 #+END_SRC
 
 #+RESULTS:
-: helm-show-kill-ring
+: t
 
 
 ** emacs xdg
@@ -163,12 +173,20 @@
 :END:
 #+BEGIN_SRC elisp
 (require 'ob-shell)
+(require 'org-tempo)
+(setq tempo-interactive t)
 (require 'ox-md)
 (require 'julia-repl)
 (add-hook 'julia-mode-hook 'julia-repl-mode)
 (with-eval-after-load "ob"
   (require 'org-babel-eval-in-repl))
 
+#+END_SRC
+
+#+RESULTS:
+: org-babel-eval-in-repl
+
+#+BEGIN_SRC elisp
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((emacs-lisp . t)
@@ -178,6 +196,22 @@
 #+END_SRC
 
 #+RESULTS:
+
+#+BEGIN_SRC elisp
+(tempo-define-template "my-property"
+                       '(":PROPERTIES:" p ":END:" >)
+                       "<p"
+                       "Insert a property tempate")
+(tempo-define-template "name"
+                       '("#+NAME:" (p "Name : " name)  n)
+                       "<n"
+                       "Insert name")
+#+END_SRC
+
+#+RESULTS:
+: tempo-template-name
+
+
 
 
 ** org faces
@@ -216,7 +250,7 @@
    `(org-level-7        ((t (,@headline ,@variable-tuple))))
    `(org-level-6        ((t (,@headline ,@variable-tuple))))
    `(org-level-5        ((t (,@headline ,@variable-tuple))))
-   `(org-level-4        ((t (,@headline ,@variable-tuple :height 1.1))))
+   `(org-level-4        ((t (,@headline ,@variable-tuple :height 1.2))))
    `(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
    `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
    `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.70))))
@@ -258,7 +292,35 @@
 : ((org-mode . bibtex-completion-format-citation-org-link-to-PDF) (latex-mode . bibtex-completion-format-citation-cite) (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc) (default . bibtex-completion-format-citation-default))
 
 
+* completion
+#+BEGIN_SRC elisp
+(use-package company
+  :defer 2
+  :diminish
+  :custom
+  (company-begin-commands '(self-insert-command))
+  (company-idle-delay .1)
+  (company-minimum-prefix-length 2)
+  (company-show-numbers t)
+  (company-tooltip-align-annotations 't)
+  (global-company-mode t))
+#+END_SRC
+
+#+RESULTS:
+#+BEGIN_SRC elisp
+(use-package company-box
+  :after company
+  :diminish
+  :hook (company-mode . company-box-mode))
+#+END_SRC
+
+#+RESULTS:
+| company-box-mode | evil-normalize-keymaps | +company | init-backends | company-mode-set-explicitly | company-prescient-mode |
+
+
 * org
+
+
 
 ** toc org
 #+BEGIN_SRC elisp
@@ -267,6 +329,215 @@
   (warn "toc-org not found"))
 #+END_SRC
 
+#+RESULTS:
+| toc-org-mode | org-ref-org-menu | er/add-org-mode-expansions | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load | org-ref-setup-label-finders |
+
+
+**  org publish
+#+BEGIN_SRC elisp
+(require 'ox-publish)
+(setq org-publish-project-alist
+      '(("org-notes"
+         :base-directory "~/.personal/org/"
+         :base-extension "org"
+         :publishing-directory "~/.personal/public_html/"
+         :recursive t
+         :publishing-function org-html-publish-to-html
+         :headline-levels 4             ; Just the default for this project.
+         :auto-preamble t)
+        ("org-static"
+         :base-directory "~/.personal/org/"
+         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+         :publishing-directory "~/.personal/public_html/"
+         :recursive t
+         :publishing-function org-publish-attachment)
+
+        ("org" :components ("org-notes" "org-static"))
+
+        ("spirou-inherit"
+         :base-directory "~/.personal/org/"
+         :recursive t
+         :base-extension "css\\|js"
+         :publishing-directory "~/spirou/publish"
+         :publishing-function org-publish-attachment
+         )
+
+        ("spip-org"
+         :base-directory "~/spirou/spip_ocr"
+         :auto-index t
+         :index-filename "sitemap.org"
+         :index-title "Sitemap"
+         :recursive t
+         :base-extension "org"
+         :publishing-directory "~/spirou/publish"
+         :publishing-function org-html-publish-to-html
+         :headline-levels 3
+         :auto-preamble t
+         )
+        ("spirou-static"
+         :base-directory "~/spirou/static/"
+         :recursive t
+         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+         :publishing-directory "~/spirou/publish/"
+         :publishing-function org-publish-attachment)
+
+        ("spirou" :components ("spirou-inherit" "spip-org" "spirou-static"))))
+#+END_SRC
+
+#+RESULTS:
+| org-notes      | :base-directory | ~/.personal/org/                        | :base-extension | org  | :publishing-directory | ~/.personal/public_html/ | :recursive   | t                     | :publishing-function | org-html-publish-to-html | :headline-levels       | 4    | :auto-preamble        | t                        |                       |                          |                      |                        |                |   |
+| org-static     | :base-directory | ~/.personal/org/                        | :base-extension | css\ | js\                   | png\                     | jpg\         | gif\                  | pdf\                 | mp3\                     | ogg\                   | swf  | :publishing-directory | ~/.personal/public_html/ | :recursive            | t                        | :publishing-function | org-publish-attachment |                |   |
+| org            | :components     | (org-notes org-static)                  |                 |      |                       |                          |              |                       |                      |                          |                        |      |                       |                          |                       |                          |                      |                        |                |   |
+| spirou-inherit | :base-directory | ~/.personal/org/                        | :recursive      | t    | :base-extension       | css\                     | js           | :publishing-directory | ~/spirou/publish     | :publishing-function     | org-publish-attachment |      |                       |                          |                       |                          |                      |                        |                |   |
+| spip-org       | :base-directory | ~/spirou/spip_ocr                       | :auto-index     | t    | :index-filename       | sitemap.org              | :index-title | Sitemap               | :recursive           | t                        | :base-extension        | org  | :publishing-directory | ~/spirou/publish         | :publishing-function  | org-html-publish-to-html | :headline-levels     | 3                      | :auto-preamble | t |
+| spirou-static  | :base-directory | ~/spirou/static/                        | :recursive      | t    | :base-extension       | css\                     | js\          | png\                  | jpg\                 | gif\                     | pdf\                   | mp3\ | ogg\                  | swf                      | :publishing-directory | ~/spirou/publish/        | :publishing-function | org-publish-attachment |                |   |
+| spirou         | :components     | (spirou-inherit spip-org spirou-static) |                 |      |                       |                          |              |                       |                      |                          |                        |      |                       |                          |                       |                          |                      |                        |                |   |
+
+#+BEGIN_SRC elisp
+(defun org-blog-prepare (project-plist)
+  "With help from `https://github.com/howardabrams/dot-files'.
+  Touch `index.org' to rebuilt it.
+  Argument `PROJECT-PLIST' contains information about the current project."
+  (let* ((base-directory (plist-get project-plist :base-directory))
+         (buffer (find-file-noselect (expand-file-name "index.org" base-directory) t)))
+    (with-current-buffer buffer
+      (set-buffer-modified-p t)
+      (save-buffer 0))
+    (kill-buffer buffer)))
+#+END_SRC
+#+BEGIN_SRC elisp
+(defvar org-blog-head
+  "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/bootstrap.css\"/>
+  <link rel=\"stylesheet\" type=\"text/css\" href=\"https://fonts.googleapis.com/css?family=Amaranth|Handlee|Libre+Baskerville|Bree+Serif|Ubuntu+Mono|Pacifico&subset=latin,greek\"/>
+  <link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"favicon.ico\">")
+#+END_SRC
+
+#+BEGIN_SRC elisp
+
+#+END_SRC
+#+RESULTS:
+: org-blog-head
+
+*** mathjax
+#+BEGIN_SRC elisp
+(setf org-html-mathjax-options
+      '((path "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")
+        (scale "100")
+        (align "center")
+        (indent "2em")
+        (mathml nil))
+      )
+(setf org-html-mathjax-template
+      "<script type=\"text/javascript\" src=\"%PATH\"></script>")
+#+END_SRC
+
+#+RESULTS:
+: <script type="text/javascript" src="%PATH"></script>
+
+
+** IDEA org keywords
+#+BEGIN_SRC elisp
+(setq org-todo-keywords
+      '(
+        (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
+        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+        ))
+
+(setq org-todo-keyword-faces
+      '(("IDEA" . (:foreground "GoldenRod" :weight bold))
+        ("NEXT" . (:foreground "IndianRed1" :weight bold))
+        ("STARTED" . (:foreground "OrangeRed" :weight bold))
+        ("WAITING" . (:foreground "coral" :weight bold))
+        ("CANCELED" . (:foreground "LimeGreen" :weight bold))
+        ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
+        ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))
+        ))
+
+(setq org-tag-persistent-alist
+      '((:startgroup . nil)
+        ("HOME" . ?h)
+        ("RESEARCH" . ?r)
+        ("TEACHING" . ?t)
+        (:endgroup . nil)
+        (:startgroup . nil)
+        ("OS" . ?o)
+        ("DEV" . ?d)
+        ("WWW" . ?w)
+        (:endgroup . nil)
+        (:startgroup . nil)
+        ("EASY" . ?e)
+        ("MEDIUM" . ?m)
+        ("HARD" . ?a)
+        (:endgroup . nil)
+        ("URGENT" . ?u)
+        ("KEY" . ?k)
+        ("BONUS" . ?b)
+        ("noexport" . ?x)
+        )
+      )
+
+(setq org-tag-faces
+      '(
+        ("HOME" . (:foreground "GoldenRod" :weight bold))
+        ("RESEARCH" . (:foreground "GoldenRod" :weight bold))
+        ("TEACHING" . (:foreground "GoldenRod" :weight bold))
+        ("OS" . (:foreground "IndianRed1" :weight bold))
+        ("DEV" . (:foreground "IndianRed1" :weight bold))
+        ("WWW" . (:foreground "IndianRed1" :weight bold))
+        ("URGENT" . (:foreground "Red" :weight bold))
+        ("KEY" . (:foreground "Red" :weight bold))
+        ("EASY" . (:foreground "OrangeRed" :weight bold))
+        ("MEDIUM" . (:foreground "OrangeRed" :weight bold))
+        ("HARD" . (:foreground "OrangeRed" :weight bold))
+        ("BONUS" . (:foreground "GoldenRod" :weight bold))
+        ("noexport" . (:foreground "LimeGreen" :weight bold))
+        )
+)
+#+END_SRC
+
+#+RESULTS:
+| HOME     | :foreground | GoldenRod  | :weight | bold |
+| RESEARCH | :foreground | GoldenRod  | :weight | bold |
+| TEACHING | :foreground | GoldenRod  | :weight | bold |
+| OS       | :foreground | IndianRed1 | :weight | bold |
+| DEV      | :foreground | IndianRed1 | :weight | bold |
+| WWW      | :foreground | IndianRed1 | :weight | bold |
+| URGENT   | :foreground | Red        | :weight | bold |
+| KEY      | :foreground | Red        | :weight | bold |
+| EASY     | :foreground | OrangeRed  | :weight | bold |
+| MEDIUM   | :foreground | OrangeRed  | :weight | bold |
+| HARD     | :foreground | OrangeRed  | :weight | bold |
+| BONUS    | :foreground | GoldenRod  | :weight | bold |
+| noexport | :foreground | LimeGreen  | :weight | bold |
+
+
+** capture
+
+
+* TODO snippets
+#+BEGIN_SRC elisp
+;; Develop in ~/emacs.d/mysnippets, but also
+;; try out snippets in ~/Downloads/interesting-snippets
+(setq yas-snippet-dirs '("~/dotfiles/emacsy/mysnippets"
+                           "~/dotfiles/emacsy/interesting-snippets"))
+
+;; OR, keeping YASnippet defaults try out ~/Downloads/interesting-snippets
+(setq yas-snippet-dirs (append yas-snippet-dirs
+                               '("~/Downloads/interesting-snippets")))
+#+END_SRC
+#+BEGIN_SRC elisp
+(require 'yasnippet)
+(use-package yasnippet-snippets)
+(require 'helm-c-yasnippet)
+(setq helm-yas-space-match-any-greedy t)
+(global-set-key (kbd "C-c y") 'helm-yas-complete)
+(yas-global-mode 1)
+(yas-load-directory "~/dotfiles/emacsy/mysnippets")
+#+END_SRC
+
+#+RESULTS:
+
+
 * keybindings
 #+BEGIN_SRC elisp
 (global-set-key (kbd "M-p l") 'org-cliplink)
@@ -274,6 +545,7 @@
 
 #+RESULTS:
 : org-cliplink
+
 
 * evil :interactive:
 :PROPERTIES:
@@ -289,7 +561,7 @@
 #+END_SRC
 
 #+RESULTS:
-| er/add-org-mode-expansions | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load |
+| er/add-org-mode-expansions | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load |
 
 
 #+BEGIN_SRC elisp
@@ -317,41 +589,6 @@
 
 *
 
-
-* org faces interactive
-
-#+BEGIN_SRC elisp
-(cl-defun ap/org-set-level-faces (&key (first-parent 'outline-1))
-    (solarized-with-color-variables 'dark
-      (require 'color)
-      (require 'dash)
-      (require 'org-inlinetask)
-      (let ((org-level-color-list (-cycle (list red orange yellow green cyan blue violet magenta))))
-        (cl-flet ((modify-color (color) (thread-first color
-                                          (color-desaturate-name 30))))
-          (cl-loop for level from 1 to (1- org-inlinetask-min-level)
-                   for face = (intern (format "org-level-%s" level))
-                   for parent = (cl-case level
-                                  (1 (list first-parent 'highlight))
-                                  (t (intern (format "org-level-%s" (1- level)))))
-                   for height = (cond ((= level 1) 1.3)
-                                      ((<= level 4) 0.9)
-                                      (t 1.0))
-                   for weight = (if (<= level 8) 'bold 'normal)
-                   unless (internal-lisp-face-p face)
-                   do (custom-declare-face face `((t :inherit ,(intern (format "outline-%s" (1- level)))))
-                                           (format "Face for Org level %s headings." (1- level)))
-                   do (set-face-attribute face nil
-                                          :inherit parent
-                                          :foreground (modify-color (nth level org-level-color-list))
-                                          :height height
-                                          :weight weight
-                                          :overline t)
-                   collect face into faces
-                   finally do (defconst org-level-faces faces)
-                   finally do (setq org-n-level-faces (length org-level-faces)))))))
-  (ap/org-set-level-faces :first-parent 'variable-pitch)
-#+END_SRC
 
 
 * configs

@@ -3,6 +3,14 @@
 ;;; summary: private config of Doom
 ;;; Code:
 
+;; Set default font
+(set-face-attribute 'default nil
+                    :family "Inconsolata"
+                    :height 110
+                    :weight 'normal
+                    :width 'normal)
+(setq  inferior-julia-program-name "/usr/bin/julia")
+(setq python-python-command "/usr/bin/ipython")
 (ranger-override-dired-mode t)
 (setq org-cycle-separator-lines 2)
 (require 'doom-themes)
@@ -19,6 +27,7 @@
 (autoload 'ibuffer "ibuffer" "List buffers." t)
 (setq org-cycle-separator-lines 2)
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
+(bind-key (kbd "M-p") 'company-complete)
 
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "brave")
@@ -90,6 +99,8 @@
 (setq doom-modeline-irc-stylize 'identity)
 
 (require 'ob-shell)
+(require 'org-tempo)
+(setq tempo-interactive t)
 (require 'ox-md)
 (require 'julia-repl)
 (add-hook 'julia-mode-hook 'julia-repl-mode)
@@ -102,6 +113,15 @@
    (python . t)
    (julia . t)
    (shell . t)))
+
+(tempo-define-template "my-property"
+                       '(":PROPERTIES:" p ":END:" >)
+                       "<p"
+                       "Insert a property tempate")
+(tempo-define-template "name"
+                       '("#+NAME:" (p "Name : " name)  n)
+                       "<n"
+                       "Insert name")
 
 (let* ((variable-tuple (cond ((x-list-fonts   "Source Sans Pro") '(:font   "Source Sans Pro"))
                              ((x-list-fonts   "Lucida Grande")   '(:font   "Lucida Grande"))
@@ -117,7 +137,7 @@
    `(org-level-7        ((t (,@headline ,@variable-tuple))))
    `(org-level-6        ((t (,@headline ,@variable-tuple))))
    `(org-level-5        ((t (,@headline ,@variable-tuple))))
-   `(org-level-4        ((t (,@headline ,@variable-tuple :height 1.1))))
+   `(org-level-4        ((t (,@headline ,@variable-tuple :height 1.2))))
    `(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
    `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
    `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.70))))
