@@ -1,12 +1,17 @@
-;;; package --- doodoo
-;;; Commentary:
-;;; summary: private config of Doom
-;;; Code:
-
 ;; Set default font
+(add-to-list 'load-path
+              "~/dotfiles/emacsy/packages/yasnippet/")
+(require 'yasnippet)
+(yas-global-mode 1)
+
+(use-package doom-snippets
+  :load-path "~/dotfiles/emacsy/packages/doom-snippets"
+  :after yasnippet)
+
+(global-set-key (kbd "M-p l") 'org-cliplink)
 (set-face-attribute 'default nil
                     :family "Inconsolata"
-                    :height 110
+                    :height 120
                     :weight 'normal
                     :width 'normal)
 (setq  inferior-julia-program-name "/usr/bin/julia")
@@ -28,7 +33,8 @@
 (setq org-cycle-separator-lines 2)
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
 (bind-key (kbd "M-o") 'company-complete)
-(global-set-key (kbd "M-p l") 'org-cliplink)
+(global-set-key (kbd "M-p") nil)
+(bind-key (kbd "M-p l") 'org-cliplink)
 (load-theme 'doom-city-lights)
 
 (setq browse-url-browser-function 'browse-url-generic
@@ -156,6 +162,11 @@
   "\C-b" 'evil-backward-char
   "\C-k" 'kill-line)
 
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+(setq org-directory "~/.personal/org")
+
 (setq org-todo-keywords
       '(
         (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
@@ -212,6 +223,27 @@
         ("noexport" . (:foreground "LimeGreen" :weight bold))
         )
 )
+
+(defvar yt-iframe-format
+  ;; You may want to change your width and height.
+  (concat "<iframe width=\"440\""
+          " height=\"335\""
+          " src=\"https://www.youtube.com/embed/%s\""
+          " frameborder=\"0\""
+          " allowfullscreen>%s</iframe>"))
+
+(org-add-link-type
+ "yt"
+ (lambda (handle)
+   (browse-url
+    (concat "https://www.youtube.com/embed/"
+            handle)))
+ (lambda (path desc backend)
+   (cl-case backend
+     (html (format yt-iframe-format
+                   path (or desc "")))
+     (latex (format "\href{%s}{%s}"
+                    path (or desc "video"))))))
 
 (use-package evil-org
   :commands evil-org-mode

@@ -49,3 +49,9 @@
 [submodule "emacsy/packages/yasnippets-orgmode"]
 	path = emacsy/mysnippets/yasnippets-orgmode
 	url = git@github.com:yyr/yasnippets-orgmode.git
+[submodule "emacsy/packages/doom-snippets"]
+	path = emacsy/packages/doom-snippets
+	url = git@github.com:hlissner/doom-snippets
+[submodule "emacsy/packages/yasnippet"]
+	path = emacsy/packages/yasnippet
+	url = https://github.com/joaotavora/yasnippet

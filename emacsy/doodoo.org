@@ -6,22 +6,22 @@
 :header-args: :tangle yes
 :END:
 
-** preamble
-#+BEGIN_SRC elisp
-;;; package --- doodoo
-;;; Commentary:
-;;; summary: private config of Doom
-;;; Code:
-#+END_SRC
-
-
 ** basic basic
-
 #+BEGIN_SRC elisp
 ;; Set default font
+(add-to-list 'load-path
+              "~/dotfiles/emacsy/packages/yasnippet/")
+(require 'yasnippet)
+(yas-global-mode 1)
+
+(use-package doom-snippets
+  :load-path "~/dotfiles/emacsy/packages/doom-snippets"
+  :after yasnippet)
+
+(global-set-key (kbd "M-p l") 'org-cliplink)
 (set-face-attribute 'default nil
                     :family "Inconsolata"
-                    :height 110
+                    :height 120
                     :weight 'normal
                     :width 'normal)
 (setq  inferior-julia-program-name "/usr/bin/julia")
@@ -47,6 +47,9 @@
 (bind-key (kbd "M-p l") 'org-cliplink)
 (load-theme 'doom-city-lights)
 #+END_SRC
+
+#+RESULTS:
+: t
 
 
 
@@ -288,6 +291,9 @@
 
 
 ** evil interactive
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
 #+BEGIN_SRC elisp
 (evil-define-key nil evil-insert-state-map
   "\C-n" 'evil-next-visual-line
@@ -297,7 +303,13 @@
   "\C-k" 'kill-line)
 #+END_SRC
 
+#+RESULTS:
+
+
 * completion
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 #+BEGIN_SRC elisp
 (use-package company
   :defer 2
@@ -325,6 +337,20 @@
 
 * org
 
+** basic
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
+#+NAME:org-basic-set-keys
+#+BEGIN_SRC elisp
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+(setq org-directory "~/.personal/org")
+#+END_SRC
+
+#+RESULTS: org-basic-set-keys
+: ~/.personal/org
 
 
 ** toc org
@@ -520,6 +546,22 @@
 
 
 ** capture
+:PROPERTIES:
+:header-args: :tangle yes
+#+BEGIN_SRC elisp
+(setq org-default-notes-file (concat org-directory "notes.org"))
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/.personal/org/todo.org" "tasks")
+         "* TODO %?\n:PROPERTIES:\n:Created: %U\n:Linked: %A\n:END:\n %i"
+         :prepend t)
+        ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
+         "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
+        ("j" "Journal" entry (file+datetree "~/.personal/org/journal.org")
+         "* %?\nEntered on %U\n %i\n %a")))
+#+END_SRC
+
+#+RESULTS:
+| t | Todo | entry | (file+headline ~/.personal/org/todo.org tasks) | * TODO %? |
 
 
 ** cliplink
@@ -573,17 +615,20 @@
 : Created yt link.
 
 [[yt:lEljKc9ZtU8]]
-* TODO snippets
+
+
+* STARTED snippets
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 #+BEGIN_SRC elisp
 ;; Develop in ~/emacs.d/mysnippets, but also
 ;; try out snippets in ~/Downloads/interesting-snippets
-(setq yas-snippet-dirs '("~/dotfiles/emacsy/mysnippets"
-                           "~/dotfiles/emacsy/interesting-snippets"))
-
 ;; OR, keeping YASnippet defaults try out ~/Downloads/interesting-snippets
 (setq yas-snippet-dirs (append yas-snippet-dirs
                                '("~/Downloads/interesting-snippets")))
 #+END_SRC
+
 #+BEGIN_SRC elisp
 (require 'yasnippet)
 (use-package yasnippet-snippets)
@@ -591,7 +636,6 @@
 (setq helm-yas-space-match-any-greedy t)
 (global-set-key (kbd "C-c y") 'helm-yas-complete)
 (yas-global-mode 1)
-(yas-load-directory "~/dotfiles/emacsy/mysnippets")
 #+END_SRC
 
 #+RESULTS:
@@ -599,14 +643,13 @@
 
 * keybindings
 #+BEGIN_SRC elisp
-(global-set-key (kbd "M-p l") 'org-cliplink)
 #+END_SRC
 
 #+RESULTS:
 : org-cliplink
 
 
-* evil :interactive:
+* evil
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
@@ -620,7 +663,7 @@
 #+END_SRC
 
 #+RESULTS:
-| er/add-org-mode-expansions | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load |
+| er/add-org-mode-expansions | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-tempo-setup | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load |
 
 
 #+BEGIN_SRC elisp
