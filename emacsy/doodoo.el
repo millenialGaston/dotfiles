@@ -166,22 +166,26 @@
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
 (setq org-directory "~/.personal/org")
+(defun org-archive-done-tasks ()
+  (interactive)
+  (org-map-entries
+   (lambda ()
+     (org-archive-subtree)
+     (setq org-map-continue-from (outline-previous-heading)))
+   "/DONE" 'tree))
 
 (setq org-todo-keywords
       '(
-        (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)")
-        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
-        ))
+        (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)"
+                  "PROJECT" "|" "DONE(d)" "ABRT(a)")
+        (sequence "|" "CANCELED(c)"
+                  "DELEGATED(l)" "SOMEDAY(f)")))
 
 (setq org-todo-keyword-faces
       '(("IDEA" . (:foreground "GoldenRod" :weight bold))
-        ("NEXT" . (:foreground "IndianRed1" :weight bold))
-        ("STARTED" . (:foreground "OrangeRed" :weight bold))
-        ("WAITING" . (:foreground "coral" :weight bold))
         ("CANCELED" . (:foreground "LimeGreen" :weight bold))
         ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
-        ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))
-        ))
+        ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))))
 
 (setq org-tag-persistent-alist
       '((:startgroup . nil)
@@ -192,6 +196,7 @@
         (:startgroup . nil)
         ("OS" . ?o)
         ("DEV" . ?d)
+        ("GEEK" ?g)
         ("WWW" . ?w)
         (:endgroup . nil)
         (:startgroup . nil)
@@ -202,13 +207,10 @@
         ("URGENT" . ?u)
         ("KEY" . ?k)
         ("BONUS" . ?b)
-        ("noexport" . ?x)
-        )
-      )
+        ("noexport" . ?x)))
 
 (setq org-tag-faces
-      '(
-        ("HOME" . (:foreground "GoldenRod" :weight bold))
+      '(("HOME" . (:foreground "GoldenRod" :weight bold))
         ("RESEARCH" . (:foreground "GoldenRod" :weight bold))
         ("TEACHING" . (:foreground "GoldenRod" :weight bold))
         ("OS" . (:foreground "IndianRed1" :weight bold))
@@ -220,9 +222,7 @@
         ("MEDIUM" . (:foreground "OrangeRed" :weight bold))
         ("HARD" . (:foreground "OrangeRed" :weight bold))
         ("BONUS" . (:foreground "GoldenRod" :weight bold))
-        ("noexport" . (:foreground "LimeGreen" :weight bold))
-        )
-)
+        ("noexport" . (:foreground "LimeGreen" :weight bold))))
 
 (defvar yt-iframe-format
   ;; You may want to change your width and height.

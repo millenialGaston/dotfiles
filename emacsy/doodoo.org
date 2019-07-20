@@ -306,7 +306,13 @@
 #+RESULTS:
 
 
-* completion
+
+* todo
+
+** TODO leader key ,
+
+
+* completion :broken:notangle:
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -347,10 +353,20 @@
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
 (setq org-directory "~/.personal/org")
+(defun org-archive-done-tasks ()
+  (interactive)
+  (org-map-entries
+   (lambda ()
+     (org-archive-subtree)
+     (setq org-map-continue-from (outline-previous-heading)))
+   "/DONE" 'tree))
 #+END_SRC
 
 #+RESULTS: org-basic-set-keys
-: ~/.personal/org
+: org-archive-done-tasks
+
+
+** NEXT agenda
 
 
 ** toc org
@@ -466,23 +482,23 @@
 : <script type="text/javascript" src="%PATH"></script>
 
 
-** IDEA org keywords
+** STARTED org keywords
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
 #+BEGIN_SRC elisp
 (setq org-todo-keywords
       '(
-        (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)" "ABRT(a)")
-        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
-        ))
+        (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)"
+                  "PROJECT" "|" "DONE(d)" "ABRT(a)")
+        (sequence "|" "CANCELED(c)"
+                  "DELEGATED(l)" "SOMEDAY(f)")))
 
 (setq org-todo-keyword-faces
       '(("IDEA" . (:foreground "GoldenRod" :weight bold))
         ("CANCELED" . (:foreground "LimeGreen" :weight bold))
         ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
-        ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))
-        ))
+        ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))))
 
 (setq org-tag-persistent-alist
       '((:startgroup . nil)
@@ -493,6 +509,7 @@
         (:startgroup . nil)
         ("OS" . ?o)
         ("DEV" . ?d)
+        ("GEEK" ?g)
         ("WWW" . ?w)
         (:endgroup . nil)
         (:startgroup . nil)
@@ -503,13 +520,10 @@
         ("URGENT" . ?u)
         ("KEY" . ?k)
         ("BONUS" . ?b)
-        ("noexport" . ?x)
-        )
-      )
+        ("noexport" . ?x)))
 
 (setq org-tag-faces
-      '(
-        ("HOME" . (:foreground "GoldenRod" :weight bold))
+      '(("HOME" . (:foreground "GoldenRod" :weight bold))
         ("RESEARCH" . (:foreground "GoldenRod" :weight bold))
         ("TEACHING" . (:foreground "GoldenRod" :weight bold))
         ("OS" . (:foreground "IndianRed1" :weight bold))
@@ -521,10 +535,8 @@
         ("MEDIUM" . (:foreground "OrangeRed" :weight bold))
         ("HARD" . (:foreground "OrangeRed" :weight bold))
         ("BONUS" . (:foreground "GoldenRod" :weight bold))
-        ("noexport" . (:foreground "LimeGreen" :weight bold))
-        )
-)
-#+END_SRC
+        ("noexport" . (:foreground "LimeGreen" :weight bold))))
+        #+END_SRC
 
 #+RESULTS:
 | HOME     | :foreground | GoldenRod  | :weight | bold |
@@ -545,6 +557,8 @@
 ** capture
 :PROPERTIES:
 :header-args: :tangle yes
+
+#+srcname: capture-templates
 #+BEGIN_SRC elisp
 (setq org-default-notes-file (concat org-directory "notes.org"))
 (setq org-capture-templates
@@ -557,7 +571,7 @@
          "* %?\nEntered on %U\n %i\n %a")))
 #+END_SRC
 
-#+RESULTS:
+#+RESULTS: capture-templates
 | t | Todo | entry | (file+headline ~/.personal/org/todo.org tasks) | * TODO %? |
 
 
@@ -614,19 +628,13 @@
 [[yt:lEljKc9ZtU8]]
 
 
-* STARTED snippets
+* STARTED snippets :notangle:broken:
 :PROPERTIES:
 :header-args: :tangle no
 :END:
 #+BEGIN_SRC elisp
-;; Develop in ~/emacs.d/mysnippets, but also
-;; try out snippets in ~/Downloads/interesting-snippets
-;; OR, keeping YASnippet defaults try out ~/Downloads/interesting-snippets
 (setq yas-snippet-dirs (append yas-snippet-dirs
                                '("~/Downloads/interesting-snippets")))
-#+END_SRC
-
-#+BEGIN_SRC elisp
 (require 'yasnippet)
 (use-package yasnippet-snippets)
 (require 'helm-c-yasnippet)
