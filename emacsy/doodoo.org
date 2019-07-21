@@ -312,7 +312,7 @@
 ** TODO leader key ,
 
 
-* completion :broken:notangle:
+* completion
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -347,6 +347,7 @@
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
+
 #+NAME:org-basic-set-keys
 #+BEGIN_SRC elisp
 (global-set-key (kbd "C-c l") 'org-store-link)
@@ -367,6 +368,18 @@
 
 
 ** NEXT agenda
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
+#+begin_src elisp
+(setq org-agenda-files '("~/.personal/org"))
+#+end_src
+
+#+RESULTS:
+| ~/.personal/org |
+
+
+
 
 
 ** toc org
@@ -488,19 +501,12 @@
 :END:
 #+BEGIN_SRC elisp
 (setq org-todo-keywords
-      '(
-        (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)"
-                  "PROJECT" "|" "DONE(d)" "ABRT(a)")
-        (sequence "|" "CANCELED(c)"
-                  "DELEGATED(l)" "SOMEDAY(f)")))
+      '((sequence "IDEA(i)" "TODO(t)" "STARTED(s)"
+                  "NEXT(n)" "WAITING(w)" "PROJECT(p)"
+                  "|" "DONE(d)" "ABRT(a)")
+        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")))
 
-(setq org-todo-keyword-faces
-      '(("IDEA" . (:foreground "GoldenRod" :weight bold))
-        ("CANCELED" . (:foreground "LimeGreen" :weight bold))
-        ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
-        ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))))
-
-(setq org-tag-persistent-alist
+(setq org-tag-alist
       '((:startgroup . nil)
         ("HOME" . ?h)
         ("RESEARCH" . ?r)
@@ -509,7 +515,7 @@
         (:startgroup . nil)
         ("OS" . ?o)
         ("DEV" . ?d)
-        ("GEEK" ?g)
+        ("GEEK" . ?g)
         ("WWW" . ?w)
         (:endgroup . nil)
         (:startgroup . nil)
@@ -538,20 +544,6 @@
         ("noexport" . (:foreground "LimeGreen" :weight bold))))
         #+END_SRC
 
-#+RESULTS:
-| HOME     | :foreground | GoldenRod  | :weight | bold |
-| RESEARCH | :foreground | GoldenRod  | :weight | bold |
-| TEACHING | :foreground | GoldenRod  | :weight | bold |
-| OS       | :foreground | IndianRed1 | :weight | bold |
-| DEV      | :foreground | IndianRed1 | :weight | bold |
-| WWW      | :foreground | IndianRed1 | :weight | bold |
-| URGENT   | :foreground | Red        | :weight | bold |
-| KEY      | :foreground | Red        | :weight | bold |
-| EASY     | :foreground | OrangeRed  | :weight | bold |
-| MEDIUM   | :foreground | OrangeRed  | :weight | bold |
-| HARD     | :foreground | OrangeRed  | :weight | bold |
-| BONUS    | :foreground | GoldenRod  | :weight | bold |
-| noexport | :foreground | LimeGreen  | :weight | bold |
 
 
 ** capture
@@ -628,13 +620,11 @@
 [[yt:lEljKc9ZtU8]]
 
 
-* STARTED snippets :notangle:broken:
+* STARTED snippets
 :PROPERTIES:
-:header-args: :tangle no
+:header-args: :tangle yes
 :END:
 #+BEGIN_SRC elisp
-(setq yas-snippet-dirs (append yas-snippet-dirs
-                               '("~/Downloads/interesting-snippets")))
 (require 'yasnippet)
 (use-package yasnippet-snippets)
 (require 'helm-c-yasnippet)
@@ -644,6 +634,7 @@
 #+END_SRC
 
 #+RESULTS:
+: t
 
 
 * keybindings
@@ -665,13 +656,7 @@
   :after org
   :init
   (add-hook 'org-mode-hook 'evil-org-mode))
-#+END_SRC
 
-#+RESULTS:
-| er/add-org-mode-expansions | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-tempo-setup | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load |
-
-
-#+BEGIN_SRC elisp
 (evil-define-key 'normal evil-org-mode-map
   "<" 'org-metaleft
   ">" 'org-metaright
@@ -688,13 +673,13 @@
           (kbd "M-H") 'org-shiftmetaleft
           (kbd "M-K") 'org-shiftmetaup
           (kbd "M-J") 'org-shiftmetadown))
-      '(normal insert))
+      '('normal 'insert))
 #+END_SRC
 
 #+RESULTS:
-| normal | insert |
+| quote | normal |
+| quote | insert |
 
-*
 
 
 

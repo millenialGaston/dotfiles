@@ -174,20 +174,15 @@
      (setq org-map-continue-from (outline-previous-heading)))
    "/DONE" 'tree))
 
+(setq org-agenda-files '("~/.personal/org"))
+
 (setq org-todo-keywords
-      '(
-        (sequence "IDEA(i)" "TODO(t)" "STARTED(s)" "NEXT(n)" "WAITING(w)"
-                  "PROJECT" "|" "DONE(d)" "ABRT(a)")
-        (sequence "|" "CANCELED(c)"
-                  "DELEGATED(l)" "SOMEDAY(f)")))
+      '((sequence "IDEA(i)" "TODO(t)" "STARTED(s)"
+                  "NEXT(n)" "WAITING(w)" "PROJECT(p)"
+                  "|" "DONE(d)" "ABRT(a)")
+        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")))
 
-(setq org-todo-keyword-faces
-      '(("IDEA" . (:foreground "GoldenRod" :weight bold))
-        ("CANCELED" . (:foreground "LimeGreen" :weight bold))
-        ("DELEGATED" . (:foreground "LimeGreen" :weight bold))
-        ("SOMEDAY" . (:foreground "LimeGreen" :weight bold))))
-
-(setq org-tag-persistent-alist
+(setq org-tag-alist
       '((:startgroup . nil)
         ("HOME" . ?h)
         ("RESEARCH" . ?r)
@@ -196,7 +191,7 @@
         (:startgroup . nil)
         ("OS" . ?o)
         ("DEV" . ?d)
-        ("GEEK" ?g)
+        ("GEEK" . ?g)
         ("WWW" . ?w)
         (:endgroup . nil)
         (:startgroup . nil)
@@ -245,6 +240,13 @@
      (latex (format "\href{%s}{%s}"
                     path (or desc "video"))))))
 
+(require 'yasnippet)
+(use-package yasnippet-snippets)
+(require 'helm-c-yasnippet)
+(setq helm-yas-space-match-any-greedy t)
+(global-set-key (kbd "C-c y") 'helm-yas-complete)
+(yas-global-mode 1)
+
 (use-package evil-org
   :commands evil-org-mode
   :after org
@@ -267,4 +269,4 @@
           (kbd "M-H") 'org-shiftmetaleft
           (kbd "M-K") 'org-shiftmetaup
           (kbd "M-J") 'org-shiftmetadown))
-      '(normal insert))
+      '('normal 'insert))
