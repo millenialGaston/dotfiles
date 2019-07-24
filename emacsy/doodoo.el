@@ -1,4 +1,5 @@
 ;; Set default font
+(setq org-agenda-files (directory-files-recursively "~/.personal/org/" "\.org$"))
 (add-to-list 'load-path
               "~/dotfiles/emacsy/packages/yasnippet/")
 (require 'yasnippet)
@@ -162,6 +163,34 @@
   "\C-b" 'evil-backward-char
   "\C-k" 'kill-line)
 
+(use-package company
+  :init
+  (setq company-tooltip-align-annotations t)
+
+  :defer 2
+  :diminish
+  :custom
+  (company-begin-commands '(self-insert-command))
+  (company-idle-delay .1)
+  (company-minimum-prefix-length 2)
+  (company-show-numbers t)
+  (company-tooltip-align-annotations 't)
+  (global-company-mode t))
+(global-set-key (kbd "C-M-p ") 'company-complete)
+(define-key global-map (kbd "C-.") 'company-files)
+
+(defun company-preview-if-not-tng-frontend (command)
+  "`company-preview-frontend', but not when tng is active."
+  (unless (and (eq command 'post-command)
+               company-selection-changed
+               (memq 'company-tng-frontend company-frontends))
+    (company-preview-frontend command)))
+
+(use-package company-box
+  :after company
+  :diminish
+  :hook (company-mode . company-box-mode))
+
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
@@ -173,6 +202,66 @@
      (org-archive-subtree)
      (setq org-map-continue-from (outline-previous-heading)))
    "/DONE" 'tree))
+
+(use-package org-brain
+  :init
+  (setq org-brain-path "~/.personal/org/brain")
+  ;; For Evil users
+  (with-eval-after-load 'evil
+    (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
+  :config
+  (setq org-id-track-globally t)
+  (setq org-id-locations-file "~/.personal/org/.org-id-locations")
+  (push '("b" "Brain" plain (function org-brain-goto-end)
+          "* %i%?" :empty-lines 1)
+        org-capture-templates)
+  (setq org-brain-visualize-default-choices 'all)
+  (setq org-brain-title-max-length 12))
+(defun org-brain-cliplink-resource ()
+  "Add a URL from the clipboard as an org-brain resource.
+Suggest the URL title as a description for resource."
+  (interactive)
+  (let ((url (org-cliplink-clipboard-content)))
+    (org-brain-add-resource
+     url
+     (org-cliplink-retrieve-title-synchronously url)
+     t)))
+
+(define-key org-brain-visualize-mode-map (kbd "L") #'org-brain-cliplink-resource)
+
+(defun org-brain-insert-resource-icon (link)
+  "Insert an icon, based on content of org-mode LINK."
+  (insert (format "%s "
+                  (cond ((string-prefix-p "http" link)
+                         (cond ((string-match "wikipedia\\.org" link)
+                                (all-the-icons-faicon "wikipedia-w"))
+                               ((string-match "github\\.com" link)
+                                (all-the-icons-octicon "mark-github"))
+                               ((string-match "vimeo\\.com" link)
+                                (all-the-icons-faicon "vimeo"))
+                               ((string-match "youtube\\.com" link)
+                                (all-the-icons-faicon "youtube"))
+                               (t
+                                (all-the-icons-faicon "globe"))))
+                        ((string-prefix-p "brain:" link)
+                         (all-the-icons-fileicon "brain"))
+                        (t
+                         (all-the-icons-icon-for-file link))))))
+
+(add-hook 'org-brain-after-resource-button-functions #'org-brain-insert-resource-icon)
+
+(defface aa2u-face '((t . nil))
+  "Face for aa2u box drawing characters")
+(advice-add #'aa2u-1c :filter-return
+            (lambda (str) (propertize str 'face 'aa2u-face)))
+(defun aa2u-org-brain-buffer ()
+  (let ((inhibit-read-only t))
+    (make-local-variable 'face-remapping-alist)
+    (add-to-list 'face-remapping-alist
+                 '(aa2u-face . org-brain-wires))
+    (ignore-errors (aa2u (point-min) (point-max)))))
+(with-eval-after-load 'org-brain
+  (add-hook 'org-brain-after-visualize-hook #'aa2u-org-brain-buffer))
 
 (setq org-agenda-files '("~/.personal/org"))
 
@@ -240,13 +329,6 @@
      (latex (format "\href{%s}{%s}"
                     path (or desc "video"))))))
 
-(require 'yasnippet)
-(use-package yasnippet-snippets)
-(require 'helm-c-yasnippet)
-(setq helm-yas-space-match-any-greedy t)
-(global-set-key (kbd "C-c y") 'helm-yas-complete)
-(yas-global-mode 1)
-
 (use-package evil-org
   :commands evil-org-mode
   :after org
@@ -270,3 +352,10 @@
           (kbd "M-K") 'org-shiftmetaup
           (kbd "M-J") 'org-shiftmetadown))
       '('normal 'insert))
+
+(require 'yasnippet)
+(use-package yasnippet-snippets)
+(require 'helm-c-yasnippet)
+(setq helm-yas-space-match-any-greedy t)
+(global-set-key (kbd "C-c y") 'helm-yas-complete)
+(yas-global-mode 1)
