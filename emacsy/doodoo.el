@@ -15,28 +15,30 @@
                     :height 120
                     :weight 'normal
                     :width 'normal)
-(setq  inferior-julia-program-name "/usr/bin/julia")
+(setq inferior-julia-program-name "/usr/bin/julia")
 (setq python-python-command "/usr/bin/ipython")
 (ranger-override-dired-mode t)
 (setq org-cycle-separator-lines 2)
+
 (require 'doom-themes)
 (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
       doom-themes-enable-italic t) ; if nil, italics is universally disabled
 (doom-themes-org-config)
 (setq-default tab-width 2)
 (setq c-basic-indent 2)
+
 (set-frame-parameter (selected-frame) 'alpha '(100 . 90))
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (autoload 'ibuffer "ibuffer" "List buffers." t)
-(setq org-cycle-separator-lines 2)
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
 (bind-key (kbd "M-o") 'company-complete)
-(global-set-key (kbd "M-p") nil)
+(bind-key (kbd "M-p") nil)
 (bind-key (kbd "M-p l") 'org-cliplink)
-(load-theme 'doom-city-lights)
+(load-theme 'zenburn)
 
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "brave")
@@ -176,7 +178,6 @@
   (company-show-numbers t)
   (company-tooltip-align-annotations 't)
   (global-company-mode t))
-(global-set-key (kbd "C-M-p ") 'company-complete)
 (define-key global-map (kbd "C-.") 'company-files)
 
 (defun company-preview-if-not-tng-frontend (command)

@@ -36,28 +36,30 @@
                     :height 120
                     :weight 'normal
                     :width 'normal)
-(setq  inferior-julia-program-name "/usr/bin/julia")
+(setq inferior-julia-program-name "/usr/bin/julia")
 (setq python-python-command "/usr/bin/ipython")
 (ranger-override-dired-mode t)
 (setq org-cycle-separator-lines 2)
+
 (require 'doom-themes)
 (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
       doom-themes-enable-italic t) ; if nil, italics is universally disabled
 (doom-themes-org-config)
 (setq-default tab-width 2)
 (setq c-basic-indent 2)
+
 (set-frame-parameter (selected-frame) 'alpha '(100 . 90))
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (autoload 'ibuffer "ibuffer" "List buffers." t)
-(setq org-cycle-separator-lines 2)
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
 (bind-key (kbd "M-o") 'company-complete)
-(global-set-key (kbd "M-p") nil)
+(bind-key (kbd "M-p") nil)
 (bind-key (kbd "M-p l") 'org-cliplink)
-(load-theme 'doom-city-lights)
+(load-theme 'zenburn)
 #+END_SRC
 
 #+RESULTS:
@@ -111,14 +113,16 @@
 - http://develop.spacemacs.org/layers/+completion/ivy/README.html
 
 
-*** rg :melpa:github:broken:
+*** rg
 :PROPERTIES:
 :GH:       https://github.com/dajva/rg.el
 :header-args: :tangle yes
 :END:
 #+BEGIN_SRC elisp
 (use-package rg
-  :bind ("C-c l" . counsel-rg)
+  :bind
+  (("C-c l" . 'counsel-rg)
+   ("C-c r" . 'counsel-projectile-rg'))
   :config
   (rg-enable-default-bindings))
 #+END_SRC
@@ -337,9 +341,9 @@
   (company-show-numbers t)
   (company-tooltip-align-annotations 't)
   (global-company-mode t))
-(global-set-key (kbd "C-M-p ") 'company-complete)
 (define-key global-map (kbd "C-.") 'company-files)
 #+END_SRC
+
 *** preview ala vim
 #+BEGIN_SRC elisp
 (defun company-preview-if-not-tng-frontend (command)
@@ -390,6 +394,36 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 
 #+RESULTS: org-basic-set-keys
 : org-archive-done-tasks
+
+
+** org-wiki
+#+begin_src elisp
+(use-package org-wiki)
+(setq org-wiki-template
+      (string-trim
+       "
+,#+TITLE: %n
+,#+DESCRIPTION:
+,#+KEYWORDS:
+,#+STARTUP:  content
+,#+DATE: %d
+
+- [[wiki:index][Index]]
+
+- Related:
+
+ ,* %n
+"))
+(setq org-wiki-location-list
+      '("~/.personal/notes"/
+        "~/dotfiles/"))
+
+;; Initialize first org-wiki-directory or default org-wiki
+(setq org-wiki-location (car org-wiki-location-list))
+#+end_src
+
+#+RESULTS:
+: ~/.personal/notes
 
 
 ** brain
@@ -488,7 +522,7 @@ Suggest the URL title as a description for resource."
 | toc-org-mode | org-ref-org-menu | er/add-org-mode-expansions | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load | org-ref-setup-label-finders |
 
 
-**  org publish
+** org publish
 #+BEGIN_SRC elisp
 (require 'ox-publish)
 (setq org-publish-project-alist
@@ -994,3 +1028,4 @@ Display the free keybindings in current buffer.
 * configs
 https://emacs.christianbaeuerlein.com/my-org-config.html
 http://aaronbedra.com/emacs.d/#org-habit
+https://github.com/fuxialexander/doom-emacs-private-xfu/blob/master/modules/lang/org-private/config.el
