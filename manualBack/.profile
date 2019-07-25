@@ -16,7 +16,7 @@ export FZF_ALT_C_COMMAND="fd -t d . $HOME"
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/.Devel
 
-export TERMINAL=termite
+export TERMINAL=urxvt
 export TERM=xterm-256color
 
 export PAGER=less

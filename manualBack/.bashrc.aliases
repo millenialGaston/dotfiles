@@ -2,6 +2,7 @@ if [[ $LANG = '' ]]; then
 	export LANG=en_US.UTF-8
 fi
 
+alias u="urxvt"
 alias ls='ls --color=auto'
 alias psg='ps -aux | grep --color=auto'
 alias grep='grep --color=auto'

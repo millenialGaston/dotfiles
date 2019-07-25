@@ -41,6 +41,9 @@ current_item_inactive_column_prefix = "$(red)$r"
 current_item_inactive_column_suffix = "$/r$(end)"
 
 lyrics_fetchers = genius, lyricsmania, lyricwiki, metrolyrics, justsomelyrics, jahlyrics, plyrics, tekstowo, internet
+lyrics_directory = ~/.config/mpd/lyrics
+store_lyrics_in_song_dir = no
+fetch_lyrics_for_current_song_in_background = yes
 
 # Others
 song_window_title_format = "{%a > }{%t}{ [%b{ Disc %d}]}|{%f}"
@@ -48,3 +51,7 @@ search_engine_display_mode = "columns" (classic/columns)
 follow_now_playing_lyrics = "yes"
 allow_for_physical_item_deletion = "yes"
 #display_screens_numbers_on_start = "no"
+#
+#
+#
+
