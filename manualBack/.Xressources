@@ -1,38 +1,31 @@
-
-/*
- * X resource file for URxvt
- * vim:ft=xdefaults:
- *
- * Maintained by Claud D. Park <posquit0.bj@gmail.com>
- * http://www.posquit0.com/
- */
-
-
 URxvt*termName: rxvt-unicode-256color
 URxvt*saveLines: 4096
 URxvt*loginShell: True
 URxvt*hold: false
-
+URxvt.internalBorder:  6
+URxvt.externalBorder: 2
+URxvt.scrollstyle:      plain
+URxvt.secondaryScroll:  true
 
 URxvt*font: \
-    xft:Iosevka:size=13:antialias=true:hinting=true, \
-    xft:NanumGothicCoding:size=12:antialias=true:hinting=true
-URxvt*italicFont: \
-    xft:Iosevka:size=12:italic:antialias=true:hinting=true, \
-    xft:NanumGothicCoding:size=12:italic:antialias=true:hinting=true
-URxvt*boldFont: \
-    xft:Iosevka:size=12:bold:antialias=true:hinting=true, \
-    xft:NanumGothicCoding:size=12:bold:antialias=true:hinting=true
-URxvt*boldItalicFont: \
-    xft:Iosevka:size=12:bold:italic:antialias=true:hinting=true, \
-    xft:NanumGothicCoding:size=12:bold:italic:antialias=true:hinting=true
-URxvt*buffered: True
-URxvt*letterSpace: 0
-URxvt*lineSpace: 0
-URxvt*inputMethod: ibus
-URxvt*preeditType: OffTheSpot
-URxvt*imLocale: en_US.UTF-8
-URxvt*imFont: NanumGothic
+                xft:Iosevka:size=13:antialias=true:hinting=true, \
+                xft:NanumGothicCoding:size=12:antialias=true:hinting=true
+                URxvt*italicFont: \
+                xft:Iosevka:size=12:italic:antialias=true:hinting=true, \
+                xft:NanumGothicCoding:size=12:italic:antialias=true:hinting=true
+                URxvt*boldFont: \
+                xft:Iosevka:size=12:bold:antialias=true:hinting=true, \
+                xft:NanumGothicCoding:size=12:bold:antialias=true:hinting=true
+                URxvt*boldItalicFont: \
+                xft:Iosevka:size=12:bold:italic:antialias=true:hinting=true, \
+                xft:NanumGothicCoding:size=12:bold:italic:antialias=true:hinting=true
+                URxvt*buffered: True
+                URxvt*letterSpace: 0
+                URxvt*lineSpace: 0
+                URxvt*inputMethod: ibus
+                URxvt*preeditType: OffTheSpot
+                URxvt*imLocale: en_US.UTF-8
+                URxvt*imFont: Iosevka
 
 
 /* Set a icon file for URxvt */
@@ -40,7 +33,7 @@ URxvt*imFont: NanumGothic
 URxvt*gemetry: 120x44
 URxvt*reverseVideo: False
 URxvt*depth: 32
-URxvt*background: [90]#111111
+URxvt*background: #292f33
 URxvt*fadeing: 30
 URxvt*visualBell: True
 URxvt*cursorBlink: True
@@ -55,14 +48,12 @@ URxvt*scrollWithBuffer: True
 URxvt*skipScroll: True
 URxvt*borderColor: #000000
 URxvt*borderLess: False
-URxvt.internalBorder: 0
-URxvt.externalBorder: 0
 URxvt*underlineURLs: True
 URxvt*iso14755: False
 URxvt*iso14755_52: False
 
 
-URxvt.perl-ext: default,url-select,clipboard,tabbed,resize-font
+URxvt.perl-ext: default,url-select,clipboard,resize-font
 URxvt.iso14755: false
 URxvt.iso14755_52: false
 URxvt.keysym.M-u: perl:url-select:select_next
@@ -81,9 +72,11 @@ URxvt.tabbed.tab-bg: 0
 !! Colorscheme
 
 ! special
-*.foreground: #93a1a1
-*.background: #141c21
-*.cursorColor: #afbfbf
+
+*.foreground=#c9ccd3
+
+*.background: #292f33
+*.cursorColor: #c9ccd3
 
 ! black
 *.color0: #263640
@@ -94,8 +87,8 @@ URxvt.tabbed.tab-bg: 0
 *.color9: #fa3935
 
 ! green
-*.color2: #819400
-*.color10: #a4bd00
+*.color2: #696ebf
+*.color10: #8086e8
 
 ! yellow
 *.color3: #b08500
@@ -120,7 +113,6 @@ URxvt.tabbed.tab-bg: 0
 URxvt.letterSpace: 0
 URxvt.lineSpace: 0
 URxvt.geometry: 92x24
-URxvt.internalBorder: 24
 URxvt.cursorBlink: true
 URxvt.cursorUnderline: false
 URxvt.saveline: 2048
@@ -129,3 +121,29 @@ URxvt.scrollBar_right: false
 URxvt.urgentOnBell: true
 URxvt.depth: 24
 URxvt.iso14755: false
+
+
+
+URxvt*termName: rxvt-256color
+URxvt*xftAntialias: true
+URxvt*background: #3f3f3f
+URxvt*foreground: #dcdccc
+URxvt*cursorColor: #aaaaaa
+URxvt*colorUL: #366060
+URxvt*underlineColor: #dfaf8f
+URxvt*color0: #3f3f3f
+URxvt*color1: #cc9393
+URxvt*color2: #7f9f7f
+URxvt*color3: #d0bf8f
+URxvt*color4: #6ca0a3
+URxvt*color5: #dc8cc3
+URxvt*color6: #93e0e3
+URxvt*color7: #dcdccc
+URxvt*color8: #000000
+URxvt*color9: #dca3a3
+URxvt*color10: #bfebbf
+URxvt*color11: #f0dfaf
+URxvt*color12: #8cd0d3
+URxvt*color13: #dc8cc3
+URxvt*color14: #93e0e3
+URxvt*color15: #ffffff

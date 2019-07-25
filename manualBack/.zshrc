@@ -34,5 +34,6 @@ antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle djui/alias-tips
 #antigen bundle denysdovhan/spaceship-prompt
 antigen bundle mafredri/zsh-async
-antigen bundle sindresorhus/pure
+#antigen bundle sindresorhus/pure
+antigen bundle yourfin/pure-agnoster
 antigen apply
