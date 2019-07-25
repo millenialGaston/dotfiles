@@ -1,0 +1,17 @@
+[retriever]
+type = SimpleIMAPRetriever
+server = localhost
+port = 1143
+username = frederic.boileau
+password = ql0LqP/UjNRoou4jMTXKA9M0NGiLHU1Lszlmee90Dgk=
+
+[destination]
+type = Maildir
+path = ~/.personal/mail/
+
+[options]
+verbose = 2
+message_log = ~/.getmail/gmail.log
+read_all = false
+delivered_to = false
+received = false
