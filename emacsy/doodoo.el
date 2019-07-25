@@ -64,7 +64,8 @@
 (global-set-key (kbd "C-x l") 'counsel-locate)
 
 (use-package rg
-  :bind ("C-c l" . counsel-rg)
+  :bind (("C-c l" . 'counsel-rg)
+         ("C-c r" . 'counsel-projectile-rg))
   :config
   (rg-enable-default-bindings))
 
@@ -203,6 +204,30 @@
      (org-archive-subtree)
      (setq org-map-continue-from (outline-previous-heading)))
    "/DONE" 'tree))
+
+(require 'org-wiki)
+(setq org-wiki-template
+      (string-trim
+       "
+#+TITLE: %n
+#+DESCRIPTION:
+#+KEYWORDS:
+#+STARTUP:  content
+#+DATE: %d
+
+- [[wiki:index][Index]]
+
+- Related:
+
+ * %n
+"))
+(setq org-wiki-location-list
+      '("~/.personal/notes"
+        "~/dotfiles/"
+        "~/.personal/org/"))
+
+;; Initialize first org-wiki-directory or default org-wiki
+(setq org-wiki-location (car org-wiki-location-list))
 
 (use-package org-brain
   :init

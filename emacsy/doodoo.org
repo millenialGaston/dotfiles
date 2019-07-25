@@ -12,6 +12,15 @@
 ** IDEA better captures
 
 
+** IDEA packages
+*** memacs
+- https://github.com/novoid/Memacs
+
+*** yankpad
+- https://github.com/Kungsgeten/yankpad
+
+*** deft
+https://jblevins.org/projects/deft/
 * basic
 :PROPERTIES:
 :header-args: :tangle yes
@@ -120,12 +129,11 @@
 :END:
 #+BEGIN_SRC elisp
 (use-package rg
-  :bind
-  (("C-c l" . 'counsel-rg)
-   ("C-c r" . 'counsel-projectile-rg'))
+  :bind (("C-c l" . 'counsel-rg)
+         ("C-c r" . 'counsel-projectile-rg))
   :config
   (rg-enable-default-bindings))
-#+END_SRC
+  #+END_SRC
 
 #+RESULTS:
 : counsel-rg
@@ -253,21 +261,21 @@
 : org-faces
 
 
-  Install Source Sans Pro."))))
-       (base-font-color (face-foreground 'default nil 'default))
-       (headline       `(:inherit default :weight normal :foreground ,base-font-color)))
+Install Source Sans Pro."))))
+(base-font-color (face-foreground 'default nil 'default))
+(headline       `(:inherit default :weight normal :foreground ,base-font-color)))
 
-  (custom-theme-set-faces
-   'user
-   `(org-level-8        ((t (,@headline ,@variable-tuple))))
-   `(org-level-7        ((t (,@headline ,@variable-tuple))))
-   `(org-level-6        ((t (,@headline ,@variable-tuple))))
-   `(org-level-5        ((t (,@headline ,@variable-tuple))))
-   `(org-level-4        ((t (,@headline ,@variable-tuple :height 1.2))))
-   `(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
-   `(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
-   `(org-level-1        ((t (,@headline ,@variable-tuple :height 1.70))))
-   `(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
+(custom-theme-set-faces
+'user
+`(org-level-8        ((t (,@headline ,@variable-tuple))))
+`(org-level-7        ((t (,@headline ,@variable-tuple))))
+`(org-level-6        ((t (,@headline ,@variable-tuple))))
+`(org-level-5        ((t (,@headline ,@variable-tuple))))
+`(org-level-4        ((t (,@headline ,@variable-tuple :height 1.2))))
+`(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
+`(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
+`(org-level-1        ((t (,@headline ,@variable-tuple :height 1.70))))
+`(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
 #+END_SRC
 
 #+RESULTS:
@@ -395,10 +403,23 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 #+RESULTS: org-basic-set-keys
 : org-archive-done-tasks
 
+** org contacts
+#+begin_src elisp
+(use-package org-contacts
+  :ensure nil
+  :after org
+  :custom (org-contacts-files '("~/.personal/org/contacts.org")))
+#+end_src
+#+begin_src
+
+#+end_src
 
 ** org-wiki
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
 #+begin_src elisp
-(use-package org-wiki)
+(require 'org-wiki)
 (setq org-wiki-template
       (string-trim
        "
@@ -415,8 +436,9 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
  ,* %n
 "))
 (setq org-wiki-location-list
-      '("~/.personal/notes"/
-        "~/dotfiles/"))
+      '("~/.personal/notes"
+        "~/dotfiles/"
+        "~/.personal/org/"))
 
 ;; Initialize first org-wiki-directory or default org-wiki
 (setq org-wiki-location (car org-wiki-location-list))
@@ -679,6 +701,20 @@ Suggest the URL title as a description for resource."
 :PROPERTIES:
 :header-args: :tangle yes
 
+- http://howardism.org/Technical/Emacs/capturing-content.html
+
+*** capture utilities
+
+#+begin_src elisp
+(defvar my/org-contacts-template )
+
+#+end_src
+
+#+RESULTS:
+: my/org-contacts-template
+
+*** capture basic setup
+
 #+srcname: capture-templates
 #+BEGIN_SRC elisp
 (setq org-default-notes-file (concat org-directory "notes.org"))
@@ -689,13 +725,21 @@ Suggest the URL title as a description for resource."
         ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
          "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
         ("j" "Journal" entry (file+datetree "~/.personal/org/journal.org")
-         "* %?\nEntered on %U\n %i\n %a")))
+         "* %?\nEntered on %U\n %i\n %a")
+        ("b" "Books" entry (file+headline "~/notes/books.org" "Books")
+         "* Title: %(read-string \"Title: \")\n Author: %(read-string
+        \"Author: \")\n Pages: %(number-to-string (read-number
+        \"Pages:\"))\n")
+        ("c" "Contact" entry (file+headline "~/.personal/org/contacts.org" "Friends")
+         "* %(read-string \"Name: \")\n
+          :PROPERTIES:\n
+          :EMAIL: %(read-string \"email: \")\n
+          :END:")))
+
 #+END_SRC
 
 #+RESULTS: capture-templates
 | t | Todo | entry | (file+headline ~/.personal/org/todo.org tasks) | * TODO %? |
-
-
 ** cliplink
 #+BEGIN_SRC elisp
 (defun custom-org-cliplink ()
@@ -791,6 +835,8 @@ Suggest the URL title as a description for resource."
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
+- [[*yankpad][yankpad]]
+
 #+BEGIN_SRC elisp
 (require 'yasnippet)
 (use-package yasnippet-snippets)
@@ -804,7 +850,16 @@ Suggest the URL title as a description for resource."
 : t
 
 
-* free keybindings
+* keybindings
+#+BEGIN_SRC elisp
+#+END_SRC
+
+#+RESULTS:
+: org-cliplink
+
+
+* live code
+** free keybindings
 #+begin_src elisp
 ;;; free-keys.el --- Show free keybindings for modkeys or prefixes
 
@@ -1017,15 +1072,14 @@ Display the free keybindings in current buffer.
 : free-keys
 
 
-* keybindings
-#+BEGIN_SRC elisp
-#+END_SRC
-
-#+RESULTS:
-: org-cliplink
-
-
 * configs
 https://emacs.christianbaeuerlein.com/my-org-config.html
 http://aaronbedra.com/emacs.d/#org-habit
 https://github.com/fuxialexander/doom-emacs-private-xfu/blob/master/modules/lang/org-private/config.el
+https://karl-voit.at/2014/12/03/emacs-chat/
+https://joshrollinswrites.com/emacsorg/org-capture-template-1/
+https://github.com/daviwil/dotfiles/blob/master/emacs/config/org-mode.el
+
+* links
+https://orgmode.org/worg/org-tutorials/#org4320b02
+https://sachachua.com/blog/
