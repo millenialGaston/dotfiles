@@ -4,14 +4,14 @@
 * todo
 
 ** TODO leader key ,
+** IDEA better captures
+
+*** IDEA capture optional properties
 ** IDEA email
 ** IDEA projectile setup
 ** IDEA bookmarks setup
-** NEXT rg
+** DONE rg
 ** IDEA complete snippets
-** IDEA better captures
-
-
 ** IDEA packages
 *** memacs
 - https://github.com/novoid/Memacs
@@ -21,6 +21,8 @@
 
 *** deft
 https://jblevins.org/projects/deft/
+
+
 * basic
 :PROPERTIES:
 :header-args: :tangle yes
@@ -1073,6 +1075,7 @@ Display the free keybindings in current buffer.
 
 
 * configs
+https://github.com/rememberYou/.emacs.d/blob/master/config.org
 https://emacs.christianbaeuerlein.com/my-org-config.html
 http://aaronbedra.com/emacs.d/#org-habit
 https://github.com/fuxialexander/doom-emacs-private-xfu/blob/master/modules/lang/org-private/config.el
