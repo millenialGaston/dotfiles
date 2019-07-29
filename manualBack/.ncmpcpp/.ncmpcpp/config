@@ -55,3 +55,4 @@ allow_for_physical_item_deletion = "yes"
 #
 #
 
+execute_on_song_change = "~/apps/myScripts/mnuc"

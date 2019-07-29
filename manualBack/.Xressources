@@ -2,8 +2,6 @@ URxvt*termName: rxvt-unicode-256color
 URxvt*saveLines: 4096
 URxvt*loginShell: True
 URxvt*hold: false
-URxvt.internalBorder:  6
-URxvt.externalBorder: 2
 URxvt.scrollstyle:      plain
 URxvt.secondaryScroll:  true
 
@@ -73,9 +71,6 @@ URxvt.tabbed.tab-bg: 0
 
 ! special
 
-*.foreground=#c9ccd3
-
-*.background: #292f33
 *.cursorColor: #c9ccd3
 
 ! black
@@ -109,41 +104,76 @@ URxvt.tabbed.tab-bg: 0
 ! white
 *.color7: #bfbaac
 *.color15: #fdf6e3
-!! URxvt Appearance
-URxvt.letterSpace: 0
-URxvt.lineSpace: 0
-URxvt.geometry: 92x24
-URxvt.cursorBlink: true
-URxvt.cursorUnderline: false
-URxvt.saveline: 2048
-URxvt.scrollBar: false
-URxvt.scrollBar_right: false
-URxvt.urgentOnBell: true
-URxvt.depth: 24
-URxvt.iso14755: false
+! special
+
+*.foreground: #ded8d7
+
+*.background: #152733
+
+*.cursorColor: #ded8d7
 
 
 
-URxvt*termName: rxvt-256color
-URxvt*xftAntialias: true
-URxvt*background: #3f3f3f
-URxvt*foreground: #dcdccc
-URxvt*cursorColor: #aaaaaa
-URxvt*colorUL: #366060
-URxvt*underlineColor: #dfaf8f
-URxvt*color0: #3f3f3f
-URxvt*color1: #cc9393
-URxvt*color2: #7f9f7f
-URxvt*color3: #d0bf8f
-URxvt*color4: #6ca0a3
-URxvt*color5: #dc8cc3
-URxvt*color6: #93e0e3
-URxvt*color7: #dcdccc
-URxvt*color8: #000000
-URxvt*color9: #dca3a3
-URxvt*color10: #bfebbf
-URxvt*color11: #f0dfaf
-URxvt*color12: #8cd0d3
-URxvt*color13: #dc8cc3
-URxvt*color14: #93e0e3
-URxvt*color15: #ffffff
+! black
+
+*.color0: #24455b
+
+*.color8: #24455b
+
+
+
+! red
+
+*.color1: #ff777a
+
+*.color9: #ff777a
+
+
+
+! green
+
+*.color2: #d97a9b
+
+*.color10: #d97a9b
+
+
+
+! yellow
+
+*.color3: #ffba95
+
+*.color11: #ffba95
+
+
+
+! blue
+
+*.color4: #4684ae
+
+*.color12: #4584ae
+
+
+
+! magenta
+
+*.color5: #325f7d
+
+*.color13: #325f7d
+
+
+
+! cyan
+
+*.color6: #c7bcba
+
+*.color14: #c7bcba
+
+
+
+! white
+
+*.color7: #dfd9d8
+
+*.color15: #ded8d7
+
+
