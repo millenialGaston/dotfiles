@@ -9,7 +9,6 @@
   :load-path "~/dotfiles/emacsy/packages/doom-snippets"
   :after yasnippet)
 
-(global-set-key (kbd "M-p l") 'org-cliplink)
 (set-face-attribute 'default nil
                     :family "Inconsolata"
                     :height 120
@@ -38,7 +37,10 @@
 (bind-key (kbd "M-o") 'company-complete)
 (bind-key (kbd "M-p") nil)
 (bind-key (kbd "M-p l") 'org-cliplink)
-(load-theme 'zenburn)
+(bind-key (kbd "M-p v") 'org-brain-visualize)
+(bind-key (kbd "M-p a") '+popup/raise)
+
+(load-theme 'doom-dracula)
 
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "brave")
@@ -159,12 +161,19 @@
         (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
         (default       . bibtex-completion-format-citation-default)))
 
+(run-with-idle-timer 20 t 'evil-normal-state)
+
+(setq-default
+  evil-escape-key-sequence "jk"
+  evil-escape-unordered-key-sequence "true")
+
 (evil-define-key nil evil-insert-state-map
   "\C-n" 'evil-next-visual-line
   "\C-p" 'evil-previous-visual-line
   "\C-f" 'evil-forward-char
   "\C-b" 'evil-backward-char
-  "\C-k" 'kill-line)
+  "\C-k" 'kill-line
+  "\C-y" 'evil-paste-after)
 
 (use-package company
   :init
@@ -204,6 +213,7 @@
      (org-archive-subtree)
      (setq org-map-continue-from (outline-previous-heading)))
    "/DONE" 'tree))
+(setq org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
 
 (require 'org-wiki)
 (setq org-wiki-template
@@ -222,9 +232,7 @@
  * %n
 "))
 (setq org-wiki-location-list
-      '("~/.personal/notes"
-        "~/dotfiles/"
-        "~/.personal/org/"))
+      '( "~/.personal/org/" "~/.personal/notes" "~/dotfiles/" ))
 
 ;; Initialize first org-wiki-directory or default org-wiki
 (setq org-wiki-location (car org-wiki-location-list))
@@ -241,8 +249,7 @@
   (push '("b" "Brain" plain (function org-brain-goto-end)
           "* %i%?" :empty-lines 1)
         org-capture-templates)
-  (setq org-brain-visualize-default-choices 'all)
-  (setq org-brain-title-max-length 12))
+  (setq org-brain-visualize-default-choices 'all))
 (defun org-brain-cliplink-resource ()
   "Add a URL from the clipboard as an org-brain resource.
 Suggest the URL title as a description for resource."
@@ -289,13 +296,37 @@ Suggest the URL title as a description for resource."
 (with-eval-after-load 'org-brain
   (add-hook 'org-brain-after-visualize-hook #'aa2u-org-brain-buffer))
 
-(setq org-agenda-files '("~/.personal/org"))
+(use-package evil-org
+  :commands evil-org-mode
+  :after org
+  :init
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  :config
+
+  (evil-define-key 'normal evil-org-mode-map
+    "<" 'org-metaleft
+    ">" 'org-metaright
+    "-" 'org-cycle-list-bullet
+    (kbd "TAB") 'org-cycle)
+;; normal & insert state shortcuts.
+    (mapc (lambda (state)
+            (evil-define-key state evil-org-mode-map
+              (kbd "M-l") 'org-metaright
+              (kbd "M-h") 'org-metaleft
+              (kbd "M-k") 'org-metaup
+              (kbd "M-j") 'org-metadown
+              (kbd "M-L") 'org-shiftmetaright
+              (kbd "M-H") 'org-shiftmetaleft
+              (kbd "M-K") 'org-shiftmetaup
+              (kbd "M-J") 'org-shiftmetadown))
+          '('normal 'insert)))
 
 (setq org-todo-keywords
       '((sequence "IDEA(i)" "TODO(t)" "STARTED(s)"
                   "NEXT(n)" "WAITING(w)" "PROJECT(p)"
                   "|" "DONE(d)" "ABRT(a)")
-        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")))
+        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+        (sequence "PLANNED" "SCHEDULED" "|" "DONE" "CANCELLED" )))
 
 (setq org-tag-alist
       '((:startgroup . nil)
@@ -354,30 +385,6 @@ Suggest the URL title as a description for resource."
                    path (or desc "")))
      (latex (format "\href{%s}{%s}"
                     path (or desc "video"))))))
-
-(use-package evil-org
-  :commands evil-org-mode
-  :after org
-  :init
-  (add-hook 'org-mode-hook 'evil-org-mode))
-
-(evil-define-key 'normal evil-org-mode-map
-  "<" 'org-metaleft
-  ">" 'org-metaright
-  "-" 'org-cycle-list-bullet
-  (kbd "TAB") 'org-cycle)
-;; normal & insert state shortcuts.
-(mapc (lambda (state)
-        (evil-define-key state evil-org-mode-map
-          (kbd "M-l") 'org-metaright
-          (kbd "M-h") 'org-metaleft
-          (kbd "M-k") 'org-metaup
-          (kbd "M-j") 'org-metadown
-          (kbd "M-L") 'org-shiftmetaright
-          (kbd "M-H") 'org-shiftmetaleft
-          (kbd "M-K") 'org-shiftmetaup
-          (kbd "M-J") 'org-shiftmetadown))
-      '('normal 'insert))
 
 (require 'yasnippet)
 (use-package yasnippet-snippets)

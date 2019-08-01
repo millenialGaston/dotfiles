@@ -1,3 +1,12 @@
+!-------------------------------------------------------------------------------
+! Xft settings
+!-------------------------------------------------------------------------------
+
+Xft.dpi:                    96
+Xft.antialias:              true
+Xft.rgba:                   rgb
+Xft.hinting:                true
+Xft.hintstyle:              hintslight
 URxvt*termName: rxvt-unicode-256color
 URxvt*saveLines: 4096
 URxvt*loginShell: True
@@ -5,27 +14,10 @@ URxvt*hold: false
 URxvt.scrollstyle:      plain
 URxvt.secondaryScroll:  true
 
-URxvt*font: \
-                xft:Iosevka:size=13:antialias=true:hinting=true, \
-                xft:NanumGothicCoding:size=12:antialias=true:hinting=true
-                URxvt*italicFont: \
-                xft:Iosevka:size=12:italic:antialias=true:hinting=true, \
-                xft:NanumGothicCoding:size=12:italic:antialias=true:hinting=true
-                URxvt*boldFont: \
-                xft:Iosevka:size=12:bold:antialias=true:hinting=true, \
-                xft:NanumGothicCoding:size=12:bold:antialias=true:hinting=true
-                URxvt*boldItalicFont: \
-                xft:Iosevka:size=12:bold:italic:antialias=true:hinting=true, \
-                xft:NanumGothicCoding:size=12:bold:italic:antialias=true:hinting=true
-                URxvt*buffered: True
-                URxvt*letterSpace: 0
-                URxvt*lineSpace: 0
-                URxvt*inputMethod: ibus
-                URxvt*preeditType: OffTheSpot
-                URxvt*imLocale: en_US.UTF-8
-                URxvt*imFont: Iosevka
 
-
+URxvt.font: xft:Iosevkasize=13
+URxvt*letterSpace     : -1
+! Allow switching of font sizes
 /* Set a icon file for URxvt */
 ! URxvt*iconFile: ~/terminal.svg
 URxvt*gemetry: 120x44
@@ -35,13 +27,9 @@ URxvt*background: #292f33
 URxvt*fadeing: 30
 URxvt*visualBell: True
 URxvt*cursorBlink: True
-URxvt*scrollBar: True
-URxvt*scrollBar_right: True
 URxvt*scrollstyle: plain
 URxvt*scrollColor: #777777
 URxvt*thickness: 5
-URxvt*scrollTtyKeypress: True
-URxvt*scrollTtyOutput: False
 URxvt*scrollWithBuffer: True
 URxvt*skipScroll: True
 URxvt*borderColor: #000000

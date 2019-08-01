@@ -1,27 +1,6 @@
 #+TITLE: DooDoo
 #+AUTHOR: Frederic Boileau
 
-* todo
-
-** TODO leader key ,
-** IDEA better captures
-
-*** IDEA capture optional properties
-** IDEA email
-** IDEA projectile setup
-** IDEA bookmarks setup
-** DONE rg
-** IDEA complete snippets
-** IDEA packages
-*** memacs
-- https://github.com/novoid/Memacs
-
-*** yankpad
-- https://github.com/Kungsgeten/yankpad
-
-*** deft
-https://jblevins.org/projects/deft/
-
 
 * basic
 :PROPERTIES:
@@ -41,7 +20,6 @@ https://jblevins.org/projects/deft/
   :load-path "~/dotfiles/emacsy/packages/doom-snippets"
   :after yasnippet)
 
-(global-set-key (kbd "M-p l") 'org-cliplink)
 (set-face-attribute 'default nil
                     :family "Inconsolata"
                     :height 120
@@ -70,7 +48,10 @@ https://jblevins.org/projects/deft/
 (bind-key (kbd "M-o") 'company-complete)
 (bind-key (kbd "M-p") nil)
 (bind-key (kbd "M-p l") 'org-cliplink)
-(load-theme 'zenburn)
+(bind-key (kbd "M-p v") 'org-brain-visualize)
+(bind-key (kbd "M-p a") '+popup/raise)
+
+(load-theme 'doom-dracula)
 #+END_SRC
 
 #+RESULTS:
@@ -316,20 +297,25 @@ Install Source Sans Pro."))))
 
 
 
-** evil interactive
+** evil
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
 #+BEGIN_SRC elisp
+(run-with-idle-timer 20 t 'evil-normal-state)
+
+(setq-default
+  evil-escape-key-sequence "jk"
+  evil-escape-unordered-key-sequence "true")
+
 (evil-define-key nil evil-insert-state-map
   "\C-n" 'evil-next-visual-line
   "\C-p" 'evil-previous-visual-line
   "\C-f" 'evil-forward-char
   "\C-b" 'evil-backward-char
-  "\C-k" 'kill-line)
+  "\C-k" 'kill-line
+  "\C-y" 'evil-paste-after)
 #+END_SRC
-
-#+RESULTS:
 
 
 * completion
@@ -400,10 +386,44 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
      (org-archive-subtree)
      (setq org-map-continue-from (outline-previous-heading)))
    "/DONE" 'tree))
+(setq org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
 #+END_SRC
 
 #+RESULTS: org-basic-set-keys
-: org-archive-done-tasks
+: ((heading . t) (plain-list-item . auto))
+
+
+** properties
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
+#+begin_src elisp
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
+
+;; Specify todo keyworks
+(setq org-todo-keywords '((sequence "URGENT(u) NEXT (n) TODO(t)" "STARTED(s)"
+                                    "IDEA(i)" "WAITING(w)" "APPT(a)"
+                                    "|" "DONE(d)" "CANCELLED(c)" "DEFERRED(f)")))
+
+;; Log the time when a TODO item was finished
+(setq org-log-done 'time)
+
+;; Specify global tags with fast tag selection
+(setq org-tag-alist '((:startgroup . nil) ("@office" . ?o) ("@home" . ?h) (:endgroup . nil)
+                      ("computer" . ?c) ("reading" . ?r)
+                      ("grocery" . ?g) ("homework" . ?w) ("research" . ?r)))
+
+;; Effort and global properties
+(setq org-global-properties '(("Effort_ALL". "0 0:10 0:20 0:30
+1:00 1:30 2:00 3:00 4:00 6:00 8:00")))
+
+;; Set global Column View format
+(setq org-columns-default-format '"%38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)")
+#+end_src
+
+#+RESULTS:
+: %38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)
 
 ** org contacts
 #+begin_src elisp
@@ -415,6 +435,7 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 #+begin_src
 
 #+end_src
+
 
 ** org-wiki
 :PROPERTIES:
@@ -438,16 +459,14 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
  ,* %n
 "))
 (setq org-wiki-location-list
-      '("~/.personal/notes"
-        "~/dotfiles/"
-        "~/.personal/org/"))
+      '( "~/.personal/org/" "~/.personal/notes" "~/dotfiles/" ))
 
 ;; Initialize first org-wiki-directory or default org-wiki
 (setq org-wiki-location (car org-wiki-location-list))
 #+end_src
 
 #+RESULTS:
-: ~/.personal/notes
+: ~/.personal/org/
 
 
 ** brain
@@ -467,8 +486,7 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
   (push '("b" "Brain" plain (function org-brain-goto-end)
           "* %i%?" :empty-lines 1)
         org-capture-templates)
-  (setq org-brain-visualize-default-choices 'all)
-  (setq org-brain-title-max-length 12))
+  (setq org-brain-visualize-default-choices 'all))
 (defun org-brain-cliplink-resource ()
   "Add a URL from the clipboard as an org-brain resource.
 Suggest the URL title as a description for resource."
@@ -520,17 +538,40 @@ Suggest the URL title as a description for resource."
 | aa2u-org-brain-buffer |
 
 
-** NEXT agenda
+** evil
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
-#+begin_src elisp
-(setq org-agenda-files '("~/.personal/org"))
-#+end_src
+
+#+BEGIN_SRC elisp
+(use-package evil-org
+  :commands evil-org-mode
+  :after org
+  :init
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  :config
+
+  (evil-define-key 'normal evil-org-mode-map
+    "<" 'org-metaleft
+    ">" 'org-metaright
+    "-" 'org-cycle-list-bullet
+    (kbd "TAB") 'org-cycle)
+;; normal & insert state shortcuts.
+    (mapc (lambda (state)
+            (evil-define-key state evil-org-mode-map
+              (kbd "M-l") 'org-metaright
+              (kbd "M-h") 'org-metaleft
+              (kbd "M-k") 'org-metaup
+              (kbd "M-j") 'org-metadown
+              (kbd "M-L") 'org-shiftmetaright
+              (kbd "M-H") 'org-shiftmetaleft
+              (kbd "M-K") 'org-shiftmetaup
+              (kbd "M-J") 'org-shiftmetadown))
+          '('normal 'insert)))
+#+END_SRC
 
 #+RESULTS:
-| ~/.personal/org |
-
+: t
 
 
 
@@ -648,7 +689,7 @@ Suggest the URL title as a description for resource."
 : <script type="text/javascript" src="%PATH"></script>
 
 
-** STARTED org keywords
+** org keywords
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
@@ -657,7 +698,8 @@ Suggest the URL title as a description for resource."
       '((sequence "IDEA(i)" "TODO(t)" "STARTED(s)"
                   "NEXT(n)" "WAITING(w)" "PROJECT(p)"
                   "|" "DONE(d)" "ABRT(a)")
-        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")))
+        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+        (sequence "PLANNED" "SCHEDULED" "|" "DONE" "CANCELLED" )))
 
 (setq org-tag-alist
       '((:startgroup . nil)
@@ -715,6 +757,7 @@ Suggest the URL title as a description for resource."
 #+RESULTS:
 : my/org-contacts-template
 
+
 *** capture basic setup
 
 #+srcname: capture-templates
@@ -742,6 +785,8 @@ Suggest the URL title as a description for resource."
 
 #+RESULTS: capture-templates
 | t | Todo | entry | (file+headline ~/.personal/org/todo.org tasks) | * TODO %? |
+
+
 ** cliplink
 #+BEGIN_SRC elisp
 (defun custom-org-cliplink ()
@@ -795,45 +840,7 @@ Suggest the URL title as a description for resource."
 [[yt:lEljKc9ZtU8]]
 
 
-** evil
-:PROPERTIES:
-:header-args: :tangle yes
-:END:
-
-#+BEGIN_SRC elisp
-(use-package evil-org
-  :commands evil-org-mode
-  :after org
-  :init
-  (add-hook 'org-mode-hook 'evil-org-mode))
-
-(evil-define-key 'normal evil-org-mode-map
-  "<" 'org-metaleft
-  ">" 'org-metaright
-  "-" 'org-cycle-list-bullet
-  (kbd "TAB") 'org-cycle)
-;; normal & insert state shortcuts.
-(mapc (lambda (state)
-        (evil-define-key state evil-org-mode-map
-          (kbd "M-l") 'org-metaright
-          (kbd "M-h") 'org-metaleft
-          (kbd "M-k") 'org-metaup
-          (kbd "M-j") 'org-metadown
-          (kbd "M-L") 'org-shiftmetaright
-          (kbd "M-H") 'org-shiftmetaleft
-          (kbd "M-K") 'org-shiftmetaup
-          (kbd "M-J") 'org-shiftmetadown))
-      '('normal 'insert))
-#+END_SRC
-
-#+RESULTS:
-| quote | normal |
-| quote | insert |
-
-
-
-
-* STARTED snippets
+* snippets
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
@@ -852,12 +859,31 @@ Suggest the URL title as a description for resource."
 : t
 
 
-* keybindings
-#+BEGIN_SRC elisp
-#+END_SRC
+* todo
 
-#+RESULTS:
-: org-cliplink
+** TODO leader key ,
+** IDEA avy
+** IDEA better captures
+
+*** IDEA capture optional properties
+** IDEA email
+** IDEA projectile setup
+** IDEA bookmarks setup
+** IDEA complete snippets
+** IDEA packages
+*** memacs
+- https://github.com/novoid/Memacs
+
+*** yankpad
+- https://github.com/Kungsgeten/yankpad
+
+*** org-mind-map
+- https://github.com/theodorewiles/org-mind-map
+
+*** org helm rifle
+
+*** deft
+https://jblevins.org/projects/deft/
 
 
 * live code
@@ -1082,6 +1108,7 @@ https://github.com/fuxialexander/doom-emacs-private-xfu/blob/master/modules/lang
 https://karl-voit.at/2014/12/03/emacs-chat/
 https://joshrollinswrites.com/emacsorg/org-capture-template-1/
 https://github.com/daviwil/dotfiles/blob/master/emacs/config/org-mode.el
+
 
 * links
 https://orgmode.org/worg/org-tutorials/#org4320b02

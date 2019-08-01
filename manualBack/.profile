@@ -3,6 +3,8 @@ export PATH=$PATH:$HOME/apps:$HOME/apps/myScripts
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.gem/ruby/2.6.0/bin
 export DOTFILES=$HOME/dotfiles
+export XDG_CONFIG_HOME=$HOME/xdg/config-home/
+export XDG_CACHE_HOME=$HOME/xdg/cache-home
 
 export ZSH=$HOME/.oh-my-zsh
 export LANG=en_US.UTF-8
@@ -41,4 +43,7 @@ export JAVA_HOME="/usr/bin/java"
 
 export QT_STYLE_OVERRIDE=gtk
 export QT_SELECT=qt5
-export XDG_CACHE_HOME=$HOME/.cache
+export PATH=/usr/lib/jvm/java-8-openjdk/jre/bin/:$PATH
+
+
+

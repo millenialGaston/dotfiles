@@ -6,6 +6,8 @@ alias rr="source ~/.zshrc"
 fpath=( "$DOTFILES/zfunctions" "${fpath[@]}" )
 fpath=( "$DOTFILES/zfunctions/myCode" "${fpath[@]}" )
 
+export POWERLEVEL8K_MODE='nerdfont-complete'
+ZSH_THEME=""
 
 #Private autoloads
 autoload -Uz fdd
@@ -28,6 +30,7 @@ antigen use oh-my-zsh
 antigen bundle git
 antigen bundle pip
 antigen bundle fzf
+antigen bundle jocelynmallon/zshmarks
 antigen bundle command-not-found
 antigen bundle tmux
 antigen bundle zsh-users/zsh-syntax-highlighting
