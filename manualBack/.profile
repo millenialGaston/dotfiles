@@ -2,6 +2,7 @@ export PATH=$PATH:$HOME/bin:/usr/local/bin:/home/sole/.emacs.d/bin
 export PATH=$PATH:$HOME/apps:$HOME/apps/myScripts
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.gem/ruby/2.6.0/bin
+
 export DOTFILES=$HOME/dotfiles
 export XDG_CONFIG_HOME=$HOME/xdg/config-home/
 export XDG_CACHE_HOME=$HOME/xdg/cache-home
@@ -13,7 +14,7 @@ export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
 
 export FZF_DEFAULT_COMMAND='fd --type f'
 export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND "
 export FZF_ALT_C_COMMAND="fd -t d . $HOME"
 
 export WORKON_HOME=$HOME/.virtualenvs
@@ -43,7 +44,8 @@ export JAVA_HOME="/usr/bin/java"
 
 export QT_STYLE_OVERRIDE=gtk
 export QT_SELECT=qt5
-export PATH=/usr/lib/jvm/java-8-openjdk/jre/bin/:$PATH
+
+export RMANHOME=$HOME/.local/rasdaman
 
 
 

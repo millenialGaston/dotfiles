@@ -1,5 +1,4 @@
-;; Set default font
-(setq org-agenda-files (directory-files-recursively "~/.personal/org/" "\.org$"))
+;; Set d/" "\.org$"))
 (add-to-list 'load-path
               "~/dotfiles/emacsy/packages/yasnippet/")
 (require 'yasnippet)
@@ -14,12 +13,11 @@
                     :height 120
                     :weight 'normal
                     :width 'normal)
+
 (setq inferior-julia-program-name "/usr/bin/julia")
 (setq python-python-command "/usr/bin/ipython")
 (ranger-override-dired-mode t)
-(setq org-cycle-separator-lines 2)
 
-(require 'doom-themes)
 (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
       doom-themes-enable-italic t) ; if nil, italics is universally disabled
 (doom-themes-org-config)
@@ -133,7 +131,7 @@
                        "<p"
                        "Insert a property tempate")
 (tempo-define-template "name"
-                       '("#+NAME:" (p "Name : " name)  n)
+                       '("#+NAME:" (p "Name : " name)  >)
                        "<n"
                        "Insert name")
 
@@ -206,6 +204,7 @@
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
 (setq org-directory "~/.personal/org")
+(setq org-agenda-files '("~/.personal/org"))
 (defun org-archive-done-tasks ()
   (interactive)
   (org-map-entries
@@ -214,6 +213,35 @@
      (setq org-map-continue-from (outline-previous-heading)))
    "/DONE" 'tree))
 (setq org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
+
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
+
+;; Specify todo keyworks
+
+(setq org-todo-keywords
+      '((sequence "NEXT(n)" "TODO(t)" "STARTED(s)" "WAITING(w)" "IDEA(i)" "PROJECT(p)" "|" "DONE(d)" "ABRT(a)") (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+        (sequence "PLANNED" "SCHEDULED" "|" "DONE" "CANCELLED" )))
+
+;; Log the time when a TODO item was finished
+(setq org-log-done 'time)
+
+;; Specify global tags with fast tag selection
+(setq org-tag-alist '((:startgroup . nil) ("@office" . ?o) ("@home" . ?h) (:endgroup . nil)
+                      ("computer" . ?c) ("reading" . ?r)
+                      ("grocery" . ?g) ("homework" . ?w) ("research" . ?r)))
+
+;; Effort and global properties
+(setq org-global-properties '(("Effort_ALL". "0 0:10 0:20 0:30
+1:00 1:30 2:00 3:00 4:00 6:00 8:00")))
+
+;; Set global Column View format
+(setq org-columns-default-format '"%38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)")
+
+(use-package org-contacts
+  :ensure nil
+  :after org
+  :custom (org-contacts-files '("~/.personal/org/contacts.org")))
 
 (require 'org-wiki)
 (setq org-wiki-template
@@ -320,50 +348,6 @@ Suggest the URL title as a description for resource."
               (kbd "M-K") 'org-shiftmetaup
               (kbd "M-J") 'org-shiftmetadown))
           '('normal 'insert)))
-
-(setq org-todo-keywords
-      '((sequence "IDEA(i)" "TODO(t)" "STARTED(s)"
-                  "NEXT(n)" "WAITING(w)" "PROJECT(p)"
-                  "|" "DONE(d)" "ABRT(a)")
-        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
-        (sequence "PLANNED" "SCHEDULED" "|" "DONE" "CANCELLED" )))
-
-(setq org-tag-alist
-      '((:startgroup . nil)
-        ("HOME" . ?h)
-        ("RESEARCH" . ?r)
-        ("TEACHING" . ?t)
-        (:endgroup . nil)
-        (:startgroup . nil)
-        ("OS" . ?o)
-        ("DEV" . ?d)
-        ("GEEK" . ?g)
-        ("WWW" . ?w)
-        (:endgroup . nil)
-        (:startgroup . nil)
-        ("EASY" . ?e)
-        ("MEDIUM" . ?m)
-        ("HARD" . ?a)
-        (:endgroup . nil)
-        ("URGENT" . ?u)
-        ("KEY" . ?k)
-        ("BONUS" . ?b)
-        ("noexport" . ?x)))
-
-(setq org-tag-faces
-      '(("HOME" . (:foreground "GoldenRod" :weight bold))
-        ("RESEARCH" . (:foreground "GoldenRod" :weight bold))
-        ("TEACHING" . (:foreground "GoldenRod" :weight bold))
-        ("OS" . (:foreground "IndianRed1" :weight bold))
-        ("DEV" . (:foreground "IndianRed1" :weight bold))
-        ("WWW" . (:foreground "IndianRed1" :weight bold))
-        ("URGENT" . (:foreground "Red" :weight bold))
-        ("KEY" . (:foreground "Red" :weight bold))
-        ("EASY" . (:foreground "OrangeRed" :weight bold))
-        ("MEDIUM" . (:foreground "OrangeRed" :weight bold))
-        ("HARD" . (:foreground "OrangeRed" :weight bold))
-        ("BONUS" . (:foreground "GoldenRod" :weight bold))
-        ("noexport" . (:foreground "LimeGreen" :weight bold))))
 
 (defvar yt-iframe-format
   ;; You may want to change your width and height.

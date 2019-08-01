@@ -1,6 +1,6 @@
 source ~/.profile
 source ~/.bashrc.aliases
-
+source ~/.local/bin/virtualenvwrapper.sh
 alias rr="source ~/.zshrc"
 
 fpath=( "$DOTFILES/zfunctions" "${fpath[@]}" )

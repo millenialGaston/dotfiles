@@ -7,10 +7,9 @@
 :header-args: :tangle yes
 :END:
 
-** basic basic
+** TODO basic basic
 #+BEGIN_SRC elisp
-;; Set default font
-(setq org-agenda-files (directory-files-recursively "~/.personal/org/" "\.org$"))
+;; Set d/" "\.org$"))
 (add-to-list 'load-path
               "~/dotfiles/emacsy/packages/yasnippet/")
 (require 'yasnippet)
@@ -25,12 +24,11 @@
                     :height 120
                     :weight 'normal
                     :width 'normal)
+
 (setq inferior-julia-program-name "/usr/bin/julia")
 (setq python-python-command "/usr/bin/ipython")
 (ranger-override-dired-mode t)
-(setq org-cycle-separator-lines 2)
 
-(require 'doom-themes)
 (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
       doom-themes-enable-italic t) ; if nil, italics is universally disabled
 (doom-themes-org-config)
@@ -207,13 +205,14 @@
 
 #+RESULTS:
 
+*** tempo
 #+BEGIN_SRC elisp
 (tempo-define-template "my-property"
                        '(":PROPERTIES:" p ":END:" >)
                        "<p"
                        "Insert a property tempate")
 (tempo-define-template "name"
-                       '("#+NAME:" (p "Name : " name)  n)
+                       '("#+NAME:" (p "Name : " name)  >)
                        "<n"
                        "Insert name")
 #+END_SRC
@@ -223,45 +222,6 @@
 
 
 
-
-** org faces :notangle:
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-#+BEGIN_SRC elisp
-(use-package org-faces
-  :after org
-  :custom
-  (org-todo-keyword-faces
-   '(("DONE" . (:foreground "cyan" :weight bold))
-     ("SOMEDAY" . (:foreground "gray" :weight bold))
-     ("WAITING" . (:foreground "red" :weight bold))
-     ("STARTED" . (:foreground "cyan" :weight normal))
-     ("NEXT" . (:foreground "cyan" :weight bold)))))
-#+END_SRC
-
-#+RESULTS:
-: org-faces
-
-
-Install Source Sans Pro."))))
-(base-font-color (face-foreground 'default nil 'default))
-(headline       `(:inherit default :weight normal :foreground ,base-font-color)))
-
-(custom-theme-set-faces
-'user
-`(org-level-8        ((t (,@headline ,@variable-tuple))))
-`(org-level-7        ((t (,@headline ,@variable-tuple))))
-`(org-level-6        ((t (,@headline ,@variable-tuple))))
-`(org-level-5        ((t (,@headline ,@variable-tuple))))
-`(org-level-4        ((t (,@headline ,@variable-tuple :height 1.2))))
-`(org-level-3        ((t (,@headline ,@variable-tuple :height 1.25))))
-`(org-level-2        ((t (,@headline ,@variable-tuple :height 1.5))))
-`(org-level-1        ((t (,@headline ,@variable-tuple :height 1.70))))
-`(org-document-title ((t (,@headline ,@variable-tuple :height 2.0 :underline nil))))))
-#+END_SRC
-
-#+RESULTS:
 
 
 ** bib stuff
@@ -339,7 +299,6 @@ Install Source Sans Pro."))))
   (global-company-mode t))
 (define-key global-map (kbd "C-.") 'company-files)
 #+END_SRC
-
 *** preview ala vim
 #+BEGIN_SRC elisp
 (defun company-preview-if-not-tng-frontend (command)
@@ -379,6 +338,7 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
 (setq org-directory "~/.personal/org")
+(setq org-agenda-files '("~/.personal/org"))
 (defun org-archive-done-tasks ()
   (interactive)
   (org-map-entries
@@ -390,7 +350,7 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 #+END_SRC
 
 #+RESULTS: org-basic-set-keys
-: ((heading . t) (plain-list-item . auto))
+: ((heading . auto) (plain-list-item . auto))
 
 
 ** properties
@@ -402,9 +362,10 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 (org-clock-persistence-insinuate)
 
 ;; Specify todo keyworks
-(setq org-todo-keywords '((sequence "URGENT(u) NEXT (n) TODO(t)" "STARTED(s)"
-                                    "IDEA(i)" "WAITING(w)" "APPT(a)"
-                                    "|" "DONE(d)" "CANCELLED(c)" "DEFERRED(f)")))
+
+(setq org-todo-keywords
+      '((sequence "NEXT(n)" "TODO(t)" "STARTED(s)" "WAITING(w)" "IDEA(i)" "PROJECT(p)" "|" "DONE(d)" "ABRT(a)") (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
+        (sequence "PLANNED" "SCHEDULED" "|" "DONE" "CANCELLED" )))
 
 ;; Log the time when a TODO item was finished
 (setq org-log-done 'time)
@@ -425,15 +386,16 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 #+RESULTS:
 : %38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)
 
+
+
 ** org contacts
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
 #+begin_src elisp
 (use-package org-contacts
-  :ensure nil
   :after org
   :custom (org-contacts-files '("~/.personal/org/contacts.org")))
-#+end_src
-#+begin_src
-
 #+end_src
 
 
@@ -689,73 +651,12 @@ Suggest the URL title as a description for resource."
 : <script type="text/javascript" src="%PATH"></script>
 
 
-** org keywords
-:PROPERTIES:
-:header-args: :tangle yes
-:END:
-#+BEGIN_SRC elisp
-(setq org-todo-keywords
-      '((sequence "IDEA(i)" "TODO(t)" "STARTED(s)"
-                  "NEXT(n)" "WAITING(w)" "PROJECT(p)"
-                  "|" "DONE(d)" "ABRT(a)")
-        (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
-        (sequence "PLANNED" "SCHEDULED" "|" "DONE" "CANCELLED" )))
-
-(setq org-tag-alist
-      '((:startgroup . nil)
-        ("HOME" . ?h)
-        ("RESEARCH" . ?r)
-        ("TEACHING" . ?t)
-        (:endgroup . nil)
-        (:startgroup . nil)
-        ("OS" . ?o)
-        ("DEV" . ?d)
-        ("GEEK" . ?g)
-        ("WWW" . ?w)
-        (:endgroup . nil)
-        (:startgroup . nil)
-        ("EASY" . ?e)
-        ("MEDIUM" . ?m)
-        ("HARD" . ?a)
-        (:endgroup . nil)
-        ("URGENT" . ?u)
-        ("KEY" . ?k)
-        ("BONUS" . ?b)
-        ("noexport" . ?x)))
-
-(setq org-tag-faces
-      '(("HOME" . (:foreground "GoldenRod" :weight bold))
-        ("RESEARCH" . (:foreground "GoldenRod" :weight bold))
-        ("TEACHING" . (:foreground "GoldenRod" :weight bold))
-        ("OS" . (:foreground "IndianRed1" :weight bold))
-        ("DEV" . (:foreground "IndianRed1" :weight bold))
-        ("WWW" . (:foreground "IndianRed1" :weight bold))
-        ("URGENT" . (:foreground "Red" :weight bold))
-        ("KEY" . (:foreground "Red" :weight bold))
-        ("EASY" . (:foreground "OrangeRed" :weight bold))
-        ("MEDIUM" . (:foreground "OrangeRed" :weight bold))
-        ("HARD" . (:foreground "OrangeRed" :weight bold))
-        ("BONUS" . (:foreground "GoldenRod" :weight bold))
-        ("noexport" . (:foreground "LimeGreen" :weight bold))))
-        #+END_SRC
-
-
 
 ** capture
 :PROPERTIES:
 :header-args: :tangle yes
 
 - http://howardism.org/Technical/Emacs/capturing-content.html
-
-*** capture utilities
-
-#+begin_src elisp
-(defvar my/org-contacts-template )
-
-#+end_src
-
-#+RESULTS:
-: my/org-contacts-template
 
 
 *** capture basic setup
@@ -767,14 +668,18 @@ Suggest the URL title as a description for resource."
       '(("t" "Todo" entry (file+headline "~/.personal/org/todo.org" "tasks")
          "* TODO %?\n:PROPERTIES:\n:Created: %U\n:Linked: %A\n:END:\n %i"
          :prepend t)
+
         ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
          "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
+
         ("j" "Journal" entry (file+datetree "~/.personal/org/journal.org")
          "* %?\nEntered on %U\n %i\n %a")
+
         ("b" "Books" entry (file+headline "~/notes/books.org" "Books")
-         "* Title: %(read-string \"Title: \")\n Author: %(read-string
-        \"Author: \")\n Pages: %(number-to-string (read-number
-        \"Pages:\"))\n")
+          "* %(read-string \"Title: \")\n
+          :PROPERTIES: Pages: %(number-to-string (read-number \"Pages:\")):END:\n
+          Author: %(read-string \"Author: \")\n")
+
         ("c" "Contact" entry (file+headline "~/.personal/org/contacts.org" "Friends")
          "* %(read-string \"Name: \")\n
           :PROPERTIES:\n
@@ -861,15 +766,6 @@ Suggest the URL title as a description for resource."
 
 * todo
 
-** TODO leader key ,
-** IDEA avy
-** IDEA better captures
-
-*** IDEA capture optional properties
-** IDEA email
-** IDEA projectile setup
-** IDEA bookmarks setup
-** IDEA complete snippets
 ** IDEA packages
 *** memacs
 - https://github.com/novoid/Memacs
@@ -882,10 +778,22 @@ Suggest the URL title as a description for resource."
 
 *** org helm rifle
 
+*** org protocol capture html
+https://github.com/alphapapa/org-protocol-capture-html
+
 *** deft
 https://jblevins.org/projects/deft/
 
 
+** TODO leader key ,
+** IDEA avy
+** IDEA better captures
+
+*** IDEA capture optional properties
+** IDEA email
+** IDEA projectile setup
+** IDEA bookmarks setup
+** IDEA complete snippets
 * live code
 ** free keybindings
 #+begin_src elisp

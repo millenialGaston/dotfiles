@@ -13,7 +13,8 @@ alias pacu='sudo pacman -Syu --noconfirm'
 alias yayu='yay -Syua --noconfirm'
 alias systemctl='sudo systemctl'
 alias se='ls /usr/bin | fzf'
-alias clone:='git clone git@github.com:'
+alias cdr='cd $(git root)'
+
 
 alias rr='source ~/.zshrc'
 
@@ -21,7 +22,7 @@ alias b="brave &"
 alias bl="bluetoothctl"
 alias c="clear"
 alias cp='cp -i'
-alias e='emacsclient -c -a "" $* &'
+alias e='emacsclient -c -a "" $* '
 alias g="git status"
 alias j="jobs"
 alias ls='ls --color=auto'
