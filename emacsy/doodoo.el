@@ -1,18 +1,6 @@
-;; Set d/" "\.org$"))
+(setq org-cycle-separator-lines 2)
 (add-to-list 'load-path
               "~/dotfiles/emacsy/packages/yasnippet/")
-(require 'yasnippet)
-(yas-global-mode 1)
-
-(use-package doom-snippets
-  :load-path "~/dotfiles/emacsy/packages/doom-snippets"
-  :after yasnippet)
-
-(set-face-attribute 'default nil
-                    :family "Inconsolata"
-                    :height 120
-                    :weight 'normal
-                    :width 'normal)
 
 (setq inferior-julia-program-name "/usr/bin/julia")
 (setq python-python-command "/usr/bin/ipython")
@@ -37,11 +25,10 @@
 (bind-key (kbd "M-p l") 'org-cliplink)
 (bind-key (kbd "M-p v") 'org-brain-visualize)
 (bind-key (kbd "M-p a") '+popup/raise)
-
-(load-theme 'doom-dracula)
+(bind-key (kbd "M-p c") 'org-id-get-create)
 
 (setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "brave")
+      browse-url-generic-program "firefox")
 
 (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
@@ -111,8 +98,6 @@
 (setq doom-modeline-irc-stylize 'identity)
 
 (require 'ob-shell)
-(require 'org-tempo)
-(setq tempo-interactive t)
 (require 'ox-md)
 (require 'julia-repl)
 (add-hook 'julia-mode-hook 'julia-repl-mode)
@@ -124,8 +109,11 @@
  '((emacs-lisp . t)
    (python . t)
    (julia . t)
+   (lisp . t)
    (shell . t)))
 
+(require 'org-tempo)
+(setq tempo-interactive t)
 (tempo-define-template "my-property"
                        '(":PROPERTIES:" p ":END:" >)
                        "<p"
@@ -139,10 +127,10 @@
 
 (setq org-ref-bibliography-notes "~/.personal/.bibstuff/orgRefNotes.org"
       org-ref-default-bibliography '("~/.personal/.bibstuff/master-bib.bib")
-      org-ref-pdf-directory "~/.personal/zotero/storage/")
+      org-ref-pdf-directory "~/.personal/.bibstuff/bib-pdfs/")
 
 (setq bibtex-completion-bibliography '("~/.personal/.bibstuff/master-bib.bib")
-      bibtex-completion-library-path "~/.personal/zotero/storage"
+      bibtex-completion-library-path "~/.personal/.bibstuff/bib-pdfs/"
       bibtex-completion-notes-path "~/.personal/.bibstuff/helm-bibtex-notes")
 
 (setq bibtex-completion-pdf-field "file")
@@ -154,24 +142,159 @@
 (setq bibtex-dialect 'biblatex)
 
 (setq bibtex-completion-format-citation-functions
-      '((org-mode      . bibtex-completion-format-citation-org-link-to-PDF)
+      '((org-mode . bibtex-completion-format-citation-ebib)
         (latex-mode    . bibtex-completion-format-citation-cite)
         (markdown-mode . bibtex-completion-format-citation-pandoc-citeproc)
         (default       . bibtex-completion-format-citation-default)))
 
+(setq bibtex-completion-display-formats
+    '((article       . "${author:36} ${title:*} ${journal:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+      (inbook        . "${author:36} ${title:*} Chapter ${chapter:32} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+      (incollection  . "${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+      (inproceedings . "${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+      (t             . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")))
+
 (run-with-idle-timer 20 t 'evil-normal-state)
 
 (setq-default
-  evil-escape-key-sequence "jk"
-  evil-escape-unordered-key-sequence "true")
+ evil-escape-key-sequence "jk"
+ evil-escape-unordered-key-sequence "true")
 
 (evil-define-key nil evil-insert-state-map
-  "\C-n" 'evil-next-visual-line
-  "\C-p" 'evil-previous-visual-line
   "\C-f" 'evil-forward-char
   "\C-b" 'evil-backward-char
   "\C-k" 'kill-line
   "\C-y" 'evil-paste-after)
+
+(require 'engine-mode)
+(engine-mode t)
+
+(defengine wolfram-alpha
+  "http://www.wolframalpha.com/input/?i=%s")
+
+(defengine wiktionary
+  "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s"
+  :keybinding "p")
+
+(defengine youtube
+  "http://www.youtube.com/results?aq=f&oq=&search_query=%s"
+  :keybinding "y")
+
+(defengine goodreads
+  "https://www.goodreads.com/search?q=%s"
+  :keybinding "r")
+
+(defengine wikipedia
+  "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+  :keybinding "w"
+  :docstring "Searchin' the wikis.")
+
+(defengine stack-overflow
+  "https://stackoverflow.com/search?q=%s"
+  :keybinding "s")
+
+(defengine amazon
+  "http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=%s"
+  :keybinding "a")
+
+(defengine duckduckgo
+  "https://duckduckgo.com/?q=%s"
+  :keybinding "d")
+
+(defengine google
+  "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
+  :keybinding "g")
+
+(defengine github
+  "https://github.com/search?ref=simplesearch&q=%s"
+  :keybinding "h")
+
+(defengine google-maps
+  "http://maps.google.com/maps?q=%s"
+  :docstring "Mappin' it up."
+  :keybinding "m")
+
+(defengine project-gutenberg
+  "http://www.gutenberg.org/ebooks/search/?query=%s")
+
+(defengine rfcs
+  "http://pretty-rfc.herokuapp.com/search?q=%s")
+
+(defengine twitter
+  "https://twitter.com/search?q=%s")
+
+(add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
+(add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
+;; Optionally, specify the lisp program you are using. Default is "lisp"
+(setq inferior-lisp-program "sbcl")
+(load-theme 'doom-dracula)
+
+(setq epg-gpg-program "gpg")
+(require 'epa-file)
+(epa-file-enable)
+(setq auth-sources "~/.authinfo.gpg")
+(setq auth-source-debug t)
+(setf epa-pinentry-mode 'loopback)
+(require 'mu4e)
+(require 'smtpmail)
+(setq mail-user-agent 'mu4e-user-agent)
+(setq mu4e-get-mail-command "getmail"
+      mu4e-update-interval 300)
+
+(setq mu4e-maildir            "~/.personal/mail/"
+      mu4e-sent-folder        "/Sent"
+      mu4e-drafts-folder      "/Drafts"
+      mu4e-trash-folder       "/Trash"
+      mu4e-refile-folder      "/Archive")
+
+(setq mu4e-user-mail-address-list '("frederic.boileau@protonmail.com"))
+(setq mu4e-compose-reply-to-address "frederic.boileau@protonmail.com"
+      user-mail-address "frederic.boileau@protonmail.com"
+      user-full-name  "Frederic Boileau")
+
+(setq mu4e-compose-signature
+      "\n\n---frederic Boileau")
+
+
+;; (setq user-mail-address "frederic.boileau@protonmail.com"
+;;       user-full-name "Frederic Boileau")
+
+(setq gnus-select-method '(nnimap "localhost"
+                                  (nnimap-stream plain)
+                                  (nnimap-address "127.0.0.1")
+                                  (nnimap-server-port 1143)))
+
+(setq smtpmail-default-smtp-server "127.0.0.1")
+(setq mail-sources '((imap :server "127.0.0.1"
+                           :user "frederic.boileau@protonmail.com"
+                           :password "NwHMHgISP6SY/bRw8hgOtKlcwIY6OCfjj02slPtOgHM")))
+(require 'starttls)
+
+(setq send-mail-function         'smtpmail-send-it
+      message-send-mail-function 'smtpmail-send-it
+      smtpmail-smtp-server       "127.0.0.1"
+      smtpmail-smtp-service 1025
+      smtpmail-debug-info t
+      smtpmail-debug-verb t
+      starttls-extra-arguments nil
+      starttls-gnutls-program "/usr/bin/gnutls-cli"
+      starttls-extra-arguments nil
+      starttls-use-gnutls t
+      smtpmail-auth-credentials "~/.authinfo.gpg")
+(setq starttls-extra-arguments nil)
+
+(require 'gnus-desktop-notify)
+(gnus-desktop-notify-mode)
+(gnus-demon-add-scanmail)
+(load-library "smtpmail")
+;; smtp mail setting
+
+(require 'mu4e-contrib)
+(setq mu4e-html2text-command 'mu4e-shr2text)
+(setq shr-color-visible-luminance-min 60)
+(setq shr-color-visible-distance-min 5)
+(setq shr-use-colors nil)
+(advice-add #'shr-colorize-region :around (defun shr-no-colourise-region (&rest ignore)))
 
 (use-package company
   :init
@@ -214,15 +337,14 @@
    "/DONE" 'tree))
 (setq org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
 
+;; (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
+(setq org-latex-pdf-process (list
+   "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
+
+(setq org-books-file "~/.personal/org/master-book-list.org")
+
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
-
-;; Specify todo keyworks
-
-(setq org-todo-keywords
-      '((sequence "NEXT(n)" "TODO(t)" "STARTED(s)" "WAITING(w)" "IDEA(i)" "PROJECT(p)" "|" "DONE(d)" "ABRT(a)") (sequence "|" "CANCELED(c)" "DELEGATED(l)" "SOMEDAY(f)")
-        (sequence "PLANNED" "SCHEDULED" "|" "DONE" "CANCELLED" )))
-
 ;; Log the time when a TODO item was finished
 (setq org-log-done 'time)
 
@@ -232,14 +354,12 @@
                       ("grocery" . ?g) ("homework" . ?w) ("research" . ?r)))
 
 ;; Effort and global properties
-(setq org-global-properties '(("Effort_ALL". "0 0:10 0:20 0:30
-1:00 1:30 2:00 3:00 4:00 6:00 8:00")))
+(setq org-global-properties '(("Effort_ALL". "0 0:10 0:20 0:30 1:00 1:30 2:00 3:00 4:00 6:00 8:00")))
 
 ;; Set global Column View format
 (setq org-columns-default-format '"%38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)")
 
 (use-package org-contacts
-  :ensure nil
   :after org
   :custom (org-contacts-files '("~/.personal/org/contacts.org")))
 
@@ -278,6 +398,7 @@
           "* %i%?" :empty-lines 1)
         org-capture-templates)
   (setq org-brain-visualize-default-choices 'all))
+
 (defun org-brain-cliplink-resource ()
   "Add a URL from the clipboard as an org-brain resource.
 Suggest the URL title as a description for resource."
@@ -348,31 +469,3 @@ Suggest the URL title as a description for resource."
               (kbd "M-K") 'org-shiftmetaup
               (kbd "M-J") 'org-shiftmetadown))
           '('normal 'insert)))
-
-(defvar yt-iframe-format
-  ;; You may want to change your width and height.
-  (concat "<iframe width=\"440\""
-          " height=\"335\""
-          " src=\"https://www.youtube.com/embed/%s\""
-          " frameborder=\"0\""
-          " allowfullscreen>%s</iframe>"))
-
-(org-add-link-type
- "yt"
- (lambda (handle)
-   (browse-url
-    (concat "https://www.youtube.com/embed/"
-            handle)))
- (lambda (path desc backend)
-   (cl-case backend
-     (html (format yt-iframe-format
-                   path (or desc "")))
-     (latex (format "\href{%s}{%s}"
-                    path (or desc "video"))))))
-
-(require 'yasnippet)
-(use-package yasnippet-snippets)
-(require 'helm-c-yasnippet)
-(setq helm-yas-space-match-any-greedy t)
-(global-set-key (kbd "C-c y") 'helm-yas-complete)
-(yas-global-mode 1)
