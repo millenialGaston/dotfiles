@@ -1,31 +1,46 @@
-(setq org-cycle-separator-lines 2)
 (add-to-list 'load-path
               "~/dotfiles/emacsy/packages/yasnippet/")
 
 (setq inferior-julia-program-name "/usr/bin/julia")
 (setq python-python-command "/usr/bin/ipython")
-(ranger-override-dired-mode t)
 
-(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-      doom-themes-enable-italic t) ; if nil, italics is universally disabled
-(doom-themes-org-config)
+(set-default-font "Iosevka Nerd Font 12")
 (setq-default tab-width 2)
 (setq c-basic-indent 2)
 
-(set-frame-parameter (selected-frame) 'alpha '(100 . 90))
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+      doom-themes-enable-italic t) ; if nil, italics is universally disabled
+(doom-themes-org-config)
+
+(set-frame-parameter (selected-frame) 'alpha '(99 . 87))
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (autoload 'ibuffer "ibuffer" "List buffers." t)
+(ranger-override-dired-mode t)
+
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
 (bind-key (kbd "M-o") 'company-complete)
+
 (bind-key (kbd "M-p") nil)
 (bind-key (kbd "M-p l") 'org-cliplink)
 (bind-key (kbd "M-p v") 'org-brain-visualize)
 (bind-key (kbd "M-p a") '+popup/raise)
 (bind-key (kbd "M-p c") 'org-id-get-create)
+(bind-key (kbd "M-p r") 'slime-repl)
+
+(global-set-key (kbd "C-t") 'transpose-chars)
+(global-set-key (kbd "M-t") 'tranpose-words)
+;; (global-set-key (kbd "C-M-t")'tranpose-sexps)
+;; (global-set-key (kbd "C-x C-t") 'tranpose-lines)
+
+(require 'org-attach)
+(setq org-link-abbrev-alist '(("attach" . org-attach-expand-link)))
+
+(setq slime-contribs '(slime-fancy slime-asdf))
 
 (setq browse-url-browser-function 'browse-url-generic
       browse-url-generic-program "firefox")
@@ -110,7 +125,10 @@
    (python . t)
    (julia . t)
    (lisp . t)
-   (shell . t)))
+   (shell . t)
+   (js . t)
+   (haskell . t)
+   (scheme . t)))
 
 (require 'org-tempo)
 (setq tempo-interactive t)
@@ -122,6 +140,9 @@
                        '("#+NAME:" (p "Name : " name)  >)
                        "<n"
                        "Insert name")
+(tempo-define-template "attr-org"
+                       '("#+ATTR_ORG: :width 400")
+                       "<o")
 
 (setq reftex-default-bibliography '("~/.personal/.bibstuff/master-biblio.bib"))
 
@@ -148,11 +169,11 @@
         (default       . bibtex-completion-format-citation-default)))
 
 (setq bibtex-completion-display-formats
-    '((article       . "${author:36} ${title:*} ${journal:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
-      (inbook        . "${author:36} ${title:*} Chapter ${chapter:32} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
-      (incollection  . "${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
-      (inproceedings . "${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
-      (t             . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")))
+      '((article       . "${author:36} ${title:*} ${journal:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+        (inbook        . "${author:36} ${title:*} Chapter ${chapter:32} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+        (incollection  . "${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+        (inproceedings . "${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+        (t             . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")))
 
 (run-with-idle-timer 20 t 'evil-normal-state)
 
@@ -171,6 +192,12 @@
 
 (defengine wolfram-alpha
   "http://www.wolframalpha.com/input/?i=%s")
+
+(defengine libgen-articles
+  "http://gen.lib.rus.ec/scimag/?q=%s")
+
+(defengine libgen-books
+  "http://gen.lib.rus.ec/search.php?req=%s")
 
 (defengine wiktionary
   "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s"
@@ -222,12 +249,6 @@
 
 (defengine twitter
   "https://twitter.com/search?q=%s")
-
-(add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
-(add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
-;; Optionally, specify the lisp program you are using. Default is "lisp"
-(setq inferior-lisp-program "sbcl")
-(load-theme 'doom-dracula)
 
 (setq epg-gpg-program "gpg")
 (require 'epa-file)
@@ -299,7 +320,6 @@
 (use-package company
   :init
   (setq company-tooltip-align-annotations t)
-
   :defer 2
   :diminish
   :custom
@@ -311,35 +331,42 @@
   (global-company-mode t))
 (define-key global-map (kbd "C-.") 'company-files)
 
-(defun company-preview-if-not-tng-frontend (command)
-  "`company-preview-frontend', but not when tng is active."
-  (unless (and (eq command 'post-command)
-               company-selection-changed
-               (memq 'company-tng-frontend company-frontends))
-    (company-preview-frontend command)))
-
 (use-package company-box
   :after company
   :diminish
   :hook (company-mode . company-box-mode))
 
+(setq org-babel-lisp-eval-fn 'sly-eval)
+(setq org-cycle-separator-lines 2)
+(setq org-modules '(org-wikinodes org-w3m org-bbdb org-bibtex
+                                  org-docview org-gnus org-info org-irc org-mhe org-rmail org-eww))
+
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
+
 (setq org-directory "~/.personal/org")
 (setq org-agenda-files '("~/.personal/org"))
+
 (defun org-archive-done-tasks ()
   (interactive)
   (org-map-entries
    (lambda ()
      (org-archive-subtree)
      (setq org-map-continue-from (outline-previous-heading)))
-   "/DONE" 'tree))
+   "/done" 'tree))
+
+(setq org-refile-targets '((nil :maxlevel . 9)
+                                (org-agenda-files :maxlevel . 9)))
+
+(setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+(setq org-refile-use-outline-path t)                  ;
+
 (setq org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
 
 ;; (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
 (setq org-latex-pdf-process (list
-   "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
+                             "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
 
 (setq org-books-file "~/.personal/org/master-book-list.org")
 
@@ -469,3 +496,31 @@ Suggest the URL title as a description for resource."
               (kbd "M-K") 'org-shiftmetaup
               (kbd "M-J") 'org-shiftmetadown))
           '('normal 'insert)))
+
+(defvar yt-iframe-format
+  ;; You may want to change your width and height.
+  (concat "<iframe width=\"440\""
+          " height=\"335\""
+          " src=\"https://www.youtube.com/embed/%s\""
+          " frameborder=\"0\""
+          " allowfullscreen>%s</iframe>"))
+
+(org-add-link-type
+ "yt"
+ (lambda (handle)
+   (browse-url
+    (concat "https://www.youtube.com/embed/"
+            handle)))
+ (lambda (path desc backend)
+   (cl-case backend
+     (html (format yt-iframe-format
+                   path (or desc "")))
+     (latex (format "\href{%s}{%s}"
+                    path (or desc "video"))))))
+
+(require 'yasnippet)
+(use-package yasnippet-snippets)
+(require 'helm-c-yasnippet)
+(setq helm-yas-space-match-any-greedy t)
+(global-set-key (kbd "C-c y") 'helm-yas-complete)
+(yas-global-mode 1)

@@ -1,5 +1,8 @@
 #+TITLE: DooDoo
 #+AUTHOR: Frederic Boileau
+#+PROPERTY: ATTACH_DIR .
+#+STARTUP:  inlineimages lognoteclock-out hideblocks
+#+ATTR_ORG: :width 200/250/300/400/500/600
 #+TODO: fixme(r) todo(t) inprog(p) stable(d) idea(i) | broken(b)
 
 * todo
@@ -9,14 +12,16 @@
 - https://github.com/novoid/Memacs
 *** org preview html
 - https://github.com/lujun9972/org-preview-html
-
-*** yankpad
-- https://github.com/Kungsgeten/yankpad
+*** calctex
+https://github.com/johnbcoughlin/calctex
 
 *** org-mind-map
 - https://github.com/theodorewiles/org-mind-map
 
 *** org helm rifle
+
+*** drag stuff
+https://github.com/rejeep/drag-stuff.el
 
 *** org protocol capture html
 https://github.com/alphapapa/org-protocol-capture-html
@@ -45,44 +50,73 @@ https://www.reddit.com/r/emacs/comments/9n0d0p/wikipedia_info_org_wikinforg/
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
+:LOGBOOK:
+CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
+- test
+:END:
 
 ** stable basic basic
 #+BEGIN_SRC elisp
-
-(setq org-cycle-separator-lines 2)
 (add-to-list 'load-path
               "~/dotfiles/emacsy/packages/yasnippet/")
 
 (setq inferior-julia-program-name "/usr/bin/julia")
 (setq python-python-command "/usr/bin/ipython")
-(ranger-override-dired-mode t)
 
-(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-      doom-themes-enable-italic t) ; if nil, italics is universally disabled
-(doom-themes-org-config)
+(set-default-font "Iosevka Nerd Font 12")
 (setq-default tab-width 2)
 (setq c-basic-indent 2)
 
-(set-frame-parameter (selected-frame) 'alpha '(100 . 90))
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+      doom-themes-enable-italic t) ; if nil, italics is universally disabled
+(doom-themes-org-config)
+
+(set-frame-parameter (selected-frame) 'alpha '(99 . 87))
 (setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
 (setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
 (setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (autoload 'ibuffer "ibuffer" "List buffers." t)
+(ranger-override-dired-mode t)
+
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
 (bind-key (kbd "M-o") 'company-complete)
+
 (bind-key (kbd "M-p") nil)
 (bind-key (kbd "M-p l") 'org-cliplink)
 (bind-key (kbd "M-p v") 'org-brain-visualize)
 (bind-key (kbd "M-p a") '+popup/raise)
 (bind-key (kbd "M-p c") 'org-id-get-create)
+(bind-key (kbd "M-p r") 'slime-repl)
+
+(global-set-key (kbd "C-t") 'transpose-chars)
+(global-set-key (kbd "M-t") 'tranpose-words)
+;; (global-set-key (kbd "C-M-t")'tranpose-sexps)
+;; (global-set-key (kbd "C-x C-t") 'tranpose-lines)
 
 #+END_SRC
 
 #+RESULTS:
-: org-id-get-create
+: tranpose-words
 
+
+** idea expand attach
+#+begin_src elisp
+(require 'org-attach)
+(setq org-link-abbrev-alist '(("attach" . org-attach-expand-link)))
+#+end_src
+
+
+** inprog slime
+ #+Begin_src elisp
+(setq slime-contribs '(slime-fancy slime-asdf))
+
+#+end_src
+
+#+RESULTS:
+| slime-fancy | slime-asdf |
 
 
 ** stable emacs xdg
@@ -226,29 +260,13 @@ https://www.reddit.com/r/emacs/comments/9n0d0p/wikipedia_info_org_wikinforg/
    (python . t)
    (julia . t)
    (lisp . t)
-   (shell . t)))
+   (shell . t)
+   (js . t)
+   (haskell . t)
+   (scheme . t)))
 #+END_SRC
 
 #+RESULTS:
-
-*** tempo
-#+BEGIN_SRC elisp
-(require 'org-tempo)
-(setq tempo-interactive t)
-(tempo-define-template "my-property"
-                       '(":PROPERTIES:" p ":END:" >)
-                       "<p"
-                       "Insert a property tempate")
-(tempo-define-template "name"
-                       '("#+NAME:" (p "Name : " name)  >)
-                       "<n"
-                       "Insert name")
-#+END_SRC
-
-#+RESULTS:
-: tempo-template-name
-
-
 
 *** sly in org :notangle:
 :PROPERTIES:
@@ -298,7 +316,31 @@ https://www.reddit.com/r/emacs/comments/9n0d0p/wikipedia_info_org_wikinforg/
 #+RESULTS:
 : org-babel-execute:lisp
 
-** inprog bib stuff
+
+** stable tempo
+
+#+BEGIN_SRC elisp
+(require 'org-tempo)
+(setq tempo-interactive t)
+(tempo-define-template "my-property"
+                       '(":PROPERTIES:" p ":END:" >)
+                       "<p"
+                       "Insert a property tempate")
+(tempo-define-template "name"
+                       '("#+NAME:" (p "Name : " name)  >)
+                       "<n"
+                       "Insert name")
+(tempo-define-template "attr-org"
+                       '("#+ATTR_ORG: :width 400")
+                       "<o")
+#+END_SRC
+
+#+RESULTS:
+: tempo-template-attr-org
+
+
+
+** stable bib stuff
 *** stable default files
 :PROPERTIES:
 :header-args: :tangle yes
@@ -343,11 +385,11 @@ https://www.reddit.com/r/emacs/comments/9n0d0p/wikipedia_info_org_wikinforg/
 *** idea completion display format
 #+begin_src elisp
 (setq bibtex-completion-display-formats
-    '((article       . "${author:36} ${title:*} ${journal:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
-      (inbook        . "${author:36} ${title:*} Chapter ${chapter:32} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
-      (incollection  . "${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
-      (inproceedings . "${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
-      (t             . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")))
+      '((article       . "${author:36} ${title:*} ${journal:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+        (inbook        . "${author:36} ${title:*} Chapter ${chapter:32} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+        (incollection  . "${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+        (inproceedings . "${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")
+        (t             . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}")))
 #+end_src
 
 #+RESULTS:
@@ -385,6 +427,12 @@ https://www.reddit.com/r/emacs/comments/9n0d0p/wikipedia_info_org_wikinforg/
 
 (defengine wolfram-alpha
   "http://www.wolframalpha.com/input/?i=%s")
+
+(defengine libgen-articles
+  "http://gen.lib.rus.ec/scimag/?q=%s")
+
+(defengine libgen-books
+  "http://gen.lib.rus.ec/search.php?req=%s")
 
 (defengine wiktionary
   "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s"
@@ -446,11 +494,10 @@ https://www.reddit.com/r/emacs/comments/9n0d0p/wikipedia_info_org_wikinforg/
 : engine/search-twitter
 
 
-* languages
-
-** cl-slime
+* stable languages
+** stable cl-slime
 :PROPERTIES:
-:header-args: :tangle yes
+:header-args: :tangle no
 :END:
 #+begin_src elisp
 (add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
@@ -462,6 +509,7 @@ https://www.reddit.com/r/emacs/comments/9n0d0p/wikipedia_info_org_wikinforg/
 
 #+RESULTS:
 : sbcl
+
 
 * inprog mu4e
 :PROPERTIES:
@@ -569,7 +617,6 @@ https://www.reddit.com/r/emacs/comments/9n0d0p/wikipedia_info_org_wikinforg/
 (use-package company
   :init
   (setq company-tooltip-align-annotations t)
-
   :defer 2
   :diminish
   :custom
@@ -581,7 +628,14 @@ https://www.reddit.com/r/emacs/comments/9n0d0p/wikipedia_info_org_wikinforg/
   (global-company-mode t))
 (define-key global-map (kbd "C-.") 'company-files)
 #+END_SRC
-*** preview ala vim
+
+#+RESULTS:
+: company-files
+
+*** preview ala vim :notangle:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 #+BEGIN_SRC elisp
 (defun company-preview-if-not-tng-frontend (command)
   "`company-preview-frontend', but not when tng is active."
@@ -609,34 +663,62 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 
 * stable org
 
-** basic set keys and variables
+** stable basic set keys and variables
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
 
 #+NAME:org-basic-set-keys
 #+BEGIN_SRC elisp
+
+(setq org-babel-lisp-eval-fn 'sly-eval)
+(setq org-cycle-separator-lines 2)
+(setq org-modules '(org-wikinodes org-w3m org-bbdb org-bibtex
+                                  org-docview org-gnus org-info org-irc org-mhe org-rmail org-eww))
+
 (global-set-key (kbd "C-c l") 'org-store-link)
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c c") 'org-capture)
+
 (setq org-directory "~/.personal/org")
 (setq org-agenda-files '("~/.personal/org"))
+
 (defun org-archive-done-tasks ()
   (interactive)
   (org-map-entries
    (lambda ()
      (org-archive-subtree)
      (setq org-map-continue-from (outline-previous-heading)))
-   "/DONE" 'tree))
+   "/done" 'tree))
+
+(setq org-refile-targets '((nil :maxlevel . 9)
+                                (org-agenda-files :maxlevel . 9)))
+
+(setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+(setq org-refile-use-outline-path t)                  ;
+
 (setq org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
 
 ;; (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
 (setq org-latex-pdf-process (list
-   "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
+                             "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
 #+END_SRC
 
 #+RESULTS: org-basic-set-keys
 | latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f |
+
+
+** attach
+#+begin_src elisp
+(require 'org-attach)
+(setq org-link-abbrev-alist '(("file" . org-attach-expand-link)))
+#+end_src
+
+
+** inprog org protocol capture html
+#+begin_src elisp
+(require 'org-protocol-capture-html)
+#+end_src
 
 
 ** org-books
@@ -949,9 +1031,6 @@ Suggest the URL title as a description for resource."
 
 - http://howardism.org/Technical/Emacs/capturing-content.html
 
-
-*** capture basic setup
-
 #+srcname: capture-templates
 #+BEGIN_SRC elisp
 (setq org-default-notes-file (concat org-directory "notes.org"))
@@ -967,9 +1046,13 @@ Suggest the URL title as a description for resource."
          "* %?\nEntered on %U\n %i\n %a")
 
         ("b" "Books" entry (file+headline "~/notes/books.org" "Books")
-          "* %(read-string \"Title: \")\n
+         "* %(read-string \"Title: \")\n
           :PROPERTIES: Pages: %(number-to-string (read-number \"Pages:\")):END:\n
           Author: %(read-string \"Author: \")\n")
+
+        ("w" "Web site" entry
+         (file "")
+         "* %a :website:\n\n%U %?\n\n%:initial")
 
         ("c" "Contact" entry (file+headline "~/.personal/org/contacts.org" "Friends")
          "* %(read-string \"Name: \")\n
@@ -1059,6 +1142,27 @@ https://lepisma.xyz
 #+RESULTS:
 : t
 
+** inprog yankpad :notangle:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+#+begin_src elisp
+(use-package yankpad
+  :defer 10
+  :init
+  (setq yankpad-file "~/.personal/org/yankpad.org")
+  :config
+  (bind-key "<f7>" 'yankpad-map)
+  (bind-key "<f12>" 'yankpad-expand)
+  ;; If you want to complete snippets using company-mode
+  (add-to-list 'company-backends #'company-yankpad)
+  ;; If you want to expand snippets with hippie-expand
+  (add-to-list 'hippie-expand-try-functions-list #'yankpad-expand))
+#+end_src
+
+** todo
+#+NAME: Lecture 2 Wildberger Algebraic topology
+#+ATTR_ORG: :width 200/250/300/400/500/600
 
 
 * live code
@@ -1275,6 +1379,12 @@ Display the free keybindings in current buffer.
 : free-keys
 
 
+** inbuffer settings
+
+#+NAME: Lecture 2 Wildberger Algebraic topology
+#+ATTR_ORG: :width 200/250/300/400/500/600
+
+
 * configs
 https://github.com/rememberYou/.emacs.d/blob/master/config.org
 https://emacs.christianbaeuerlein.com/my-org-config.html
@@ -1290,3 +1400,9 @@ https://github.com/daviwil/dotfiles/blob/master/emacs/config/org-mode.el
 https://orgmode.org/worg/org-tutorials/#org4320b02
 https://sachachua.com/blog/
 https://www.gnu.org/software/emacs/manual/html_mono/eintr.html
+
+
+* capture-templates
+
+
+
