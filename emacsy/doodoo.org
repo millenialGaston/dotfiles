@@ -7,6 +7,12 @@
 
 * todo
 
+** idea expand attach
+#+begin_src elisp
+(require 'org-attach)
+(setq org-link-abbrev-alist '(("attach" . org-attach-expand-link)))
+#+end_src
+
 ** idea packages
 *** memacs
 - https://github.com/novoid/Memacs
@@ -46,6 +52,22 @@ https://www.reddit.com/r/emacs/comments/9n0d0p/wikipedia_info_org_wikinforg/
 ** idea complete snippets
 
 
+** idea printing
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
+#+begin_src elisp
+(require 'printing)		; load printing package
+(setq pr-path-alist
+	    '((unix      "." "/bin" ghostview mpage PATH)
+	      (ghostview "/usr/bin/gsview")
+	      (mpage     "/usr/bin/mpage")))
+(setq pr-ps-name       'lps)
+(setq pr-ps-printer-alist '((lpss "lp" nil "-d" "HLL2390DW")))
+(pr-update-menus t)
+#+end_src
+
+
 * stable basic
 :PROPERTIES:
 :header-args: :tangle yes
@@ -57,12 +79,24 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 
 ** stable basic basic
 #+BEGIN_SRC elisp
-(add-to-list 'load-path
-              "~/dotfiles/emacsy/packages/yasnippet/")
+(load-theme 'doom-molokai)
+(add-to-list 'load-path "~/dotfiles/emacsy/packages/yasnippet/")
+(add-to-list 'load-path "~/dotfiles/emacsy/packages/stable-packages/ob-erlang")
+(require 'ob-erlang)
 
-(setq inferior-julia-program-name "/usr/bin/julia")
-(setq python-python-command "/usr/bin/ipython")
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "firefox")
+;; Files association
+(setq org-file-apps
+      '((auto-mode . emacs)
+        ("\\.djvu\\'" . "evince \"%s\"")))
+#+END_SRC
 
+#+RESULTS:
+: ((auto-mode . emacs) (\.djvu\' . evince "%s"))
+
+** stable ui
+#+BEGIN_SRC elisp
 (set-default-font "Iosevka Nerd Font 12")
 (setq-default tab-width 2)
 (setq c-basic-indent 2)
@@ -81,6 +115,12 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 (autoload 'ibuffer "ibuffer" "List buffers." t)
 (ranger-override-dired-mode t)
 
+
+(setq artist-aspect-ratio 2.0)
+#+END_SRC
+
+** stable basic bindings
+#+BEGIN_SRC elisp
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
 (bind-key (kbd "M-o") 'company-complete)
 
@@ -90,47 +130,9 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 (bind-key (kbd "M-p a") '+popup/raise)
 (bind-key (kbd "M-p c") 'org-id-get-create)
 (bind-key (kbd "M-p r") 'slime-repl)
-
-(global-set-key (kbd "C-t") 'transpose-chars)
-(global-set-key (kbd "M-t") 'tranpose-words)
-;; (global-set-key (kbd "C-M-t")'tranpose-sexps)
-;; (global-set-key (kbd "C-x C-t") 'tranpose-lines)
-
 #+END_SRC
 
-#+RESULTS:
-: tranpose-words
-
-
-** idea expand attach
-#+begin_src elisp
-(require 'org-attach)
-(setq org-link-abbrev-alist '(("attach" . org-attach-expand-link)))
-#+end_src
-
-
-** inprog slime
- #+Begin_src elisp
-(setq slime-contribs '(slime-fancy slime-asdf))
-
-#+end_src
-
-#+RESULTS:
-| slime-fancy | slime-asdf |
-
-
-** stable emacs xdg
-#+begin_src elisp
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "firefox")
-#+end_src
-
-#+RESULTS:
-: firefox
-
-
 ** stable searching
-
 *** swiper/ivy :melpa:github:
 :PROPERTIES:
 :GH:       https://github.com/abo-abo/swiper
@@ -164,7 +166,6 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 
 - http://develop.spacemacs.org/layers/+completion/ivy/README.html
 
-
 *** rg
 :PROPERTIES:
 :GH:       https://github.com/dajva/rg.el
@@ -176,11 +177,10 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
          ("C-c r" . 'counsel-projectile-rg))
   :config
   (rg-enable-default-bindings))
-  #+END_SRC
+#+END_SRC
 
 #+RESULTS:
 : counsel-rg
-
 
 ** stable doom modeline
 :PROPERTIES:
@@ -191,7 +191,6 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 (require 'doom-modeline)
 (doom-modeline-mode 1)
 #+end_src
-
 *** customize
 #+begin_src elisp
 (setq doom-modeline-height 25)
@@ -236,89 +235,7 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 #+RESULTS:
 : identity
 
-
-** stable babel
-:PROPERTIES:
-:header-args: :tangle yes
-:END:
-*** babel setup
-#+BEGIN_SRC elisp
-(require 'ob-shell)
-(require 'ox-md)
-(require 'julia-repl)
-(add-hook 'julia-mode-hook 'julia-repl-mode)
-(with-eval-after-load "ob"
-  (require 'org-babel-eval-in-repl))
-
-#+END_SRC
-
-*** babel languages
-#+BEGIN_SRC elisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (python . t)
-   (julia . t)
-   (lisp . t)
-   (shell . t)
-   (js . t)
-   (haskell . t)
-   (scheme . t)))
-#+END_SRC
-
-#+RESULTS:
-
-*** sly in org :notangle:
-:PROPERTIES:
-:header-args: :tangle no
-:END:
-#+begin_src elisp
-(defcustom org-babel-lisp-eval-fn
-  '("slime-eval" "sly-eval")
-   "The function to be called to evaluate code on the lisp side."
-   :group 'org-babel
-   :version "24.1"
-   :type 'listp)
-
-(defun org-babel-execute:lisp (body params)
-  "Execute a block of Common Lisp code with Babel."
-  (pcase org-babel-lisp-eval-fn
-    ("slime-eval" (require 'slime))
-    ("sly-eval" (require 'sly)))
-  (org-babel-reassemble-table
-   (let ((result
-      (funcall (if (member "output" (cdr (assoc :result-params params)))
-               #'car #'cadr)
-           (with-temp-buffer
-             (insert (org-babel-expand-body:lisp body params))
-             (funcall org-babel-lisp-eval-fn
-                              `(swank:eval-and-grab-output
-                                ,(let ((dir (if (assoc :dir params)
-                                                (cdr (assoc :dir params))
-                                              default-directory)))
-                                   (format
-                                    (if dir (format org-babel-lisp-dir-fmt dir)
-                                      "(progn %s\n)")
-                                    (buffer-substring-no-properties
-                                     (point-min) (point-max)))))
-                              (cdr (assoc :package params)))))))
-     (org-babel-result-cond (cdr (assoc :result-params params))
-       result
-       (condition-case nil
-           (read (org-babel-lisp-vector-to-list result))
-         (error result))))
-   (org-babel-pick-name (cdr (assoc :colname-names params))
-            (cdr (assoc :colnames params)))
-   (org-babel-pick-name (cdr (assoc :rowname-names params))
-            (cdr (assoc :rownames params)))))
-#+end_src
-
-#+RESULTS:
-: org-babel-execute:lisp
-
-
 ** stable tempo
-
 #+BEGIN_SRC elisp
 (require 'org-tempo)
 (setq tempo-interactive t)
@@ -334,12 +251,6 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
                        '("#+ATTR_ORG: :width 400")
                        "<o")
 #+END_SRC
-
-#+RESULTS:
-: tempo-template-attr-org
-
-
-
 ** stable bib stuff
 *** stable default files
 :PROPERTIES:
@@ -395,7 +306,6 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 #+RESULTS:
 : ((article . ${author:36} ${title:*} ${journal:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}) (inbook . ${author:36} ${title:*} Chapter ${chapter:32} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}) (incollection . ${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}) (inproceedings . ${author:36} ${title:*} ${booktitle:40} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}) (t . ${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:3}))
 
-
 ** stable evil
 :PROPERTIES:
 :header-args: :tangle yes
@@ -413,10 +323,6 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
   "\C-k" 'kill-line
   "\C-y" 'evil-paste-after)
 #+END_SRC
-
-#+RESULTS:
-
-
 ** stable defengines
 :PROPERTIES:
 :header-args: :tangle yes
@@ -495,124 +401,149 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 
 
 * stable languages
-** stable cl-slime
+** inprog onliner setups
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
+#+begin_src elisp
+(setq slime-contribs '(slime-fancy slime-asdf))
+(setq inferior-julia-program-name "/usr/bin/julia")
+(setq python-python-command "/usr/bin/ipython")
+
+(setq erlang-root-dir "/usr/lib/erlang")
+(add-to-list 'load-path "/usr/lib/erlang/lib/tools-3.2.1/emacs")
+(add-to-list 'exec-path "/usr/lib/erlang/bin")
+(require 'erlang-start)
+#+end_src
+
+** inprog ggtags
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
+#+begin_src elisp
+(require 'ggtags)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+              (ggtags-mode 1))))
+
+(define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
+(define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
+(define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
+(define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
+(define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
+(define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
+
+(define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark)
+#+end_src
+** inprog haskell
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
+#+begin_src elisp
+(require 'lsp)
+(require 'lsp-haskell)
+(require 'lsp-ui)
+(add-hook 'haskell-mode-hook #'lsp)
+(add-hook 'lsp-mode-hook 'lsp-ui-mode)
+#+end_src
+
+#+RESULTS:
+| lsp-ui-mode |
+
+** stable babel
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
+*** babel setup
+#+BEGIN_SRC elisp
+(require 'ob-shell)
+(require 'ox-md)
+(require 'julia-repl)
+(add-hook 'julia-mode-hook 'julia-repl-mode)
+(with-eval-after-load "ob"
+  (require 'org-babel-eval-in-repl))
+
+#+END_SRC
+
+*** babel languages
+#+BEGIN_SRC elisp
+(add-to-list 'load-path
+             "/home/sole/.opam/default/share/emacs/site-lisp/")
+(require 'ocp-indent)
+(setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)
+   (ocaml . t)
+   (julia . t)
+   (lisp . t)
+   (shell . t)
+   (erlang . t)
+   (js . t)
+   (haskell . t)
+   (scheme . t)
+   (ditaa .t)))
+#+END_SRC
+
+*** sly in org :notangle:
 :PROPERTIES:
 :header-args: :tangle no
 :END:
 #+begin_src elisp
-(add-hook 'lisp-mode-hook (lambda () (slime-mode t)))
-(add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
-;; Optionally, specify the lisp program you are using. Default is "lisp"
-(setq inferior-lisp-program "sbcl")
-(load-theme 'doom-dracula)
+(defcustom org-babel-lisp-eval-fn
+  '("slime-eval" "sly-eval")
+   "The function to be called to evaluate code on the lisp side."
+   :group 'org-babel
+   :version "24.1"
+   :type 'listp)
+
+(defun org-babel-execute:lisp (body params)
+  "Execute a block of Common Lisp code with Babel."
+  (pcase org-babel-lisp-eval-fn
+    ("slime-eval" (require 'slime))
+    ("sly-eval" (require 'sly)))
+  (org-babel-reassemble-table
+   (let ((result
+      (funcall (if (member "output" (cdr (assoc :result-params params)))
+               #'car #'cadr)
+           (with-temp-buffer
+             (insert (org-babel-expand-body:lisp body params))
+             (funcall org-babel-lisp-eval-fn
+                              `(swank:eval-and-grab-output
+                                ,(let ((dir (if (assoc :dir params)
+                                                (cdr (assoc :dir params))
+                                              default-directory)))
+                                   (format
+                                    (if dir (format org-babel-lisp-dir-fmt dir)
+                                      "(progn %s\n)")
+                                    (buffer-substring-no-properties
+                                     (point-min) (point-max)))))
+                              (cdr (assoc :package params)))))))
+     (org-babel-result-cond (cdr (assoc :result-params params))
+       result
+       (condition-case nil
+           (read (org-babel-lisp-vector-to-list result))
+         (error result))))
+   (org-babel-pick-name (cdr (assoc :colname-names params))
+            (cdr (assoc :colnames params)))
+   (org-babel-pick-name (cdr (assoc :rowname-names params))
+            (cdr (assoc :rownames params)))))
 #+end_src
 
 #+RESULTS:
-: sbcl
-
-
-* inprog mu4e
-:PROPERTIES:
-:link:     https://www.djcbsoftware.nl/code/mu/mu4e/Folders.html#Folders
-:header-args: :tangle yes
-:END:
-- http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
-
-** main
-:PROPERTIES:
-:header-args: :tangle yes
-:END:
-#+NAME:mu4e-setup
-#+begin_src elisp
-(setq epg-gpg-program "gpg")
-(require 'epa-file)
-(epa-file-enable)
-(setq auth-sources "~/.authinfo.gpg")
-(setq auth-source-debug t)
-(setf epa-pinentry-mode 'loopback)
-(require 'mu4e)
-(require 'smtpmail)
-(setq mail-user-agent 'mu4e-user-agent)
-(setq mu4e-get-mail-command "getmail"
-      mu4e-update-interval 300)
-
-(setq mu4e-maildir            "~/.personal/mail/"
-      mu4e-sent-folder        "/Sent"
-      mu4e-drafts-folder      "/Drafts"
-      mu4e-trash-folder       "/Trash"
-      mu4e-refile-folder      "/Archive")
-
-(setq mu4e-user-mail-address-list '("frederic.boileau@protonmail.com"))
-(setq mu4e-compose-reply-to-address "frederic.boileau@protonmail.com"
-      user-mail-address "frederic.boileau@protonmail.com"
-      user-full-name  "Frederic Boileau")
-
-(setq mu4e-compose-signature
-      "\n\n---frederic Boileau")
-
-
-;; (setq user-mail-address "frederic.boileau@protonmail.com"
-;;       user-full-name "Frederic Boileau")
-
-(setq gnus-select-method '(nnimap "localhost"
-                                  (nnimap-stream plain)
-                                  (nnimap-address "127.0.0.1")
-                                  (nnimap-server-port 1143)))
-
-(setq smtpmail-default-smtp-server "127.0.0.1")
-(setq mail-sources '((imap :server "127.0.0.1"
-                           :user "frederic.boileau@protonmail.com"
-                           :password "NwHMHgISP6SY/bRw8hgOtKlcwIY6OCfjj02slPtOgHM")))
-(require 'starttls)
-
-(setq send-mail-function         'smtpmail-send-it
-      message-send-mail-function 'smtpmail-send-it
-      smtpmail-smtp-server       "127.0.0.1"
-      smtpmail-smtp-service 1025
-      smtpmail-debug-info t
-      smtpmail-debug-verb t
-      starttls-extra-arguments nil
-      starttls-gnutls-program "/usr/bin/gnutls-cli"
-      starttls-extra-arguments nil
-      starttls-use-gnutls t
-      smtpmail-auth-credentials "~/.authinfo.gpg")
-(setq starttls-extra-arguments nil)
-
-(require 'gnus-desktop-notify)
-(gnus-desktop-notify-mode)
-(gnus-demon-add-scanmail)
-(load-library "smtpmail")
-;; smtp mail setting
-
-#+end_src
-
-#+RESULTS: mu4e-setup
-: t
-
-#+RESULTS:
-: ((:human-date . 25) (:flags . 6) (:from . 22) (:thread-subject))
-
-
-** todo new email setup different than protonmail
-
-** appearance
-#+begin_src elisp
-(require 'mu4e-contrib)
-(setq mu4e-html2text-command 'mu4e-shr2text)
-(setq shr-color-visible-luminance-min 60)
-(setq shr-color-visible-distance-min 5)
-(setq shr-use-colors nil)
-(advice-add #'shr-colorize-region :around (defun shr-no-colourise-region (&rest ignore)))
-#+end_src
-
-#+RESULTS:
+: org-babel-execute:lisp
 
 
 * inprog completion
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
-*** company
+:samples:
+https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
+:end:
+** company
 #+BEGIN_SRC elisp
 (use-package company
   :init
@@ -621,7 +552,7 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
   :diminish
   :custom
   (company-begin-commands '(self-insert-command))
-  (company-idle-delay .1)
+  (company-idle-delay .2)
   (company-minimum-prefix-length 2)
   (company-show-numbers t)
   (company-tooltip-align-annotations 't)
@@ -629,10 +560,7 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 (define-key global-map (kbd "C-.") 'company-files)
 #+END_SRC
 
-#+RESULTS:
-: company-files
-
-*** preview ala vim :notangle:
+** preview ala vim :tocheck:notangle:
 :PROPERTIES:
 :header-args: :tangle no
 :END:
@@ -648,21 +576,17 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 #+RESULTS:
 : company-preview-if-not-tng-frontend
 
-*** company-box
+** company-box :tocheck:
 #+BEGIN_SRC elisp
 (use-package company-box
   :after company
   :diminish
   :hook (company-mode . company-box-mode))
 #+END_SRC
-#+RESULTS:
-| company-box-mode | +company | init-backends | evil-normalize-keymaps | company-mode-set-explicitly | company-prescient-mode |
-*** other configs
-https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 
+** other configs
 
 * stable org
-
 ** stable basic set keys and variables
 :PROPERTIES:
 :header-args: :tangle yes
@@ -670,26 +594,10 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 
 #+NAME:org-basic-set-keys
 #+BEGIN_SRC elisp
-
-(setq org-babel-lisp-eval-fn 'sly-eval)
-(setq org-cycle-separator-lines 2)
-(setq org-modules '(org-wikinodes org-w3m org-bbdb org-bibtex
-                                  org-docview org-gnus org-info org-irc org-mhe org-rmail org-eww))
-
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
-
 (setq org-directory "~/.personal/org")
 (setq org-agenda-files '("~/.personal/org"))
-
-(defun org-archive-done-tasks ()
-  (interactive)
-  (org-map-entries
-   (lambda ()
-     (org-archive-subtree)
-     (setq org-map-continue-from (outline-previous-heading)))
-   "/done" 'tree))
+(setq org-modules '(org-wikinodes org-w3m org-bbdb org-bibtex
+                                  org-docview org-gnus org-info org-irc org-mhe org-rmail org-eww))
 
 (setq org-refile-targets '((nil :maxlevel . 9)
                                 (org-agenda-files :maxlevel . 9)))
@@ -697,43 +605,39 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
 (setq org-refile-use-outline-path t)                  ;
 
+(setq org-babel-lisp-eval-fn 'sly-eval)
+(setq org-cycle-separator-lines 2)
+
+
+(if (require 'toc-org nil t)
+    (add-hook 'org-mode-hook 'toc-org-mode)
+  (warn "toc-org not found"))
+
 (setq org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
+
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+
 
 ;; (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
 (setq org-latex-pdf-process (list
                              "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
 #+END_SRC
 
-#+RESULTS: org-basic-set-keys
-| latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f |
-
-
-** attach
-#+begin_src elisp
-(require 'org-attach)
-(setq org-link-abbrev-alist '(("file" . org-attach-expand-link)))
-#+end_src
-
-
-** inprog org protocol capture html
-#+begin_src elisp
-(require 'org-protocol-capture-html)
-#+end_src
-
-
-** org-books
-:PROPERTIES:
-:header-args: :tangle yes
-:END:
+** stable package one liner(ish) inits
 #+begin_src elisp
 (setq org-books-file "~/.personal/org/master-book-list.org")
+
+(require 'org-attach)
+(setq org-link-abbrev-alist '(("file" . org-attach-expand-link)))
+
+(use-package org-contacts
+  :after org
+  :custom (org-contacts-files '("~/.personal/org/contacts.org")))
 #+end_src
 
-#+RESULTS:
-: ~/.personal/org/master-book-list.org
-
-
-** properties
+** stable properties
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
@@ -754,29 +658,75 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 ;; Set global Column View format
 (setq org-columns-default-format '"%38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)")
 #+end_src
+** stable small utilities
+#+begin_src elisp
+(defun org-archive-done-tasks ()
+  (interactive)
+  (org-map-entries
+   (lambda ()
+     (org-archive-subtree)
+     (setq org-map-continue-from (outline-previous-heading)))
+   "/done" 'tree))
 
-#+RESULTS:
-: %38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)
-
-
-
-** org contacts
+(defun custom-org-cliplink ()
+  (interactive)
+  (org-cliplink-insert-transformed-title
+   (org-cliplink-clipboard-content)     ;take the URL from the CLIPBOARD
+   (lambda (url title)
+     (let* ((parsed-url (url-generic-parse-url url)) ;parse the url
+            (clean-title
+             (cond
+              ;; if the host is github.com, cleanup the title
+              ((string= (url-host parsed-url) "github.com")
+               (replace-regexp-in-string "GitHub - .*: \\(.*\\)" "\\1" title))
+              ;; otherwise keep the original title
+              (t title))))
+       ;; forward the title to the default org-cliplink transformer
+       (org-cliplink-org-mode-link-transformer url clean-title)))))
+#+end_src
+** stable evil
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
-#+begin_src elisp
-(use-package org-contacts
+
+#+BEGIN_SRC elisp
+(use-package evil-org
+  :commands evil-org-mode
   :after org
-  :custom (org-contacts-files '("~/.personal/org/contacts.org")))
-#+end_src
+  :init
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  :config
 
+  (evil-define-key 'normal evil-org-mode-map
+    "<" 'org-metaleft
+    ">" 'org-metaright
+    "-" 'org-cycle-list-bullet
+    (kbd "TAB") 'org-cycle)
+;; normal & insert state shortcuts.
+    (mapc (lambda (state)
+            (evil-define-key state evil-org-mode-map
+              (kbd "M-l") 'org-metaright
+              (kbd "M-h") 'org-metaleft
+              (kbd "M-k") 'org-metaup
+              (kbd "M-j") 'org-metadown
+              (kbd "M-L") 'org-shiftmetaright
+              (kbd "M-H") 'org-shiftmetaleft
+              (kbd "M-K") 'org-shiftmetaup
+              (kbd "M-J") 'org-shiftmetadown))
+          '('normal 'insert)))
+#+END_SRC
 
-** org-wiki
+** inprog mindmap stuff
+*** inprog org-wiki
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
 #+begin_src elisp
 (require 'org-wiki)
+(setq org-wiki-location-list
+      '( "~/wiki/" "~/.personal/org/" "~/.personal/notes" "~/dotfiles/" ))
+(setq org-wiki-location (car org-wiki-location-list))
+
 (setq org-wiki-template
       (string-trim
        "
@@ -792,18 +742,9 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
 
  ,* %n
 "))
-(setq org-wiki-location-list
-      '( "~/.personal/org/" "~/.personal/notes" "~/dotfiles/" ))
-
-;; Initialize first org-wiki-directory or default org-wiki
-(setq org-wiki-location (car org-wiki-location-list))
 #+end_src
 
-#+RESULTS:
-: ~/.personal/org/
-
-
-** brain
+*** stable brain
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
@@ -869,62 +810,50 @@ Suggest the URL title as a description for resource."
   (add-hook 'org-brain-after-visualize-hook #'aa2u-org-brain-buffer))
 #+end_src
 
-#+RESULTS:
-| aa2u-org-brain-buffer |
-
-
-** evil
+** stable capture :tocheck:
 :PROPERTIES:
 :header-args: :tangle yes
+:url:      http://howardism.org/Technical/Emacs/capturing-content.html
 :END:
 
+#+srcname: capture-templates
 #+BEGIN_SRC elisp
-(use-package evil-org
-  :commands evil-org-mode
-  :after org
-  :init
-  (add-hook 'org-mode-hook 'evil-org-mode)
-  :config
+(setq org-default-notes-file (concat org-directory "notes.org"))
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/.personal/org/todo.org" "tasks")
+         "* TODO %?\n:PROPERTIES:\n:Created: %U\n:Linked: %A\n:END:\n %i"
+         :prepend t)
 
-  (evil-define-key 'normal evil-org-mode-map
-    "<" 'org-metaleft
-    ">" 'org-metaright
-    "-" 'org-cycle-list-bullet
-    (kbd "TAB") 'org-cycle)
-;; normal & insert state shortcuts.
-    (mapc (lambda (state)
-            (evil-define-key state evil-org-mode-map
-              (kbd "M-l") 'org-metaright
-              (kbd "M-h") 'org-metaleft
-              (kbd "M-k") 'org-metaup
-              (kbd "M-j") 'org-metadown
-              (kbd "M-L") 'org-shiftmetaright
-              (kbd "M-H") 'org-shiftmetaleft
-              (kbd "M-K") 'org-shiftmetaup
-              (kbd "M-J") 'org-shiftmetadown))
-          '('normal 'insert)))
+        ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
+         "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
+
+        ("j" "Journal" entry (file+datetree "~/.personal/org/journal.org")
+         "* %?\nEntered on %U\n %i\n %a")
+
+        ("b" "Books" entry (file+headline "~/notes/books.org" "Books")
+         "* %(read-string \"Title: \")\n
+          :PROPERTIES: Pages: %(number-to-string (read-number \"Pages:\")):END:\n
+          Author: %(read-string \"Author: \")\n")
+
+        ("w" "Web site" entry
+         (file "")
+         "* %a :website:\n\n%U %?\n\n%:initial")
+
+        ("c" "Contact" entry (file+headline "~/.personal/org/contacts.org" "Friends")
+         "* %(read-string \"Name: \")\n
+          :PROPERTIES:\n
+          :EMAIL: %(read-string \"email: \")\n
+          :END:")))
+
 #+END_SRC
 
-#+RESULTS:
-: t
+** inprog publishing stuff
+*** inprog org publish
+**** org publish project alist
 
-
-
-
-** toc org
-#+BEGIN_SRC elisp
-(if (require 'toc-org nil t)
-    (add-hook 'org-mode-hook 'toc-org-mode)
-  (warn "toc-org not found"))
-#+END_SRC
-
-#+RESULTS:
-| toc-org-mode | org-ref-org-menu | er/add-org-mode-expansions | org-clock-load | (closure (t) (&rest _) (add-hook (quote before-save-hook) (quote org-encrypt-entries) nil t)) | evil-org-mode | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-show-all append local] 5] | #[0 \300\301\302\303\304$\207 [add-hook change-major-mode-hook org-babel-show-result-all append local] 5] | org-babel-result-hide-spec | org-babel-hide-all-hashes | #[0 \301\211\207 [imenu-create-index-function org-imenu-get-tree] 2] | org-bullets-mode | org-indent-mode | toc-org-enable | auto-fill-mode | doom | disable-show-paren-mode | doom | disable-show-trailing-whitespace | +org | enable-auto-reformat-tables | +org | enable-auto-update-cookies | +org | unfold-to-2nd-level-or-point | +evil | embrace-latex-mode-hook | embrace-org-mode-hook | org-eldoc-load | org-ref-setup-label-finders |
-
-
-** org publish
 #+BEGIN_SRC elisp
 (require 'ox-publish)
+
 (setq org-publish-project-alist
       '(("org-notes"
          :base-directory "~/.personal/org/"
@@ -942,6 +871,25 @@ Suggest the URL title as a description for resource."
          :publishing-function org-publish-attachment)
 
         ("org" :components ("org-notes" "org-static"))
+
+        ("wiki-org"
+         :base-directory "~/wiki/"
+         :base-extension "org"
+         :publishing-directory "~/wiki/public_html/"
+         :recursive t
+         :publishing-function org-html-publish-to-html
+         :headline-levels 4             ; Just the default for this project.
+         :auto-preamble t)
+
+        ("wiki-static"
+         :base-directory "~/wiki/static/"
+         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+         :publishing-directory "~/wiki/public_html/"
+         :recursive t
+         :publishing-function org-publish-attachment)
+
+        ("wiki" :components ("wiki-org" "org-static"))
+
 
         ("spirou-inherit"
          :base-directory "~/.personal/org/"
@@ -982,6 +930,8 @@ Suggest the URL title as a description for resource."
 | spirou-static  | :base-directory | ~/spirou/static/                        | :recursive      | t    | :base-extension       | css\                     | js\          | png\                  | jpg\                 | gif\                     | pdf\                   | mp3\ | ogg\                  | swf                      | :publishing-directory | ~/spirou/publish/        | :publishing-function | org-publish-attachment |                |   |
 | spirou         | :components     | (spirou-inherit spip-org spirou-static) |                 |      |                       |                          |              |                       |                      |                          |                        |      |                       |                          |                       |                          |                      |                        |                |   |
 
+
+**** org blog prepapre
 #+BEGIN_SRC elisp
 (defun org-blog-prepare (project-plist)
   "With help from `https://github.com/howardabrams/dot-files'.
@@ -994,6 +944,9 @@ Suggest the URL title as a description for resource."
       (save-buffer 0))
     (kill-buffer buffer)))
 #+END_SRC
+
+
+**** org blog head
 #+BEGIN_SRC elisp
 (defvar org-blog-head
   "<link rel=\"stylesheet\" type=\"text/css\" href=\"/assets/css/bootstrap.css\"/>
@@ -1001,13 +954,8 @@ Suggest the URL title as a description for resource."
   <link rel=\"shortcut icon\" type=\"image/x-icon\" href=\"favicon.ico\">")
 #+END_SRC
 
-#+BEGIN_SRC elisp
 
-#+END_SRC
-#+RESULTS:
-: org-blog-head
-
-*** mathjax
+**** mathjax
 #+BEGIN_SRC elisp
 (setf org-html-mathjax-options
       '((path "https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML")
@@ -1024,49 +972,7 @@ Suggest the URL title as a description for resource."
 : <script type="text/javascript" src="%PATH"></script>
 
 
-
-** capture
-:PROPERTIES:
-:header-args: :tangle yes
-
-- http://howardism.org/Technical/Emacs/capturing-content.html
-
-#+srcname: capture-templates
-#+BEGIN_SRC elisp
-(setq org-default-notes-file (concat org-directory "notes.org"))
-(setq org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/.personal/org/todo.org" "tasks")
-         "* TODO %?\n:PROPERTIES:\n:Created: %U\n:Linked: %A\n:END:\n %i"
-         :prepend t)
-
-        ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
-         "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
-
-        ("j" "Journal" entry (file+datetree "~/.personal/org/journal.org")
-         "* %?\nEntered on %U\n %i\n %a")
-
-        ("b" "Books" entry (file+headline "~/notes/books.org" "Books")
-         "* %(read-string \"Title: \")\n
-          :PROPERTIES: Pages: %(number-to-string (read-number \"Pages:\")):END:\n
-          Author: %(read-string \"Author: \")\n")
-
-        ("w" "Web site" entry
-         (file "")
-         "* %a :website:\n\n%U %?\n\n%:initial")
-
-        ("c" "Contact" entry (file+headline "~/.personal/org/contacts.org" "Friends")
-         "* %(read-string \"Name: \")\n
-          :PROPERTIES:\n
-          :EMAIL: %(read-string \"email: \")\n
-          :END:")))
-
-#+END_SRC
-
-#+RESULTS: capture-templates
-| t | Todo | entry | (file+headline ~/.personal/org/todo.org tasks) | * TODO %? |
-
-
-** youtube embed
+*** stable youtube embed
 :PROPERTIES:
 :header-args: :tangle yes
 :END:
@@ -1092,31 +998,8 @@ Suggest the URL title as a description for resource."
      (latex (format "\href{%s}{%s}"
                     path (or desc "video"))))))
 #+END_SRC
-
-#+RESULTS:
-: Created yt link.
-
+#+NAME:yt embed example
 [[yt:lEljKc9ZtU8]]
-
-
-** cliplink
-#+BEGIN_SRC elisp
-(defun custom-org-cliplink ()
-  (interactive)
-  (org-cliplink-insert-transformed-title
-   (org-cliplink-clipboard-content)     ;take the URL from the CLIPBOARD
-   (lambda (url title)
-     (let* ((parsed-url (url-generic-parse-url url)) ;parse the url
-            (clean-title
-             (cond
-              ;; if the host is github.com, cleanup the title
-              ((string= (url-host parsed-url) "github.com")
-               (replace-regexp-in-string "GitHub - .*: \\(.*\\)" "\\1" title))
-              ;; otherwise keep the original title
-              (t title))))
-       ;; forward the title to the default org-cliplink transformer
-       (org-cliplink-org-mode-link-transformer url clean-title)))))
-#+END_SRC
 
 
 ** links
@@ -1163,6 +1046,99 @@ https://lepisma.xyz
 ** todo
 #+NAME: Lecture 2 Wildberger Algebraic topology
 #+ATTR_ORG: :width 200/250/300/400/500/600
+
+
+* inprog mu4e
+:PROPERTIES:
+:link:     https://www.djcbsoftware.nl/code/mu/mu4e/Folders.html#Folders
+:header-args: :tangle yes
+:END:
+:samples:
+http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
+:end:
+
+** main
+:PROPERTIES:
+:header-args: :tangle yes
+:END:
+#+NAME:mu4e-setup
+#+begin_src elisp
+(setq epg-gpg-program "gpg")
+(require 'epa-file)
+(epa-file-enable)
+(setq auth-sources "~/.authinfo.gpg")
+(setq auth-source-debug t)
+(setf epa-pinentry-mode 'loopback)
+(require 'mu4e)
+(require 'smtpmail)
+(setq mail-user-agent 'mu4e-user-agent)
+(setq mu4e-get-mail-command "getmail"
+      mu4e-update-interval 300)
+
+(setq mu4e-maildir            "~/.personal/mail/"
+      mu4e-sent-folder        "/Sent"
+      mu4e-drafts-folder      "/Drafts"
+      mu4e-trash-folder       "/Trash"
+      mu4e-refile-folder      "/Archive")
+
+(setq mu4e-user-mail-address-list '("frederic.boileau@protonmail.com"))
+(setq mu4e-compose-reply-to-address "frederic.boileau@protonmail.com"
+      user-mail-address "frederic.boileau@protonmail.com"
+      user-full-name  "Frederic Boileau")
+
+(setq mu4e-compose-signature
+      "\n\n---frederic Boileau")
+
+
+;; (setq user-mail-address "frederic.boileau@protonmail.com"
+;;       user-full-name "Frederic Boileau")
+
+(setq gnus-select-method '(nnimap "localhost"
+                                  (nnimap-stream plain)
+                                  (nnimap-address "127.0.0.1")
+                                  (nnimap-server-port 1143)))
+
+(setq smtpmail-default-smtp-server "127.0.0.1")
+(setq mail-sources '((imap :server "127.0.0.1"
+                           :user "frederic.boileau@protonmail.com"
+                           :password "Um1T9PLwooU0r-jWkONqzQ")))
+(require 'starttls)
+
+(setq send-mail-function         'smtpmail-send-it
+      message-send-mail-function 'smtpmail-send-it
+      smtpmail-smtp-server       "127.0.0.1"
+      smtpmail-smtp-service 1025
+      smtpmail-debug-info t
+      smtpmail-debug-verb t
+      starttls-extra-arguments nil
+      starttls-gnutls-program "/usr/bin/gnutls-cli"
+      starttls-extra-arguments nil
+      starttls-use-gnutls t
+      smtpmail-auth-credentials "~/.authinfo.gpg")
+(setq starttls-extra-arguments nil)
+
+(require 'gnus-desktop-notify)
+(gnus-desktop-notify-mode)
+(gnus-demon-add-scanmail)
+(load-library "smtpmail")
+;; smtp mail setting
+
+#+end_src
+
+#+RESULTS: mu4e-setup
+: t
+
+** todo new email setup different than protonmail
+
+** appearance
+#+begin_src elisp
+(require 'mu4e-contrib)
+(setq mu4e-html2text-command 'mu4e-shr2text)
+(setq shr-color-visible-luminance-min 60)
+(setq shr-color-visible-distance-min 5)
+(setq shr-use-colors nil)
+(advice-add #'shr-colorize-region :around (defun shr-no-colourise-region (&rest ignore)))
+#+end_src
 
 
 * live code

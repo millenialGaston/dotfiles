@@ -1,8 +1,23 @@
-(add-to-list 'load-path
-              "~/dotfiles/emacsy/packages/yasnippet/")
+(require 'printing)		; load printing package
+(setq pr-path-alist
+	    '((unix      "." "/bin" ghostview mpage PATH)
+	      (ghostview "/usr/bin/gsview")
+	      (mpage     "/usr/bin/mpage")))
+(setq pr-ps-name       'lps)
+(setq pr-ps-printer-alist '((lpss "lp" nil "-d" "HLL2390DW")))
+(pr-update-menus t)
 
-(setq inferior-julia-program-name "/usr/bin/julia")
-(setq python-python-command "/usr/bin/ipython")
+(load-theme 'doom-molokai)
+(add-to-list 'load-path "~/dotfiles/emacsy/packages/yasnippet/")
+(add-to-list 'load-path "~/dotfiles/emacsy/packages/stable-packages/ob-erlang")
+(require 'ob-erlang)
+
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "firefox")
+;; Files association
+(setq org-file-apps
+      '((auto-mode . emacs)
+        ("\\.djvu\\'" . "evince \"%s\"")))
 
 (set-default-font "Iosevka Nerd Font 12")
 (setq-default tab-width 2)
@@ -22,6 +37,9 @@
 (autoload 'ibuffer "ibuffer" "List buffers." t)
 (ranger-override-dired-mode t)
 
+
+(setq artist-aspect-ratio 2.0)
+
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
 (bind-key (kbd "M-o") 'company-complete)
 
@@ -31,19 +49,6 @@
 (bind-key (kbd "M-p a") '+popup/raise)
 (bind-key (kbd "M-p c") 'org-id-get-create)
 (bind-key (kbd "M-p r") 'slime-repl)
-
-(global-set-key (kbd "C-t") 'transpose-chars)
-(global-set-key (kbd "M-t") 'tranpose-words)
-;; (global-set-key (kbd "C-M-t")'tranpose-sexps)
-;; (global-set-key (kbd "C-x C-t") 'tranpose-lines)
-
-(require 'org-attach)
-(setq org-link-abbrev-alist '(("attach" . org-attach-expand-link)))
-
-(setq slime-contribs '(slime-fancy slime-asdf))
-
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "firefox")
 
 (ivy-mode 1)
 (setq ivy-use-virtual-buffers t)
@@ -111,24 +116,6 @@
 (setq doom-modeline-mu4e t)
 (setq doom-modeline-irc t)
 (setq doom-modeline-irc-stylize 'identity)
-
-(require 'ob-shell)
-(require 'ox-md)
-(require 'julia-repl)
-(add-hook 'julia-mode-hook 'julia-repl-mode)
-(with-eval-after-load "ob"
-  (require 'org-babel-eval-in-repl))
-
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((emacs-lisp . t)
-   (python . t)
-   (julia . t)
-   (lisp . t)
-   (shell . t)
-   (js . t)
-   (haskell . t)
-   (scheme . t)))
 
 (require 'org-tempo)
 (setq tempo-interactive t)
@@ -250,72 +237,60 @@
 (defengine twitter
   "https://twitter.com/search?q=%s")
 
-(setq epg-gpg-program "gpg")
-(require 'epa-file)
-(epa-file-enable)
-(setq auth-sources "~/.authinfo.gpg")
-(setq auth-source-debug t)
-(setf epa-pinentry-mode 'loopback)
-(require 'mu4e)
-(require 'smtpmail)
-(setq mail-user-agent 'mu4e-user-agent)
-(setq mu4e-get-mail-command "getmail"
-      mu4e-update-interval 300)
+(setq slime-contribs '(slime-fancy slime-asdf))
+(setq inferior-julia-program-name "/usr/bin/julia")
+(setq python-python-command "/usr/bin/ipython")
 
-(setq mu4e-maildir            "~/.personal/mail/"
-      mu4e-sent-folder        "/Sent"
-      mu4e-drafts-folder      "/Drafts"
-      mu4e-trash-folder       "/Trash"
-      mu4e-refile-folder      "/Archive")
+(setq erlang-root-dir "/usr/lib/erlang")
+(add-to-list 'load-path "/usr/lib/erlang/lib/tools-3.2.1/emacs")
+(add-to-list 'exec-path "/usr/lib/erlang/bin")
+(require 'erlang-start)
 
-(setq mu4e-user-mail-address-list '("frederic.boileau@protonmail.com"))
-(setq mu4e-compose-reply-to-address "frederic.boileau@protonmail.com"
-      user-mail-address "frederic.boileau@protonmail.com"
-      user-full-name  "Frederic Boileau")
+(require 'ggtags)
+(add-hook 'c-mode-common-hook
+          (lambda ()
+            (when (derived-mode-p 'c-mode 'c++-mode 'java-mode 'asm-mode)
+              (ggtags-mode 1))))
 
-(setq mu4e-compose-signature
-      "\n\n---frederic Boileau")
+(define-key ggtags-mode-map (kbd "C-c g s") 'ggtags-find-other-symbol)
+(define-key ggtags-mode-map (kbd "C-c g h") 'ggtags-view-tag-history)
+(define-key ggtags-mode-map (kbd "C-c g r") 'ggtags-find-reference)
+(define-key ggtags-mode-map (kbd "C-c g f") 'ggtags-find-file)
+(define-key ggtags-mode-map (kbd "C-c g c") 'ggtags-create-tags)
+(define-key ggtags-mode-map (kbd "C-c g u") 'ggtags-update-tags)
 
+(define-key ggtags-mode-map (kbd "M-,") 'pop-tag-mark)
 
-;; (setq user-mail-address "frederic.boileau@protonmail.com"
-;;       user-full-name "Frederic Boileau")
+(require 'lsp)
+(require 'lsp-haskell)
+(require 'lsp-ui)
+(add-hook 'haskell-mode-hook #'lsp)
+(add-hook 'lsp-mode-hook 'lsp-ui-mode)
 
-(setq gnus-select-method '(nnimap "localhost"
-                                  (nnimap-stream plain)
-                                  (nnimap-address "127.0.0.1")
-                                  (nnimap-server-port 1143)))
+(require 'ob-shell)
+(require 'ox-md)
+(require 'julia-repl)
+(add-hook 'julia-mode-hook 'julia-repl-mode)
+(with-eval-after-load "ob"
+  (require 'org-babel-eval-in-repl))
 
-(setq smtpmail-default-smtp-server "127.0.0.1")
-(setq mail-sources '((imap :server "127.0.0.1"
-                           :user "frederic.boileau@protonmail.com"
-                           :password "NwHMHgISP6SY/bRw8hgOtKlcwIY6OCfjj02slPtOgHM")))
-(require 'starttls)
-
-(setq send-mail-function         'smtpmail-send-it
-      message-send-mail-function 'smtpmail-send-it
-      smtpmail-smtp-server       "127.0.0.1"
-      smtpmail-smtp-service 1025
-      smtpmail-debug-info t
-      smtpmail-debug-verb t
-      starttls-extra-arguments nil
-      starttls-gnutls-program "/usr/bin/gnutls-cli"
-      starttls-extra-arguments nil
-      starttls-use-gnutls t
-      smtpmail-auth-credentials "~/.authinfo.gpg")
-(setq starttls-extra-arguments nil)
-
-(require 'gnus-desktop-notify)
-(gnus-desktop-notify-mode)
-(gnus-demon-add-scanmail)
-(load-library "smtpmail")
-;; smtp mail setting
-
-(require 'mu4e-contrib)
-(setq mu4e-html2text-command 'mu4e-shr2text)
-(setq shr-color-visible-luminance-min 60)
-(setq shr-color-visible-distance-min 5)
-(setq shr-use-colors nil)
-(advice-add #'shr-colorize-region :around (defun shr-no-colourise-region (&rest ignore)))
+(add-to-list 'load-path
+             "/home/sole/.opam/default/share/emacs/site-lisp/")
+(require 'ocp-indent)
+(setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (python . t)
+   (ocaml . t)
+   (julia . t)
+   (lisp . t)
+   (shell . t)
+   (erlang . t)
+   (js . t)
+   (haskell . t)
+   (scheme . t)
+   (ditaa .t)))
 
 (use-package company
   :init
@@ -324,7 +299,7 @@
   :diminish
   :custom
   (company-begin-commands '(self-insert-command))
-  (company-idle-delay .1)
+  (company-idle-delay .2)
   (company-minimum-prefix-length 2)
   (company-show-numbers t)
   (company-tooltip-align-annotations 't)
@@ -336,25 +311,10 @@
   :diminish
   :hook (company-mode . company-box-mode))
 
-(setq org-babel-lisp-eval-fn 'sly-eval)
-(setq org-cycle-separator-lines 2)
-(setq org-modules '(org-wikinodes org-w3m org-bbdb org-bibtex
-                                  org-docview org-gnus org-info org-irc org-mhe org-rmail org-eww))
-
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
-
 (setq org-directory "~/.personal/org")
 (setq org-agenda-files '("~/.personal/org"))
-
-(defun org-archive-done-tasks ()
-  (interactive)
-  (org-map-entries
-   (lambda ()
-     (org-archive-subtree)
-     (setq org-map-continue-from (outline-previous-heading)))
-   "/done" 'tree))
+(setq org-modules '(org-wikinodes org-w3m org-bbdb org-bibtex
+                                  org-docview org-gnus org-info org-irc org-mhe org-rmail org-eww))
 
 (setq org-refile-targets '((nil :maxlevel . 9)
                                 (org-agenda-files :maxlevel . 9)))
@@ -362,13 +322,24 @@
 (setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
 (setq org-refile-use-outline-path t)                  ;
 
+(setq org-babel-lisp-eval-fn 'sly-eval)
+(setq org-cycle-separator-lines 2)
+
+
+(if (require 'toc-org nil t)
+    (add-hook 'org-mode-hook 'toc-org-mode)
+  (warn "toc-org not found"))
+
 (setq org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
+
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+
 
 ;; (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
 (setq org-latex-pdf-process (list
                              "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
-
-(setq org-books-file "~/.personal/org/master-book-list.org")
 
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
@@ -386,11 +357,36 @@
 ;; Set global Column View format
 (setq org-columns-default-format '"%38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)")
 
-(use-package org-contacts
+(use-package evil-org
+  :commands evil-org-mode
   :after org
-  :custom (org-contacts-files '("~/.personal/org/contacts.org")))
+  :init
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  :config
+
+  (evil-define-key 'normal evil-org-mode-map
+    "<" 'org-metaleft
+    ">" 'org-metaright
+    "-" 'org-cycle-list-bullet
+    (kbd "TAB") 'org-cycle)
+;; normal & insert state shortcuts.
+    (mapc (lambda (state)
+            (evil-define-key state evil-org-mode-map
+              (kbd "M-l") 'org-metaright
+              (kbd "M-h") 'org-metaleft
+              (kbd "M-k") 'org-metaup
+              (kbd "M-j") 'org-metadown
+              (kbd "M-L") 'org-shiftmetaright
+              (kbd "M-H") 'org-shiftmetaleft
+              (kbd "M-K") 'org-shiftmetaup
+              (kbd "M-J") 'org-shiftmetadown))
+          '('normal 'insert)))
 
 (require 'org-wiki)
+(setq org-wiki-location-list
+      '( "~/wiki/" "~/.personal/org/" "~/.personal/notes" "~/dotfiles/" ))
+(setq org-wiki-location (car org-wiki-location-list))
+
 (setq org-wiki-template
       (string-trim
        "
@@ -406,11 +402,6 @@
 
  * %n
 "))
-(setq org-wiki-location-list
-      '( "~/.personal/org/" "~/.personal/notes" "~/dotfiles/" ))
-
-;; Initialize first org-wiki-directory or default org-wiki
-(setq org-wiki-location (car org-wiki-location-list))
 
 (use-package org-brain
   :init
@@ -472,30 +463,32 @@ Suggest the URL title as a description for resource."
 (with-eval-after-load 'org-brain
   (add-hook 'org-brain-after-visualize-hook #'aa2u-org-brain-buffer))
 
-(use-package evil-org
-  :commands evil-org-mode
-  :after org
-  :init
-  (add-hook 'org-mode-hook 'evil-org-mode)
-  :config
+(setq org-default-notes-file (concat org-directory "notes.org"))
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/.personal/org/todo.org" "tasks")
+         "* TODO %?\n:PROPERTIES:\n:Created: %U\n:Linked: %A\n:END:\n %i"
+         :prepend t)
 
-  (evil-define-key 'normal evil-org-mode-map
-    "<" 'org-metaleft
-    ">" 'org-metaright
-    "-" 'org-cycle-list-bullet
-    (kbd "TAB") 'org-cycle)
-;; normal & insert state shortcuts.
-    (mapc (lambda (state)
-            (evil-define-key state evil-org-mode-map
-              (kbd "M-l") 'org-metaright
-              (kbd "M-h") 'org-metaleft
-              (kbd "M-k") 'org-metaup
-              (kbd "M-j") 'org-metadown
-              (kbd "M-L") 'org-shiftmetaright
-              (kbd "M-H") 'org-shiftmetaleft
-              (kbd "M-K") 'org-shiftmetaup
-              (kbd "M-J") 'org-shiftmetadown))
-          '('normal 'insert)))
+        ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
+         "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
+
+        ("j" "Journal" entry (file+datetree "~/.personal/org/journal.org")
+         "* %?\nEntered on %U\n %i\n %a")
+
+        ("b" "Books" entry (file+headline "~/notes/books.org" "Books")
+         "* %(read-string \"Title: \")\n
+          :PROPERTIES: Pages: %(number-to-string (read-number \"Pages:\")):END:\n
+          Author: %(read-string \"Author: \")\n")
+
+        ("w" "Web site" entry
+         (file "")
+         "* %a :website:\n\n%U %?\n\n%:initial")
+
+        ("c" "Contact" entry (file+headline "~/.personal/org/contacts.org" "Friends")
+         "* %(read-string \"Name: \")\n
+          :PROPERTIES:\n
+          :EMAIL: %(read-string \"email: \")\n
+          :END:")))
 
 (defvar yt-iframe-format
   ;; You may want to change your width and height.
@@ -524,3 +517,70 @@ Suggest the URL title as a description for resource."
 (setq helm-yas-space-match-any-greedy t)
 (global-set-key (kbd "C-c y") 'helm-yas-complete)
 (yas-global-mode 1)
+
+(setq epg-gpg-program "gpg")
+(require 'epa-file)
+(epa-file-enable)
+(setq auth-sources "~/.authinfo.gpg")
+(setq auth-source-debug t)
+(setf epa-pinentry-mode 'loopback)
+(require 'mu4e)
+(require 'smtpmail)
+(setq mail-user-agent 'mu4e-user-agent)
+(setq mu4e-get-mail-command "getmail"
+      mu4e-update-interval 300)
+
+(setq mu4e-maildir            "~/.personal/mail/"
+      mu4e-sent-folder        "/Sent"
+      mu4e-drafts-folder      "/Drafts"
+      mu4e-trash-folder       "/Trash"
+      mu4e-refile-folder      "/Archive")
+
+(setq mu4e-user-mail-address-list '("frederic.boileau@protonmail.com"))
+(setq mu4e-compose-reply-to-address "frederic.boileau@protonmail.com"
+      user-mail-address "frederic.boileau@protonmail.com"
+      user-full-name  "Frederic Boileau")
+
+(setq mu4e-compose-signature
+      "\n\n---frederic Boileau")
+
+
+;; (setq user-mail-address "frederic.boileau@protonmail.com"
+;;       user-full-name "Frederic Boileau")
+
+(setq gnus-select-method '(nnimap "localhost"
+                                  (nnimap-stream plain)
+                                  (nnimap-address "127.0.0.1")
+                                  (nnimap-server-port 1143)))
+
+(setq smtpmail-default-smtp-server "127.0.0.1")
+(setq mail-sources '((imap :server "127.0.0.1"
+                           :user "frederic.boileau@protonmail.com"
+                           :password "Um1T9PLwooU0r-jWkONqzQ")))
+(require 'starttls)
+
+(setq send-mail-function         'smtpmail-send-it
+      message-send-mail-function 'smtpmail-send-it
+      smtpmail-smtp-server       "127.0.0.1"
+      smtpmail-smtp-service 1025
+      smtpmail-debug-info t
+      smtpmail-debug-verb t
+      starttls-extra-arguments nil
+      starttls-gnutls-program "/usr/bin/gnutls-cli"
+      starttls-extra-arguments nil
+      starttls-use-gnutls t
+      smtpmail-auth-credentials "~/.authinfo.gpg")
+(setq starttls-extra-arguments nil)
+
+(require 'gnus-desktop-notify)
+(gnus-desktop-notify-mode)
+(gnus-demon-add-scanmail)
+(load-library "smtpmail")
+;; smtp mail setting
+
+(require 'mu4e-contrib)
+(setq mu4e-html2text-command 'mu4e-shr2text)
+(setq shr-color-visible-luminance-min 60)
+(setq shr-color-visible-distance-min 5)
+(setq shr-use-colors nil)
+(advice-add #'shr-colorize-region :around (defun shr-no-colourise-region (&rest ignore)))
