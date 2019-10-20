@@ -1,17 +1,17 @@
 [retriever]
-type = SimpleIMAPRetriever
-server = localhost
-port = 1143
-username = frederic.boileau
-password = ql0LqP/UjNRoou4jMTXKA9M0NGiLHU1Lszlmee90Dgk=
+type = SimpleIMAPSSLRetriever
+server = outlook.office365.com
+port = 993
+username = frederic.boileau@umontreal.ca
+password = BuYqjpK9
 
 [destination]
 type = Maildir
-path = ~/.personal/mail/
+path = ~/.mail/outlook/udem/
 
 [options]
 verbose = 2
-message_log = ~/.getmail/gmail.log
+message_log = ~/.getmail/outlook-udem-fred.log
 read_all = false
 delivered_to = false
 received = false

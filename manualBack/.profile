@@ -3,9 +3,16 @@ export PATH=$PATH:$HOME/apps:$HOME/apps/myScripts
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:$HOME/.gem/ruby/2.6.0/bin
 
+export GNUPGHOME=$HOME/.personal/.gnupg
+
 export DOTFILES=$HOME/dotfiles
+
 export XDG_CONFIG_HOME=$HOME/xdg/config-home/
 export XDG_CACHE_HOME=$HOME/xdg/cache-home
+export XDG_DATA_HOME=$HOME/xdg/data-home
+
+export NOTMUCH_CONFIG=$XDG_CONFIG_HOME/notmuch
+
 
 export ZSH=$HOME/.oh-my-zsh
 export LANG=en_US.UTF-8
@@ -20,7 +27,7 @@ export FZF_ALT_C_COMMAND="fd -t d . $HOME"
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/.Devel
 
-export TERMINAL=urxvt
+export TERMINAL=Termite
 export TERM=xterm-256color
 
 export PAGER=less
@@ -28,11 +35,12 @@ export BROWSER='brave'
 
 export LESS='-R'
 export ALTERNATE_EDITOR="nvim"
-export EDITOR="emacsclient -t"                  # $EDITOR opens in terminal
-export VISUAL="emacsclient -c -a emacs"         # $VISUAL opens in GUI mode
+export EDITOR="emacsclient -c -a emacs"
+#$EDITOR opens in terminal
+export VISUAL="emacsclient -c -a emacs"
+# $VISUAL opens in GUI mode
 
 export OOO_FORCE_DESKTOP=gnome soffice
-
 export HISTCONTROL=ignoredups
 export HISTSIZE=5000
 export HISTFILESIZE=1000
@@ -43,9 +51,10 @@ export SANE_DEFAULT_DEVICE="brother4:bus4;dev3"
 export JAVA_HOME="/usr/bin/java"
 
 export QT_STYLE_OVERRIDE=gtk
-export QT_SELECT=qt5
+#export QT_SELECT=qt5
+export QT_SELECT=gtk
 
 export RMANHOME=$HOME/.local/rasdaman
 
-
-
+# opam configuration
+test -r /home/sole/.opam/opam-init/init.zsh && . /home/sole/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true

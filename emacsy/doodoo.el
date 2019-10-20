@@ -7,39 +7,6 @@
 (setq pr-ps-printer-alist '((lpss "lp" nil "-d" "HLL2390DW")))
 (pr-update-menus t)
 
-(load-theme 'doom-molokai)
-(add-to-list 'load-path "~/dotfiles/emacsy/packages/yasnippet/")
-(add-to-list 'load-path "~/dotfiles/emacsy/packages/stable-packages/ob-erlang")
-(require 'ob-erlang)
-
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "firefox")
-;; Files association
-(setq org-file-apps
-      '((auto-mode . emacs)
-        ("\\.djvu\\'" . "evince \"%s\"")))
-
-(set-default-font "Iosevka Nerd Font 12")
-(setq-default tab-width 2)
-(setq c-basic-indent 2)
-
-(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
-(setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-      doom-themes-enable-italic t) ; if nil, italics is universally disabled
-(doom-themes-org-config)
-
-(set-frame-parameter (selected-frame) 'alpha '(99 . 87))
-(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
-(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
-(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
-
-(global-set-key (kbd "C-x C-b") 'ibuffer)
-(autoload 'ibuffer "ibuffer" "List buffers." t)
-(ranger-override-dired-mode t)
-
-
-(setq artist-aspect-ratio 2.0)
-
 (bind-key (kbd "M-y") 'helm-show-kill-ring)
 (bind-key (kbd "M-o") 'company-complete)
 
@@ -76,7 +43,7 @@
   :config
   (rg-enable-default-bindings))
 
-(require 'doom-modeline)
+(use-package doom-modeline)
 (doom-modeline-mode 1)
 
 (setq doom-modeline-height 25)
@@ -238,13 +205,16 @@
   "https://twitter.com/search?q=%s")
 
 (setq slime-contribs '(slime-fancy slime-asdf))
+(setq inferior-lisp-program "sbcl --dynamic-space-size 10000")
 (setq inferior-julia-program-name "/usr/bin/julia")
 (setq python-python-command "/usr/bin/ipython")
 
 (setq erlang-root-dir "/usr/lib/erlang")
 (add-to-list 'load-path "/usr/lib/erlang/lib/tools-3.2.1/emacs")
+(add-to-list 'load-path "~/dotfiles/emacsy/packages/stable-packages/ob-erlang")
 (add-to-list 'exec-path "/usr/lib/erlang/bin")
 (require 'erlang-start)
+(require 'ob-erlang)
 
 (require 'ggtags)
 (add-hook 'c-mode-common-hook
@@ -267,13 +237,6 @@
 (add-hook 'haskell-mode-hook #'lsp)
 (add-hook 'lsp-mode-hook 'lsp-ui-mode)
 
-(require 'ob-shell)
-(require 'ox-md)
-(require 'julia-repl)
-(add-hook 'julia-mode-hook 'julia-repl-mode)
-(with-eval-after-load "ob"
-  (require 'org-babel-eval-in-repl))
-
 (add-to-list 'load-path
              "/home/sole/.opam/default/share/emacs/site-lisp/")
 (require 'ocp-indent)
@@ -284,62 +247,16 @@
    (python . t)
    (ocaml . t)
    (julia . t)
+   (racket . t)
    (lisp . t)
    (shell . t)
    (erlang . t)
    (js . t)
+   (C . t)
    (haskell . t)
+   (makefile .t)
    (scheme . t)
    (ditaa .t)))
-
-(use-package company
-  :init
-  (setq company-tooltip-align-annotations t)
-  :defer 2
-  :diminish
-  :custom
-  (company-begin-commands '(self-insert-command))
-  (company-idle-delay .2)
-  (company-minimum-prefix-length 2)
-  (company-show-numbers t)
-  (company-tooltip-align-annotations 't)
-  (global-company-mode t))
-(define-key global-map (kbd "C-.") 'company-files)
-
-(use-package company-box
-  :after company
-  :diminish
-  :hook (company-mode . company-box-mode))
-
-(setq org-directory "~/.personal/org")
-(setq org-agenda-files '("~/.personal/org"))
-(setq org-modules '(org-wikinodes org-w3m org-bbdb org-bibtex
-                                  org-docview org-gnus org-info org-irc org-mhe org-rmail org-eww))
-
-(setq org-refile-targets '((nil :maxlevel . 9)
-                                (org-agenda-files :maxlevel . 9)))
-
-(setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
-(setq org-refile-use-outline-path t)                  ;
-
-(setq org-babel-lisp-eval-fn 'sly-eval)
-(setq org-cycle-separator-lines 2)
-
-
-(if (require 'toc-org nil t)
-    (add-hook 'org-mode-hook 'toc-org-mode)
-  (warn "toc-org not found"))
-
-(setq org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
-
-(global-set-key (kbd "C-c l") 'org-store-link)
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c c") 'org-capture)
-
-
-;; (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
-(setq org-latex-pdf-process (list
-                             "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
 
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
@@ -357,51 +274,33 @@
 ;; Set global Column View format
 (setq org-columns-default-format '"%38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)")
 
-(use-package evil-org
-  :commands evil-org-mode
-  :after org
-  :init
-  (add-hook 'org-mode-hook 'evil-org-mode)
-  :config
-
-  (evil-define-key 'normal evil-org-mode-map
-    "<" 'org-metaleft
-    ">" 'org-metaright
-    "-" 'org-cycle-list-bullet
-    (kbd "TAB") 'org-cycle)
-;; normal & insert state shortcuts.
-    (mapc (lambda (state)
-            (evil-define-key state evil-org-mode-map
-              (kbd "M-l") 'org-metaright
-              (kbd "M-h") 'org-metaleft
-              (kbd "M-k") 'org-metaup
-              (kbd "M-j") 'org-metadown
-              (kbd "M-L") 'org-shiftmetaright
-              (kbd "M-H") 'org-shiftmetaleft
-              (kbd "M-K") 'org-shiftmetaup
-              (kbd "M-J") 'org-shiftmetadown))
-          '('normal 'insert)))
-
 (require 'org-wiki)
 (setq org-wiki-location-list
-      '( "~/wiki/" "~/.personal/org/" "~/.personal/notes" "~/dotfiles/" ))
+      '( "~/.personal/org/" "~/meta-wiki/mywiki/" "~/meta-wiki/blog" "~/dotfiles/"
+         "~/meta-wiki/demos"))
 (setq org-wiki-location (car org-wiki-location-list))
 
 (setq org-wiki-template
       (string-trim
        "
 #+TITLE: %n
+#+AUTHOR: Frederic Boileau
+#+email:frederic.boileau@protonmail.com
 #+DESCRIPTION:
 #+KEYWORDS:
-#+STARTUP:  content
 #+DATE: %d
+
+#+STARTUP:  inlineimages lognoteclock-out hideblocks
+#+PROPERTY: ATTACH_DIR .
+#+STARTUP:  content
+#+ATTR_ORG: :width 200/250/300/400/500/600
+#+TODO: fixme(r) todo(t) inprog(p) stable(d) idea(i) wait(w) | broken(b)
 
 - [[wiki:index][Index]]
 
 - Related:
 
- * %n
-"))
+* %n "))
 
 (use-package org-brain
   :init
@@ -472,7 +371,7 @@ Suggest the URL title as a description for resource."
         ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
          "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
 
-        ("j" "Journal" entry (file+datetree "~/.personal/org/journal.org")
+        ("j" "Journal" entry (file+olp+datetree "~/.personal/org/journal.org")
          "* %?\nEntered on %U\n %i\n %a")
 
         ("b" "Books" entry (file+headline "~/notes/books.org" "Books")
@@ -487,8 +386,57 @@ Suggest the URL title as a description for resource."
         ("c" "Contact" entry (file+headline "~/.personal/org/contacts.org" "Friends")
          "* %(read-string \"Name: \")\n
           :PROPERTIES:\n
-          :EMAIL: %(read-string \"email: \")\n
-          :END:")))
+          :EMAIL: %(read-string \"emacs: \")\n
+          :END:")
+
+        ("Q" "quote org capture" entry
+         (file+headline ,"~/meta-wiki/mywiki/inbox.org" "browsing")
+         "* %?%:description Added %U
+#+BEGIN_QUOTE
+%x
+#+END_QUOTE" :immediate-finish t)))
+
+;; [[file:~/dotfiles/emacsy/doodoo.org::*org publish project alist][org publish project alist:1]]
+(require 'ox-html)
+(require 'ox-publish)
+
+(setq org-publish-project-alist
+      '(("blog-org"
+         :base-directory "~/meta-wiki/blog"
+         :base-extension "org"
+         :publishing-directory "~/meta-wiki/blog/public_html/"
+         :recursive t
+         :publishing-function org-html-publish-to-html
+         :headline-levels 4             ; Just the default for this project.
+         :auto-preamble t)
+
+        ("blog-static"
+         :base-directory "~/meta-wiki/blog/static/"
+         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+         :publishing-directory "~/meta-wiki/blog/public_html/"
+         :recursive t
+         :publishing-function org-publish-attachment)
+
+        ("blog" :components ("blog-org" "blog-static"))
+
+        ("demos-org"
+         :base-directory "~/meta-wiki/demos/"
+         :base-extension "org"
+         :publishing-directory "~/meta-wiki/demos/public_html/"
+         :recursive t
+         :publishing-function org-html-publish-to-html
+         :headline-levels 4             ; Just the default for this project.
+         :auto-preamble t)
+
+        ("demos-static"
+         :base-directory "~/meta-wiki/demos/static/"
+         :base-extension "css\\|js\\|png\\|jpg\\|gif\\|pdf\\|mp3\\|ogg\\|swf"
+         :publishing-directory "~/meta-wiki/demos/public_html/"
+         :recursive t
+         :publishing-function org-publish-attachment)
+
+        ("demos" :components ("demos-org" "demos-static"))))
+;; org publish project alist:1 ends here
 
 (defvar yt-iframe-format
   ;; You may want to change your width and height.
@@ -511,11 +459,129 @@ Suggest the URL title as a description for resource."
      (latex (format "\href{%s}{%s}"
                     path (or desc "video"))))))
 
+(use-package company
+  :init
+  (setq company-tooltip-align-annotations t)
+  :defer 2
+  :diminish
+  :custom
+  (company-begin-commands '(self-insert-command))
+  (company-idle-delay .2)
+  (company-minimum-prefix-length 2)
+  (company-show-numbers t)
+  (company-tooltip-align-annotations 't)
+  (global-company-mode t))
+(define-key global-map (kbd "C-.") 'company-files)
+
+(use-package company-box
+  :after company
+  :diminish
+  :hook (company-mode . company-box-mode))
+
+(require 'mu4e-contrib)
+(setq mu4e-html2text-command 'mu4e-shr2text)
+(setq shr-color-visible-luminance-min 60)
+(setq shr-color-visible-distance-min 5)
+(setq shr-use-colors nil)
+(advice-add #'shr-colorize-region :around (defun shr-no-colourise-region (&rest ignore)))
+
+(set-default-font "Iosevka Nerd Font 12")
+
+(set-face-attribute 'default nil :family "Iosevka Nerd Font" :height 130)
+(set-face-attribute 'fixed-pitch nil :family "Iosevka Nerd Font")
+(set-face-attribute 'variable-pitch nil :family "EtBembo")
+
+
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+(set-frame-parameter (selected-frame) 'alpha '(99 . 87))
+(setq mouse-wheel-scroll-amount '(1 ((shift) . 1))) ;; one line at a time
+(setq mouse-wheel-progressive-speed nil) ;; don't accelerate scrolling
+(setq mouse-wheel-follow-mouse 't) ;; scroll window under mouse
+
+(setq-default tab-width 2)
+(setq c-basic-indent 2)
+(setq artist-aspect-ratio 2.0)
+
+(global-set-key (kbd "C-x C-b") 'ibuffer)
+(autoload 'ibuffer "ibuffer" "List buffers." t)
+
+(load "~/dotfiles/emacsy/packages/my-doom-themes-ext-org.el")
+(setq doom-themes-enable-bold t
+      doom-themes-enable-italic t)
+(doom-themes-org-config)
+
+(require 'ob-shell)
+(require 'ox-md)
+(require 'julia-repl)
+(add-hook 'julia-mode-hook 'julia-repl-mode)
+(with-eval-after-load "ob"
+  (require 'org-babel-eval-in-repl))
+(require 'eval-in-repl)
+
+(setq org-directory "~/.personal/org")
+(setq org-agenda-files '("~/.personal/org"))
+(setq org-modules '(org-wikinodes org-w3m org-bbdb org-bibtex
+                                  org-docview org-gnus org-info org-irc org-mhe org-rmail org-eww))
+
+(setq org-attach-dir-relative t)
+(setq org-refile-targets '((nil :maxlevel . 9)
+                           (org-agenda-files :maxlevel . 9)))
+
+(setq org-outline-path-complete-in-steps nil)         ; Refile in a single go
+(setq org-refile-use-outline-path t)                  ;
+
+(setq org-babel-lisp-eval-fn 'sly-eval)
+(setq org-cycle-separator-lines 2)
+
+
+(if (require 'toc-org nil t)
+    (add-hook 'org-mode-hook 'toc-org-mode)
+  (warn "toc-org not found"))
+
+(setq org-blank-before-new-entry '((heading . auto) (plain-list-item . auto)))
+
+(global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c c") 'org-capture)
+
+(setq org-latex-pdf-process
+      (list "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
+
+(use-package evil-org
+  :commands evil-org-mode
+  :after org
+  :init
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  :config
+
+  (evil-define-key 'normal evil-org-mode-map
+    "<" 'org-metaleft
+    ">" 'org-metaright
+    "-" 'org-cycle-list-bullet
+    (kbd "TAB") 'org-cycle)
+  ;; normal & insert state shortcuts.
+  (mapc (lambda (state)
+          (evil-define-key state evil-org-mode-map
+            (kbd "C-;") 'ober-eval-block-in-repl
+            (kbd "M-;") 'ober-eval-in-repl
+            (kbd "M-l") 'org-metaright
+            (kbd "M-h") 'org-metaleft
+            (kbd "M-k") 'org-metaup
+            (kbd "M-j") 'org-metadown
+            (kbd "M-L") 'org-shiftmetaright
+            (kbd "M-H") 'org-shiftmetaleft
+            (kbd "M-K") 'org-shiftmetaup
+            (kbd "M-J") 'org-shiftmetadown))
+        '('normal 'insert)))
+
+(add-to-list 'load-path "~/dotfiles/emacsy/packages/yasnippet/")
 (require 'yasnippet)
 (use-package yasnippet-snippets)
-(require 'helm-c-yasnippet)
+(use-package helm-c-yasnippet)
 (setq helm-yas-space-match-any-greedy t)
 (global-set-key (kbd "C-c y") 'helm-yas-complete)
+(setq yas-snippet-dirs
+      '("~/dotfiles/emacsy/mysnippets/"))
 (yas-global-mode 1)
 
 (setq epg-gpg-program "gpg")
@@ -526,24 +592,27 @@ Suggest the URL title as a description for resource."
 (setf epa-pinentry-mode 'loopback)
 (require 'mu4e)
 (require 'smtpmail)
+
+;; make sure mu4e is in your load-path
+;; use mu4e for e-mail in emacs
 (setq mail-user-agent 'mu4e-user-agent)
-(setq mu4e-get-mail-command "getmail"
+(setq mu4e-get-mail-command "offlineimap"
       mu4e-update-interval 300)
 
-(setq mu4e-maildir            "~/.personal/mail/"
+(setq mu4e-mu-home "/home/sole/.mail/outlook/udem")
+(setq mu4e-maildir            "/home/sole/.mail/outlook/udem"
       mu4e-sent-folder        "/Sent"
       mu4e-drafts-folder      "/Drafts"
       mu4e-trash-folder       "/Trash"
       mu4e-refile-folder      "/Archive")
 
-(setq mu4e-user-mail-address-list '("frederic.boileau@protonmail.com"))
-(setq mu4e-compose-reply-to-address "frederic.boileau@protonmail.com"
-      user-mail-address "frederic.boileau@protonmail.com"
+(setq mu4e-user-mail-address-list '("frederic.boileau@umontreal.ca"))
+(setq mu4e-compose-reply-to-address "frederic.boileau@umontreal.ca"
+      user-mail-address "frederic.boileau@umontreal.ca"
       user-full-name  "Frederic Boileau")
 
 (setq mu4e-compose-signature
       "\n\n---frederic Boileau")
-
 
 ;; (setq user-mail-address "frederic.boileau@protonmail.com"
 ;;       user-full-name "Frederic Boileau")
@@ -577,10 +646,3 @@ Suggest the URL title as a description for resource."
 (gnus-demon-add-scanmail)
 (load-library "smtpmail")
 ;; smtp mail setting
-
-(require 'mu4e-contrib)
-(setq mu4e-html2text-command 'mu4e-shr2text)
-(setq shr-color-visible-luminance-min 60)
-(setq shr-color-visible-distance-min 5)
-(setq shr-use-colors nil)
-(advice-add #'shr-colorize-region :around (defun shr-no-colourise-region (&rest ignore)))

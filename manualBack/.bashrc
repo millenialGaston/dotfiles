@@ -1,7 +1,9 @@
+[ -f ~/.profile ] && source ~/.profile
+alias rr="source ~/.bashrc"
 #https://github.com/adi1090x/termite-style
 if [[ $- != *i* ]] ; then
 # Shell is non-interactive. Be done now!
-return 
+return
 fi
 if ! shopt -oq posix; then
   if [ -f /usr/share/bash-completion/bash_completion ]; then
@@ -14,16 +16,14 @@ fi
 if [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
 fi
-alias rr="source ~/.bashrc"
 # Colors
 if [ -f ~/.dir_colors ]; then
 eval `dircolors ~/.dir_colors`
 fi
+
 export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34:"
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
 [ -f ~/.bashrc.aliases ] && source ~/.bashrc.aliases
-[ -f ~/.profile ] && source ~/.profile
-
 
 function _update_ps1() {
     PS1=$(powerline-shell $?)
@@ -43,10 +43,14 @@ set -o noclobber # prevent overwriting files with cat
 set -o ignoreeof # stops ctrl+d from logging me out
 export WORKON_HOME=$HOME/.virtualenvs
 export PROJECT_HOME=$HOME/Devel
+
+
 #source /usr/bin/virtualenvwrapper.sh
 #if ubuntu swap this line
-source /usr/share/virtualenvwrapper/virtualenvwrapper.sh
-source ~/apps/liquidprompt/liquidprompt
+source $HOME/.local/bin/virtualenvwrapper.sh
+
+
+
 
 # HSTR configuration - add this to ~/.bashrc
 alias hh=hstr                    # hh to be alias for hstr
