@@ -204,6 +204,75 @@
 (defengine twitter
   "https://twitter.com/search?q=%s")
 
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
+;; Log the time when a TODO item was finished
+(setq org-log-done 'time)
+
+;; Specify global tags with fast tag selection
+(setq org-tag-alist '((:startgroup . nil) ("@school" . ?o) ("@home" . ?h) (:endgroup . nil)
+                      ("computer" . ?c) ("reading" . ?r) ("udem" . ?u) ("!udem" . ?!) ("!aux" . ?a)
+                      ("grocery" . ?g) ("homework" . ?w) ("research" . ?r)))
+
+;; Effort and global properties
+(setq org-global-properties '(("Effort_ALL". "0 0:10 0:20 0:30 1:00 1:30 2:00 3:00 4:00 6:00 8:00")))
+
+;; Set global Column View format
+(setq org-columns-default-format '"%38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)")
+
+(setq org-default-notes-file (concat org-directory "notes.org"))
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/.personal/org/todo.org" "tasks")
+         "* TODO %?\n:PROPERTIES:\n:Created: %U\n:Linked: %A\n:END:\n %i"
+         :prepend t)
+
+        ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
+         "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
+
+        ("j" "Journal" entry (file+olp+datetree "~/.personal/org/journal.org")
+         "* %?\nEntered on %U\n %i\n %a")
+
+        ("b" "Books" entry (file+headline "~/notes/books.org" "Books")
+         "* %(read-string \"Title: \")\n
+          :PROPERTIES: Pages: %(number-to-string (read-number \"Pages:\")):END:\n
+          Author: %(read-string \"Author: \")\n")
+
+        ("w" "Web site" entry
+         (file "")
+         "* %a :website:\n\n%U %?\n\n%:initial")
+
+        ("c" "Contact" entry (file+headline "~/.personal/org/contacts.org" "Friends")
+         "* %(read-string \"Name: \")\n
+          :PROPERTIES:\n
+          :EMAIL: %(read-string \"emacs: \")\n
+          :END:")
+
+        ("Q" "quote org capture" entry
+         (file+headline ,"~/meta-wiki/mywiki/inbox.org" "browsing")
+         "* %?%:description Added %U
+#+BEGIN_QUOTE
+%x
+#+END_QUOTE" :immediate-finish t)))
+
+(use-package company
+  :init
+  (setq company-tooltip-align-annotations t)
+  :defer 2
+  :diminish
+  :custom
+  (company-begin-commands '(self-insert-command))
+  (company-idle-delay .2)
+  (company-minimum-prefix-length 2)
+  (company-show-numbers t)
+  (company-tooltip-align-annotations 't)
+  (global-company-mode t))
+(define-key global-map (kbd "C-.") 'company-files)
+
+(use-package company-box
+  :after company
+  :diminish
+  :hook (company-mode . company-box-mode))
+
 (setq slime-contribs '(slime-fancy slime-asdf))
 (setq inferior-lisp-program "sbcl --dynamic-space-size 10000")
 (setq inferior-julia-program-name "/usr/bin/julia")
@@ -258,21 +327,12 @@
    (scheme . t)
    (ditaa .t)))
 
-(setq org-clock-persist 'history)
-(org-clock-persistence-insinuate)
-;; Log the time when a TODO item was finished
-(setq org-log-done 'time)
-
-;; Specify global tags with fast tag selection
-(setq org-tag-alist '((:startgroup . nil) ("@office" . ?o) ("@home" . ?h) (:endgroup . nil)
-                      ("computer" . ?c) ("reading" . ?r)
-                      ("grocery" . ?g) ("homework" . ?w) ("research" . ?r)))
-
-;; Effort and global properties
-(setq org-global-properties '(("Effort_ALL". "0 0:10 0:20 0:30 1:00 1:30 2:00 3:00 4:00 6:00 8:00")))
-
-;; Set global Column View format
-(setq org-columns-default-format '"%38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)")
+(require 'mu4e-contrib)
+(setq mu4e-html2text-command 'mu4e-shr2text)
+(setq shr-color-visible-luminance-min 60)
+(setq shr-color-visible-distance-min 5)
+(setq shr-use-colors nil)
+(advice-add #'shr-colorize-region :around (defun shr-no-colourise-region (&rest ignore)))
 
 (require 'org-wiki)
 (setq org-wiki-location-list
@@ -362,40 +422,6 @@ Suggest the URL title as a description for resource."
 (with-eval-after-load 'org-brain
   (add-hook 'org-brain-after-visualize-hook #'aa2u-org-brain-buffer))
 
-(setq org-default-notes-file (concat org-directory "notes.org"))
-(setq org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/.personal/org/todo.org" "tasks")
-         "* TODO %?\n:PROPERTIES:\n:Created: %U\n:Linked: %A\n:END:\n %i"
-         :prepend t)
-
-        ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
-         "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
-
-        ("j" "Journal" entry (file+olp+datetree "~/.personal/org/journal.org")
-         "* %?\nEntered on %U\n %i\n %a")
-
-        ("b" "Books" entry (file+headline "~/notes/books.org" "Books")
-         "* %(read-string \"Title: \")\n
-          :PROPERTIES: Pages: %(number-to-string (read-number \"Pages:\")):END:\n
-          Author: %(read-string \"Author: \")\n")
-
-        ("w" "Web site" entry
-         (file "")
-         "* %a :website:\n\n%U %?\n\n%:initial")
-
-        ("c" "Contact" entry (file+headline "~/.personal/org/contacts.org" "Friends")
-         "* %(read-string \"Name: \")\n
-          :PROPERTIES:\n
-          :EMAIL: %(read-string \"emacs: \")\n
-          :END:")
-
-        ("Q" "quote org capture" entry
-         (file+headline ,"~/meta-wiki/mywiki/inbox.org" "browsing")
-         "* %?%:description Added %U
-#+BEGIN_QUOTE
-%x
-#+END_QUOTE" :immediate-finish t)))
-
 ;; [[file:~/dotfiles/emacsy/doodoo.org::*org publish project alist][org publish project alist:1]]
 (require 'ox-html)
 (require 'ox-publish)
@@ -459,32 +485,6 @@ Suggest the URL title as a description for resource."
      (latex (format "\href{%s}{%s}"
                     path (or desc "video"))))))
 
-(use-package company
-  :init
-  (setq company-tooltip-align-annotations t)
-  :defer 2
-  :diminish
-  :custom
-  (company-begin-commands '(self-insert-command))
-  (company-idle-delay .2)
-  (company-minimum-prefix-length 2)
-  (company-show-numbers t)
-  (company-tooltip-align-annotations 't)
-  (global-company-mode t))
-(define-key global-map (kbd "C-.") 'company-files)
-
-(use-package company-box
-  :after company
-  :diminish
-  :hook (company-mode . company-box-mode))
-
-(require 'mu4e-contrib)
-(setq mu4e-html2text-command 'mu4e-shr2text)
-(setq shr-color-visible-luminance-min 60)
-(setq shr-color-visible-distance-min 5)
-(setq shr-use-colors nil)
-(advice-add #'shr-colorize-region :around (defun shr-no-colourise-region (&rest ignore)))
-
 (set-default-font "Iosevka Nerd Font 12")
 
 (set-face-attribute 'default nil :family "Iosevka Nerd Font" :height 130)
@@ -509,14 +509,7 @@ Suggest the URL title as a description for resource."
 (setq doom-themes-enable-bold t
       doom-themes-enable-italic t)
 (doom-themes-org-config)
-
-(require 'ob-shell)
-(require 'ox-md)
-(require 'julia-repl)
-(add-hook 'julia-mode-hook 'julia-repl-mode)
-(with-eval-after-load "ob"
-  (require 'org-babel-eval-in-repl))
-(require 'eval-in-repl)
+(use-package doom-themes)
 
 (setq org-directory "~/.personal/org")
 (setq org-agenda-files '("~/.personal/org"))
@@ -583,6 +576,14 @@ Suggest the URL title as a description for resource."
 (setq yas-snippet-dirs
       '("~/dotfiles/emacsy/mysnippets/"))
 (yas-global-mode 1)
+
+(require 'ob-shell)
+(require 'ox-md)
+(require 'julia-repl)
+(add-hook 'julia-mode-hook 'julia-repl-mode)
+(with-eval-after-load "ob"
+  (require 'org-babel-eval-in-repl))
+(require 'eval-in-repl)
 
 (setq epg-gpg-program "gpg")
 (require 'epa-file)

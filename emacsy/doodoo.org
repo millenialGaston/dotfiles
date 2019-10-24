@@ -43,7 +43,6 @@ https://sachachua.com/blog/
 https://www.gnu.org/software/emacs/manual/html_mono/eintr.html
 https://cestlaz.github.io/stories/emacs/
 
-
 ** next stabilize org-fs-tree
 #+begin_src emacs-lisp
 (require 'org-fs-tree)
@@ -136,6 +135,7 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 (setq doom-themes-enable-bold t
       doom-themes-enable-italic t)
 (doom-themes-org-config)
+(use-package doom-themes)
 #+END_SRC
 
 #+RESULTS:
@@ -152,7 +152,11 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 (bind-key (kbd "M-p a") '+popup/raise)
 (bind-key (kbd "M-p c") 'org-id-get-create)
 (bind-key (kbd "M-p r") 'slime-repl)
+(bind-key (kbd "M-p s") 'org-insert-subheading)
 #+END_SRC
+
+#+RESULTS:
+: org-insert-subheading
 
 ** stable searching
 *** swiper/ivy :melpa:github:
@@ -429,6 +433,56 @@ some text
 : engine/search-twitter
 
 * stable org
+** next capture                                                    :tocheck:
+:PROPERTIES:
+:header-args: :tangle yes
+:url:      http://howardism.org/Technical/Emacs/capturing-content.html
+:END:
+
+#+srcname: capture-templates
+#+BEGIN_SRC elisp
+(setq org-default-notes-file (concat org-directory "notes.org"))
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/.personal/org/todo.org" "tasks")
+         "* TODO %?\n:PROPERTIES:\n:Created: %U\n:Linked: %A\n:END:\n %i"
+         :prepend t)
+
+        ("w" "wiki-link" entry (file+headline "~/meta-wiki/mywiki/index.org" "inbox")
+         "* %(org-cliplink-capture) %^g \n ")
+
+        ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
+         "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
+
+        ("j" "Journal" entry (file+olp+datetree "~/.personal/org/journal.org")
+         "* %?\nEntered on %U\n %i\n %a")
+
+        ("b" "Books" entry (file+headline "~/notes/books.org" "Books")
+         "* %(read-string \"Title: \")\n
+          :PROPERTIES: Pages: %(number-to-string (read-number \"Pages:\")):END:\n
+          Author: %(read-string \"Author: \")\n")
+
+
+        ("c" "Contact" entry (file+headline "~/.personal/org/contacts.org" "Friends")
+         "* %(read-string \"Name: \")\n
+          :PROPERTIES:\n
+          :EMAIL: %(read-string \"emacs: \")\n
+          :END:")
+
+        ("Q" "quote org capture" entry
+         (file+headline ,"~/meta-wiki/mywiki/inbox.org" "browsing")
+         "* %?%:description Added %U
+,#+BEGIN_QUOTE
+%x
+,#+END_QUOTE" :immediate-finish t)))
+#+END_SRC
+
+
+#+begin_src shell :tangle ~/apps/myScripts/org-capture-clipboard.sh
+#!/bin/bash
+xclip -o -selection primary | xclip -o -selection clipboard -i
+emacsclient -ne '(org-capture "" "Q")' && notify-send -u low -t 2000 "Emacs" "Text Successfully Captu
+#+end_src
+
 ** always links
 https://tasshin.com/blog/implementing-a-second-brain-in-empty-keys-and-org-mode/
 https://lepisma.xyz
@@ -584,58 +638,6 @@ mostly from https://lepisma.xyz/2017/10/28/ricing-org-mode/index.html
 #+RESULTS:
 : t
 
-** stable capture                                                  :tocheck:
-:PROPERTIES:
-:header-args: :tangle yes
-:url:      http://howardism.org/Technical/Emacs/capturing-content.html
-:END:
-
-#+srcname: capture-templates
-#+BEGIN_SRC elisp
-(setq org-default-notes-file (concat org-directory "notes.org"))
-(setq org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/.personal/org/todo.org" "tasks")
-         "* TODO %?\n:PROPERTIES:\n:Created: %U\n:Linked: %A\n:END:\n %i"
-         :prepend t)
-
-        ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
-         "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
-
-        ("j" "Journal" entry (file+olp+datetree "~/.personal/org/journal.org")
-         "* %?\nEntered on %U\n %i\n %a")
-
-        ("b" "Books" entry (file+headline "~/notes/books.org" "Books")
-         "* %(read-string \"Title: \")\n
-          :PROPERTIES: Pages: %(number-to-string (read-number \"Pages:\")):END:\n
-          Author: %(read-string \"Author: \")\n")
-
-        ("w" "Web site" entry
-         (file "")
-         "* %a :website:\n\n%U %?\n\n%:initial")
-
-        ("c" "Contact" entry (file+headline "~/.personal/org/contacts.org" "Friends")
-         "* %(read-string \"Name: \")\n
-          :PROPERTIES:\n
-          :EMAIL: %(read-string \"emacs: \")\n
-          :END:")
-
-        ("Q" "quote org capture" entry
-         (file+headline ,"~/meta-wiki/mywiki/inbox.org" "browsing")
-         "* %?%:description Added %U
-,#+BEGIN_QUOTE
-%x
-,#+END_QUOTE" :immediate-finish t)))
-#+END_SRC
-
-#+RESULTS: capture-templates
-| t | Todo | entry | (file+headline ~/.personal/org/todo.org tasks) | * TODO %? |
-
-#+begin_src shell :tangle ~/apps/myScripts/org-capture-clipboard.sh
-#!/bin/bash
-xclip -o -selection primary | xclip -o -selection clipboard -i
-emacsclient -ne '(org-capture "" "Q")' && notify-send -u low -t 2000 "Emacs" "Text Successfully Captu
-#+end_src
-
 * inprog coding/ide
 ** inprog completion
 :PROPERTIES:
@@ -789,6 +791,9 @@ example:
   (require 'org-babel-eval-in-repl))
 (require 'eval-in-repl)
   #+END_SRC
+
+  #+RESULTS:
+  : eval-in-repl
 
 **** babel languages
 #+BEGIN_SRC elisp
@@ -1091,7 +1096,7 @@ https://github.com/dakrone/eos/blob/master/eos-web.org
 #+begin_src elisp
 (use-package org-brain
   :init
-  (setq org-brain-path "~/.personal/org/brain")
+  (setq org-brain-path "~/meta-wiki/mywiki/")
   ;; For Evil users
   (with-eval-after-load 'evil
     (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
@@ -1149,6 +1154,9 @@ Suggest the URL title as a description for resource."
 (with-eval-after-load 'org-brain
   (add-hook 'org-brain-after-visualize-hook #'aa2u-org-brain-buffer))
 #+end_src
+
+#+RESULTS:
+| aa2u-org-brain-buffer |
 
 ** inprog publishing stuff                                             :org:
 *** inprog org publish
