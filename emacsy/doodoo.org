@@ -94,7 +94,10 @@ https://cestlaz.github.io/stories/emacs/
 CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 - test
 :END:
-** stable COMMENT basic basic
+** stable COMMENT basic basic                                     :notangle:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
 #+BEGIN_SRC elisp
 (setq evil-want-C-u-scroll nil
       evil-want-C-d-scroll nil)
@@ -103,12 +106,34 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 ;; Files association
 (setq org-file-apps
       '((auto-mode . emacs)
-        ("\\.djvu\\'" . "evince \"%s\"")
-         ("\\.pdf\\'" . "evince \"%s\"")))
+        ("\\.djvu\\" . "evince \"%s\"")
+        ("\\.pdf\\" . "evince \"%s\"")
+        ("\\.docx\\" . "libreoffice \"%s"")))
 #+END_SRC
 
 #+RESULTS:
 : ((auto-mode . emacs) (\.djvu\' . evince "%s") (\.pdf\' . evince "%s"))
+** inprog spelling
+http://manuel-uberti.github.io/emacs/2016/06/06/spellchecksetup/
+#+BEGIN_SRC emacs-lisp
+(setq ispell-program-name (executable-find "hunspell")
+      ispell-dictionary "en_US")
+(bind-key "C-c I"
+          (lambda ()
+            (interactive)
+            (ispell-change-dictionary "fr_CA")
+            (flyspell-buffer)))
+
+(bind-key "C-c E"
+          (lambda ()
+            (interactive)
+            (ispell-change-dictionary "en_GB")
+            (flyspell-buffer)))
+
+#+END_SRC
+
+#+RESULTS:
+| lambda | nil | (interactive) | (ispell-change-dictionary en_GB) | (flyspell-buffer) |
 
 ** stable ui
 #+BEGIN_SRC emacs-lisp
@@ -131,15 +156,25 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 
 (global-set-key (kbd "C-x C-b") 'ibuffer)
 (autoload 'ibuffer "ibuffer" "List buffers." t)
+(use-package doom-themes)
+;; (load "~/temp/dotfiles/emacsy/packages/my-doom-themes-ext-org.el")
 
-(load "~/dotfiles/emacsy/packages/my-doom-themes-ext-org.el")
+(require 'doom-themes)
 (setq doom-themes-enable-bold t
       doom-themes-enable-italic t)
 (doom-themes-org-config)
+
+(defun disable-all-themes ()
+  "disable all active themes."
+  (dolist (i custom-enabled-themes)
+    (disable-theme i)))
+
+(defadvice load-theme (before disable-themes-first activate)
+  (disable-all-themes))
 #+END_SRC
 
 #+RESULTS:
-: Enable custom fontification & improves theme integration with org-mode.
+: load-theme
 
 ** fixme basic bindings
 #+BEGIN_SRC elisp
@@ -153,6 +188,9 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 (bind-key (kbd "M-p c") 'org-id-get-create)
 (bind-key (kbd "M-p r") 'slime-repl)
 #+END_SRC
+
+#+RESULTS:
+: slime-repl
 
 ** stable searching
 *** swiper/ivy :melpa:github:
@@ -252,7 +290,7 @@ CLOCK: [2019-09-18 Wed 01:55]--[2019-09-18 Wed 01:55] =>  0:00
 (setq doom-modeline-env-go-executable "go")
 (setq doom-modeline-env-elixir-executable "iex")
 (setq doom-modeline-env-rust-executable "rustc")
-(setq doom-modeline-mu4e t)
+;; (setq doom-modeline-mu4e t)
 (setq doom-modeline-irc t)
 (setq doom-modeline-irc-stylize 'identity)
 #+end_src
@@ -351,6 +389,9 @@ some text
   "\C-k" 'kill-line
   "\C-y" 'evil-paste-after)
 #+END_SRC
+
+#+RESULTS:
+
 some text
 ** stable defengines
 :PROPERTIES:
@@ -469,6 +510,10 @@ https://lepisma.xyz
       (list "latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f"))
 
 #+END_SRC
+
+#+RESULTS: org-basic-set-keys
+| latexmk -pdflatex='lualatex -shell-escape -interaction nonstopmode' -pdf -f %f |
+
 ** fixme ui
 mostly from https://lepisma.xyz/2017/10/28/ricing-org-mode/index.html
 #+begin_src emacs-lisp
@@ -517,6 +562,10 @@ mostly from https://lepisma.xyz/2017/10/28/ricing-org-mode/index.html
 ;; Set global Column View format
 (setq org-columns-default-format '"%38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)")
 #+end_src
+
+#+RESULTS:
+: %38ITEM(Details) %TAGS(Context) %7TODO(To Do) %5Effort(Time){:} %6CLOCKSUM(Clock)
+
 ** stable small utilities
 #+begin_src elisp
 (defun org-archive-done-tasks ()
@@ -594,12 +643,12 @@ mostly from https://lepisma.xyz/2017/10/28/ricing-org-mode/index.html
 #+BEGIN_SRC elisp
 (setq org-default-notes-file (concat org-directory "notes.org"))
 (setq org-capture-templates
-      '(("t" "Todo" entry (file+headline "~/.personal/org/todo.org" "tasks")
-         "* TODO %?\n:PROPERTIES:\n:Created: %U\n:Linked: %A\n:END:\n %i"
+      '(("t" "Todo" entry (file+headline "~/.personal/org/inbox.org" "tasks")
+         "* todo %?\n:PROPERTIES:\n:Created: %U\n:Linked: %A\n:END:\n %i"
          :prepend t)
 
-        ("s" "Started" entry (file+headline "~/.personal/org/todo.org" "tasks")
-         "* STARTED %?\n %i" :clock-in t :clock-keep t :prepend t)
+        ("s" "Started" entry (file+headline "~/.personal/org/inbox.org" "tasks")
+         "* started %?\n %i" :clock-in t :clock-keep t :prepend t)
 
         ("j" "Journal" entry (file+olp+datetree "~/.personal/org/journal.org")
          "* %?\nEntered on %U\n %i\n %a")
@@ -620,7 +669,7 @@ mostly from https://lepisma.xyz/2017/10/28/ricing-org-mode/index.html
           :END:")
 
         ("Q" "quote org capture" entry
-         (file+headline ,"~/meta-wiki/mywiki/inbox.org" "browsing")
+         (file+headline ,"~/.personal/org/inbox.org" "browsing")
          "* %?%:description Added %U
 ,#+BEGIN_QUOTE
 %x
@@ -629,12 +678,6 @@ mostly from https://lepisma.xyz/2017/10/28/ricing-org-mode/index.html
 
 #+RESULTS: capture-templates
 | t | Todo | entry | (file+headline ~/.personal/org/todo.org tasks) | * TODO %? |
-
-#+begin_src shell :tangle ~/apps/myScripts/org-capture-clipboard.sh
-#!/bin/bash
-xclip -o -selection primary | xclip -o -selection clipboard -i
-emacsclient -ne '(org-capture "" "Q")' && notify-send -u low -t 2000 "Emacs" "Text Successfully Captu
-#+end_src
 
 * inprog coding/ide
 ** inprog completion
@@ -660,6 +703,10 @@ https://gist.github.com/rswgnu/85ca5c69bb26551f3f27500855893dbe
   (global-company-mode t))
 (define-key global-map (kbd "C-.") 'company-files)
 #+END_SRC
+
+#+RESULTS:
+: company-files
+
 *** preview ala vim                                      :tocheck:notangle:
 :PROPERTIES:
 :header-args: :tangle no
@@ -732,12 +779,12 @@ example:
 (setq inferior-julia-program-name "/usr/bin/julia")
 (setq python-python-command "/usr/bin/ipython")
 
-(setq erlang-root-dir "/usr/lib/erlang")
-(add-to-list 'load-path "/usr/lib/erlang/lib/tools-3.2.1/emacs")
-(add-to-list 'load-path "~/dotfiles/emacsy/packages/stable-packages/ob-erlang")
-(add-to-list 'exec-path "/usr/lib/erlang/bin")
-(require 'erlang-start)
-(require 'ob-erlang)
+;; (setq erlang-root-dir "/usr/lib/erlang")
+;; (add-to-list 'load-path "/usr/lib/erlang/lib/tools-3.2.1/emacs")
+;; (add-to-list 'load-path "~/dotfiles/emacsy/packages/stable-packages/ob-erlang")
+;; (add-to-list 'exec-path "/usr/lib/erlang/bin")
+;; (require 'erlang-start)
+;; (require 'ob-erlang)
 #+end_src
 
 *** inprog ggtags
@@ -792,9 +839,9 @@ example:
 
 **** babel languages
 #+BEGIN_SRC elisp
-(add-to-list 'load-path
-             "/home/sole/.opam/default/share/emacs/site-lisp/")
-(require 'ocp-indent)
+;; (add-to-list 'load-path
+             ;; "/home/sole/.opam/default/share/emacs/site-lisp/")
+;; (require 'ocp-indent)
 (setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
 (org-babel-do-load-languages
  'org-babel-load-languages
@@ -805,7 +852,7 @@ example:
    (racket . t)
    (lisp . t)
    (shell . t)
-   (erlang . t)
+   ;; (erlang . t)
    (js . t)
    (C . t)
    (haskell . t)
@@ -864,18 +911,20 @@ example:
 #+RESULTS:
 : org-babel-execute:lisp
 
-* inprog general life
-** wait mu4e
+* inprog general life                                              :notangle:
+:PROPERTIES:
+:header-args: :tangle no
+:END:
+** wait mu4e                                                      :notangle:
 :PROPERTIES:
 :link:     https://www.djcbsoftware.nl/code/mu/mu4e/Folders.html#Folders
-:header-args: :tangle yes
 :END:
 :samples:
 http://cachestocaches.com/2017/3/complete-guide-email-emacs-using-mu-and-/
 :end:
 *** main
 :PROPERTIES:
-:header-args: :tangle yes
+:header-args: :tangle no
 :END:
 #+NAME:mu4e-setup
 #+begin_src emacs-lisp
@@ -1027,10 +1076,10 @@ mailboxes +INBOX
 https://github.com/dakrone/eos/blob/master/eos-web.org
 
 ** project org agenda/web/caldav/orgzly
-** inprog mindmap stuff                                                :org:
+** inprog mindmap stuff                                       :org:notangle:
 *** inprog org-wiki
 :PROPERTIES:
-:header-args: :tangle yes
+:header-args: :tangle no
 :END:
 #+begin_src elisp
 (require 'org-wiki)
@@ -1086,7 +1135,6 @@ https://github.com/dakrone/eos/blob/master/eos-web.org
 
 *** stable brain
 :PROPERTIES:
-:header-args: :tangle yes
 :END:
 #+begin_src elisp
 (use-package org-brain
@@ -1153,9 +1201,6 @@ Suggest the URL title as a description for resource."
 ** inprog publishing stuff                                             :org:
 *** inprog org publish
 **** stable org publish project alist
-:PROPERTIES:
-:header-args: :tangle yes
-:END:
 
 #+BEGIN_SRC elisp :comments link
 (require 'ox-html)
